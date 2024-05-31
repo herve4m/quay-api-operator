@@ -1,0 +1,38 @@
+---
+apiVersion: quay.herve4m.github.io/v1alpha1
+kind: ApiToken
+metadata:
+  name: apitoken-sample
+spec:
+  # Connection parameters in a Secret resource
+  # The secret MUST include the "username" and "password" parameters, because
+  # you cannot authenticate with a token to create another token.
+  connSecretRef:
+    name: quay-temp-credentials-secret
+    # By default, the operator looks for the secret in the same namespace as the
+    # apitoken resource, but you can specify a different namespace.
+    # namespace: mynamespace
+
+  # You can specify the client ID by using the clientId parameter, or you can
+  # refer to a secret that stores the ID by using the clientIdFrom parameter.
+  # The application resource can create such secret.
+  # clientId: PZ6F80R1LCVPGYNZGSZQ
+  clientIdFrom:
+    name: application-secret
+    key: clientId
+    # namespace: mynamespace
+
+  rights:
+    - all
+    # - org:admin
+    # - user:admin
+
+  # The Secret resource is created or updated, and stores the "accessToken"
+  # parameter.
+  # "host", "validateCerts", and "token" parameters are also added, so that
+  # you can use the secret with other Quay resources to access the API.
+  retSecretRef:
+    name: quay-credentials-secret
+    # By default, the operator stores the secret in the same namespace as the
+    # apitoken resource, but you can specify a different namespace.
+    # namespace: mynamespace

@@ -1,0 +1,22 @@
+---
+apiVersion: quay.herve4m.github.io/v1alpha1
+kind: Organization
+metadata:
+  name: organization-sample
+spec:
+  # Connection parameters in a Secret resource
+  connSecretRef:
+    name: quay-temp-credentials-secret
+    # By default, the operator looks for the secret in the same namespace as the
+    # organization resource, but you can specify a different namespace.
+    # namespace: mynamespace
+
+  # Whether to preserve the corresponding Quay object when you
+  # delete the resource.
+  preserveInQuayOnDeletion: false
+
+  name: production
+  email: prodlist@example.com
+  timeMachineExpiration: 7d
+  autoPruneMethod: tags
+  autoPruneValue: "20"

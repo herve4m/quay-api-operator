@@ -1,0 +1,58 @@
+---
+- name: Ensure the resource does not exist in Quay
+  when:
+    - _quay_herve4m_github_io_manifestlabel is defined
+    - "'status' in _quay_herve4m_github_io_manifestlabel"
+    - "'existInQuay' in _quay_herve4m_github_io_manifestlabel['status']"
+    - _quay_herve4m_github_io_manifestlabel['status']['existInQuay']
+    - "'spec' not in _quay_herve4m_github_io_manifestlabel
+      or 'preserveInQuayOnDeletion' not in _quay_herve4m_github_io_manifestlabel['spec']
+      or not _quay_herve4m_github_io_manifestlabel['spec']['preserveInQuayOnDeletion']"
+  block:
+    - name: Ensure the secret resource that stores the Quay parameters exists
+      ansible.builtin.fail:
+        msg: "connSecretRef: {{ conn_secret_ref['name'] }}: secret not found"
+      when:
+        - not secret_found
+
+    - name: Ensure the manifestlabel resource does not exist
+      herve4m.quay.quay_manifest_label:
+        state: absent
+        quay_host: "{{ quay_host | default(omit) }}"
+        validate_certs: "{{ validate_certs | default(omit) }}"
+        quay_token: "{{ quay_token | default(omit, true) }}"
+        quay_username: "{{ omit if quay_token is defined and quay_token | length > 0 else quay_username | default(omit) }}"
+        quay_password: "{{ omit if quay_token is defined and quay_token | length > 0 else quay_password | default(omit) }}"
+        image: "{{ image | default(omit) }}"
+        key: "{{ key | default(omit) }}"
+        replace: "{{ replace | default(omit) }}"
+        value: "{{ value | default(omit) }}"
+
+  rescue:
+    - name: Ensure the error message is set in the resource status
+      operator_sdk.util.k8s_status:
+        api_version: quay.herve4m.github.io/v1alpha1
+        kind: ManifestLabel
+        name: "{{ ansible_operator_meta['name'] }}"
+        namespace: "{{ ansible_operator_meta['namespace'] }}"
+        status:
+          message: "{{ ansible_failed_result['msg'] }}"
+
+    - name: Ensure the error is raised
+      ansible.builtin.fail:
+        msg: "{{ ansible_failed_result['msg'] }}"
+
+# Cleaning up the secret because the owner reference mechanism, which enables
+# the operator to automatically remove the dependent resources, applies only
+# to resources in the same namespace as the CR.
+- name: Ensure the secret is removed
+  kubernetes.core.k8s:
+    state: absent
+    api_version: v1
+    kind: Secret
+    name: "{{ ret_secret_ref['name'] }}"
+    namespace: "{{ ret_secret_ref['namespace'] | default(ansible_operator_meta['namespace']) }}"
+  when:
+    - ret_secret_ref is defined
+    - "'name' in ret_secret_ref"
+    - ret_secret_ref["name"]|length > 0

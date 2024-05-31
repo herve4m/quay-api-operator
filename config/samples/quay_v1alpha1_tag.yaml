@@ -1,0 +1,21 @@
+---
+apiVersion: quay.herve4m.github.io/v1alpha1
+kind: Tag
+metadata:
+  name: tag-sample
+spec:
+  # Connection parameters in a Secret resource
+  connSecretRef:
+    name: quay-credentials-secret
+    # By default, the operator looks for the secret in the same namespace as the
+    # tag resource, but you can specify a different namespace.
+    # namespace: mynamespace
+
+  # Whether to preserve the corresponding Quay object when you
+  # delete the resource.
+  preserveInQuayOnDeletion: false
+
+  image: production/smallimage:v1.4.3
+  tag: v1
+  expirationFormat: "%Y-%m-%d"
+  expiration: "2025-05-25"

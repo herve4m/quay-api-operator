@@ -1,0 +1,138 @@
+---
+# Use the 'create api' subcommand to add watches to this file.
+- version: v1alpha1
+  group: quay.herve4m.github.io
+  kind: ApiToken
+  role: apitoken
+  reconcilePeriod: 87660h
+  finalizer:
+    name: quay.herve4m.github.io/finalizer
+    role: apitoken_delete
+- version: v1alpha1
+  group: quay.herve4m.github.io
+  kind: Application
+  role: application
+  finalizer:
+    name: quay.herve4m.github.io/finalizer
+    role: application_delete
+- version: v1alpha1
+  group: quay.herve4m.github.io
+  kind: DefaultPerm
+  role: defaultperm
+  finalizer:
+    name: quay.herve4m.github.io/finalizer
+    role: defaultperm_delete
+- version: v1alpha1
+  group: quay.herve4m.github.io
+  kind: DockerToken
+  role: dockertoken
+  finalizer:
+    name: quay.herve4m.github.io/finalizer
+    role: dockertoken_delete
+- version: v1alpha1
+  group: quay.herve4m.github.io
+  kind: FirstUser
+  role: firstuser
+  reconcilePeriod: 87660h
+  finalizer:
+    name: quay.herve4m.github.io/finalizer
+    role: firstuser_delete
+- version: v1alpha1
+  group: quay.herve4m.github.io
+  kind: ManifestLabel
+  role: manifestlabel
+  finalizer:
+    name: quay.herve4m.github.io/finalizer
+    role: manifestlabel_delete
+- version: v1alpha1
+  group: quay.herve4m.github.io
+  kind: Message
+  role: message
+  finalizer:
+    name: quay.herve4m.github.io/finalizer
+    role: message_delete
+- version: v1alpha1
+  group: quay.herve4m.github.io
+  kind: Notification
+  role: notification
+  finalizer:
+    name: quay.herve4m.github.io/finalizer
+    role: notification_delete
+- version: v1alpha1
+  group: quay.herve4m.github.io
+  kind: Organization
+  role: organization
+  finalizer:
+    name: quay.herve4m.github.io/finalizer
+    role: organization_delete
+- version: v1alpha1
+  group: quay.herve4m.github.io
+  kind: ProxyCache
+  role: proxycache
+  finalizer:
+    name: quay.herve4m.github.io/finalizer
+    role: proxycache_delete
+- version: v1alpha1
+  group: quay.herve4m.github.io
+  kind: Quota
+  role: quota
+  finalizer:
+    name: quay.herve4m.github.io/finalizer
+    role: quota_delete
+- version: v1alpha1
+  group: quay.herve4m.github.io
+  kind: Repository
+  role: repository
+  finalizer:
+    name: quay.herve4m.github.io/finalizer
+    role: repository_delete
+- version: v1alpha1
+  group: quay.herve4m.github.io
+  kind: RepositoryMirror
+  role: repositorymirror
+  finalizer:
+    name: quay.herve4m.github.io/finalizer
+    role: repositorymirror_delete
+- version: v1alpha1
+  group: quay.herve4m.github.io
+  kind: Robot
+  role: robot
+  finalizer:
+    name: quay.herve4m.github.io/finalizer
+    role: robot_delete
+- version: v1alpha1
+  group: quay.herve4m.github.io
+  kind: Tag
+  role: tag
+  finalizer:
+    name: quay.herve4m.github.io/finalizer
+    role: tag_delete
+- version: v1alpha1
+  group: quay.herve4m.github.io
+  kind: Team
+  role: team
+  finalizer:
+    name: quay.herve4m.github.io/finalizer
+    role: team_delete
+- version: v1alpha1
+  group: quay.herve4m.github.io
+  kind: TeamLdap
+  role: teamldap
+  finalizer:
+    name: quay.herve4m.github.io/finalizer
+    role: teamldap_delete
+- version: v1alpha1
+  group: quay.herve4m.github.io
+  kind: TeamOidc
+  role: teamoidc
+  finalizer:
+    name: quay.herve4m.github.io/finalizer
+    role: teamoidc_delete
+- version: v1alpha1
+  group: quay.herve4m.github.io
+  kind: User
+  role: user
+  finalizer:
+    name: quay.herve4m.github.io/finalizer
+    role: user_delete
+# +kubebuilder:scaffold:watch

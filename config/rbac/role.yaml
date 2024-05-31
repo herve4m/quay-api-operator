@@ -1,0 +1,352 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: clusterrole
+    app.kubernetes.io/instance: manager-role
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: quay-api-operator
+    app.kubernetes.io/part-of: quay-api-operator
+    app.kubernetes.io/managed-by: kustomize
+  name: manager-role
+rules:
+  ##
+  ## Base operator rules
+  ##
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  ##
+  ## Rules for quay.herve4m.github.io/v1alpha1, Kind: ApiToken
+  ##
+  - apiGroups:
+      - quay.herve4m.github.io
+    resources:
+      - apitokens
+      - apitokens/status
+      - apitokens/finalizers
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  ##
+  ## Rules for quay.herve4m.github.io/v1alpha1, Kind: Application
+  ##
+  - apiGroups:
+      - quay.herve4m.github.io
+    resources:
+      - applications
+      - applications/status
+      - applications/finalizers
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  ##
+  ## Rules for quay.herve4m.github.io/v1alpha1, Kind: DefaultPerm
+  ##
+  - apiGroups:
+      - quay.herve4m.github.io
+    resources:
+      - defaultperms
+      - defaultperms/status
+      - defaultperms/finalizers
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  ##
+  ## Rules for quay.herve4m.github.io/v1alpha1, Kind: DockerToken
+  ##
+  - apiGroups:
+      - quay.herve4m.github.io
+    resources:
+      - dockertokens
+      - dockertokens/status
+      - dockertokens/finalizers
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  ##
+  ## Rules for quay.herve4m.github.io/v1alpha1, Kind: FirstUser
+  ##
+  - apiGroups:
+      - quay.herve4m.github.io
+    resources:
+      - firstusers
+      - firstusers/status
+      - firstusers/finalizers
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  ##
+  ## Rules for quay.herve4m.github.io/v1alpha1, Kind: ManifestLabel
+  ##
+  - apiGroups:
+      - quay.herve4m.github.io
+    resources:
+      - manifestlabels
+      - manifestlabels/status
+      - manifestlabels/finalizers
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  ##
+  ## Rules for quay.herve4m.github.io/v1alpha1, Kind: Message
+  ##
+  - apiGroups:
+      - quay.herve4m.github.io
+    resources:
+      - messages
+      - messages/status
+      - messages/finalizers
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  ##
+  ## Rules for quay.herve4m.github.io/v1alpha1, Kind: Notification
+  ##
+  - apiGroups:
+      - quay.herve4m.github.io
+    resources:
+      - notifications
+      - notifications/status
+      - notifications/finalizers
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  ##
+  ## Rules for quay.herve4m.github.io/v1alpha1, Kind: Organization
+  ##
+  - apiGroups:
+      - quay.herve4m.github.io
+    resources:
+      - organizations
+      - organizations/status
+      - organizations/finalizers
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  ##
+  ## Rules for quay.herve4m.github.io/v1alpha1, Kind: ProxyCache
+  ##
+  - apiGroups:
+      - quay.herve4m.github.io
+    resources:
+      - proxycaches
+      - proxycaches/status
+      - proxycaches/finalizers
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  ##
+  ## Rules for quay.herve4m.github.io/v1alpha1, Kind: Quota
+  ##
+  - apiGroups:
+      - quay.herve4m.github.io
+    resources:
+      - quotas
+      - quotas/status
+      - quotas/finalizers
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  ##
+  ## Rules for quay.herve4m.github.io/v1alpha1, Kind: Repository
+  ##
+  - apiGroups:
+      - quay.herve4m.github.io
+    resources:
+      - repositories
+      - repositories/status
+      - repositories/finalizers
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  ##
+  ## Rules for quay.herve4m.github.io/v1alpha1, Kind: RepositoryMirror
+  ##
+  - apiGroups:
+      - quay.herve4m.github.io
+    resources:
+      - repositorymirrors
+      - repositorymirrors/status
+      - repositorymirrors/finalizers
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  ##
+  ## Rules for quay.herve4m.github.io/v1alpha1, Kind: Robot
+  ##
+  - apiGroups:
+      - quay.herve4m.github.io
+    resources:
+      - robots
+      - robots/status
+      - robots/finalizers
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  ##
+  ## Rules for quay.herve4m.github.io/v1alpha1, Kind: Tag
+  ##
+  - apiGroups:
+      - quay.herve4m.github.io
+    resources:
+      - tags
+      - tags/status
+      - tags/finalizers
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  ##
+  ## Rules for quay.herve4m.github.io/v1alpha1, Kind: Team
+  ##
+  - apiGroups:
+      - quay.herve4m.github.io
+    resources:
+      - teams
+      - teams/status
+      - teams/finalizers
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  ##
+  ## Rules for quay.herve4m.github.io/v1alpha1, Kind: TeamLdap
+  ##
+  - apiGroups:
+      - quay.herve4m.github.io
+    resources:
+      - teamldaps
+      - teamldaps/status
+      - teamldaps/finalizers
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  ##
+  ## Rules for quay.herve4m.github.io/v1alpha1, Kind: TeamOidc
+  ##
+  - apiGroups:
+      - quay.herve4m.github.io
+    resources:
+      - teamoidcs
+      - teamoidcs/status
+      - teamoidcs/finalizers
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  ##
+  ## Rules for quay.herve4m.github.io/v1alpha1, Kind: User
+  ##
+  - apiGroups:
+      - quay.herve4m.github.io
+    resources:
+      - users
+      - users/status
+      - users/finalizers
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+#+kubebuilder:scaffold:rules

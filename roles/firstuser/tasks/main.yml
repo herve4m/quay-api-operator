@@ -1,0 +1,73 @@
+---
+- name: Ensure the firstuser resource exists
+  block:
+    - name: Ensure the secret resource that stores the Quay parameters exists
+      ansible.builtin.fail:
+        msg: "connSecretRef: {{ conn_secret_ref['name'] }}: secret not found"
+      when:
+        - not secret_found
+
+    - name: Ensure the firstuser resource exists in Quay
+      herve4m.quay.quay_first_user:
+        quay_host: "{{ quay_host | default(omit) }}"
+        validate_certs: "{{ validate_certs | default(omit) }}"
+        create_token: "{{ create_token | default(omit) }}"
+        email: "{{ email | default(omit) }}"
+        password: "{{ password | default(omit) }}"
+        username: "{{ username | default(omit) }}"
+      register: ret
+
+    - name: Ensure the existInQuay flag is set in the resource status
+      operator_sdk.util.k8s_status:
+        api_version: quay.herve4m.github.io/v1alpha1
+        kind: FirstUser
+        name: "{{ ansible_operator_meta['name'] }}"
+        namespace: "{{ ansible_operator_meta['namespace'] }}"
+        status:
+          existInQuay: true
+
+    - name: Ensure the resulting data is saved in a secret
+      kubernetes.core.k8s:
+        definition:
+          apiVersion: v1
+          kind: Secret
+          type: Opaque
+          metadata:
+            name: "{{ ret_secret_ref['name'] }}"
+            namespace: "{{ ret_secret_ref['namespace'] | default(ansible_operator_meta['namespace']) }}"
+          data:
+            token: "{{ ret['access_token'] | default('', true) | ansible.builtin.b64encode | default(omit, true) }}"
+            host: "{{ quay_host | default('http://127.0.0.1') | ansible.builtin.b64encode }}"
+            validateCerts: "{{ validate_certs | default('true') | ansible.builtin.b64encode }}"
+            username: "{{ username | default('', true) | ansible.builtin.b64encode | default(omit, true) }}"
+            password: "{{ password | default('', true) | ansible.builtin.b64encode | default(omit, true) }}"
+            accessToken: "{{ ret['access_token'] | default('', true) | ansible.builtin.b64encode }}"
+            email: "{{ ret['email'] | default('', true) | ansible.builtin.b64encode }}"
+            encryptedPassword: "{{ ret['encrypted_password'] | default('', true) | ansible.builtin.b64encode }}"
+      when:
+        - ret_secret_ref is defined
+        - "'name' in ret_secret_ref"
+        - ret_secret_ref["name"] | length > 0
+
+  rescue:
+    - name: Ensure the error message is set in the resource status
+      operator_sdk.util.k8s_status:
+        api_version: quay.herve4m.github.io/v1alpha1
+        kind: FirstUser
+        name: "{{ ansible_operator_meta['name'] }}"
+        namespace: "{{ ansible_operator_meta['namespace'] }}"
+        status:
+          message: "{{ ansible_failed_result['msg'] }}"
+
+    - name: Ensure the error is raised
+      ansible.builtin.fail:
+        msg: "{{ ansible_failed_result['msg'] }}"
+
+- name: Ensure the error message is cleared from the resource status
+  operator_sdk.util.k8s_status:
+    api_version: quay.herve4m.github.io/v1alpha1
+    kind: FirstUser
+    name: "{{ ansible_operator_meta['name'] }}"
+    namespace: "{{ ansible_operator_meta['namespace'] }}"
+    status:
+      message: ""

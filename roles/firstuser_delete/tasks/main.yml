@@ -1,0 +1,15 @@
+---
+# Cleaning up the secret because the owner reference mechanism, which enables
+# the operator to automatically remove the dependent resources, applies only
+# to resources in the same namespace as the CR.
+- name: Ensure the secret is removed
+  kubernetes.core.k8s:
+    state: absent
+    api_version: v1
+    kind: Secret
+    name: "{{ ret_secret_ref['name'] }}"
+    namespace: "{{ ret_secret_ref['namespace'] | default(ansible_operator_meta['namespace']) }}"
+  when:
+    - ret_secret_ref is defined
+    - "'name' in ret_secret_ref"
+    - ret_secret_ref["name"] | length > 0

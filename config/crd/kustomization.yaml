@@ -1,0 +1,24 @@
+# This kustomization.yaml is not intended to be run by itself,
+# since it depends on service name and namespace that are out of this kustomize package.
+# It should be run by config/default
+resources:
+- bases/quay.herve4m.github.io_apitokens.yaml
+- bases/quay.herve4m.github.io_applications.yaml
+- bases/quay.herve4m.github.io_defaultperms.yaml
+- bases/quay.herve4m.github.io_dockertokens.yaml
+- bases/quay.herve4m.github.io_firstusers.yaml
+- bases/quay.herve4m.github.io_manifestlabels.yaml
+- bases/quay.herve4m.github.io_messages.yaml
+- bases/quay.herve4m.github.io_notifications.yaml
+- bases/quay.herve4m.github.io_organizations.yaml
+- bases/quay.herve4m.github.io_proxycaches.yaml
+- bases/quay.herve4m.github.io_quotas.yaml
+- bases/quay.herve4m.github.io_repositories.yaml
+- bases/quay.herve4m.github.io_repositorymirrors.yaml
+- bases/quay.herve4m.github.io_robots.yaml
+- bases/quay.herve4m.github.io_tags.yaml
+- bases/quay.herve4m.github.io_teams.yaml
+- bases/quay.herve4m.github.io_teamldaps.yaml
+- bases/quay.herve4m.github.io_teamoidcs.yaml
+- bases/quay.herve4m.github.io_users.yaml
+#+kubebuilder:scaffold:crdkustomizeresource

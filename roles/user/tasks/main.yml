@@ -1,0 +1,54 @@
+---
+- name: Ensure the user resource exists
+  block:
+    - name: Ensure the secret resource that stores the Quay parameters exists
+      ansible.builtin.fail:
+        msg: "connSecretRef: {{ conn_secret_ref['name'] }}: secret not found"
+      when:
+        - not secret_found
+
+    - name: Ensure the user resource exists in Quay
+      herve4m.quay.quay_user:
+        quay_host: "{{ quay_host | default(omit) }}"
+        validate_certs: "{{ validate_certs | default(omit) }}"
+        quay_token: "{{ quay_token | default(omit, true) }}"
+        quay_username: "{{ omit if quay_token is defined and quay_token | length > 0 else quay_username | default(omit) }}"
+        quay_password: "{{ omit if quay_token is defined and quay_token | length > 0 else quay_password | default(omit) }}"
+        email: "{{ email | default(omit) }}"
+        enabled: "{{ enabled | default(omit) }}"
+        password: "{{ password | default(omit) }}"
+        superuser: "{{ superuser | default(omit) }}"
+        username: "{{ username | default(omit) }}"
+      register: ret
+
+    - name: Ensure the existInQuay flag is set in the resource status
+      operator_sdk.util.k8s_status:
+        api_version: quay.herve4m.github.io/v1alpha1
+        kind: User
+        name: "{{ ansible_operator_meta['name'] }}"
+        namespace: "{{ ansible_operator_meta['namespace'] }}"
+        status:
+          existInQuay: true
+
+  rescue:
+    - name: Ensure the error message is set in the resource status
+      operator_sdk.util.k8s_status:
+        api_version: quay.herve4m.github.io/v1alpha1
+        kind: User
+        name: "{{ ansible_operator_meta['name'] }}"
+        namespace: "{{ ansible_operator_meta['namespace'] }}"
+        status:
+          message: "{{ ansible_failed_result['msg'] }}"
+
+    - name: Ensure the error is raised
+      ansible.builtin.fail:
+        msg: "{{ ansible_failed_result['msg'] }}"
+
+- name: Ensure the error message is cleared from the resource status
+  operator_sdk.util.k8s_status:
+    api_version: quay.herve4m.github.io/v1alpha1
+    kind: User
+    name: "{{ ansible_operator_meta['name'] }}"
+    namespace: "{{ ansible_operator_meta['namespace'] }}"
+    status:
+      message: ""

@@ -1,0 +1,22 @@
+---
+apiVersion: quay.herve4m.github.io/v1alpha1
+kind: ProxyCache
+metadata:
+  name: proxycache-sample
+spec:
+  # Connection parameters in a Secret resource
+  connSecretRef:
+    name: quay-credentials-secret
+    # By default, the operator looks for the secret in the same namespace as the
+    # proxycache resource, but you can specify a different namespace.
+    # namespace: mynamespace
+
+  # Whether to preserve the corresponding configuration in Quay when you
+  # delete the resource.
+  preserveInQuayOnDeletion: false
+
+  organization: production
+  registry: quay.io/prodimgs
+  username: cwade
+  password: My53cr3Tpa55
+  expiration: 172800

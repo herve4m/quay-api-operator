@@ -1,0 +1,96 @@
+- description: {{ description }}
+  displayName: {{ display_name }}
+  group: {{ config.QUALIFIED_GROUP }}
+  kind: {{ resource.kind }}
+  name: {{ resource.plural }}.{{ config.QUALIFIED_GROUP }}
+  resources:
+  - kind: Secret
+    name: ""
+    version: v1
+  specDescriptors:
+  - description: |
+      Reference to the secret resource that stores the connection parameters to the Quay Container Registry API.
+    displayName: Connection Parameters Secret
+    path: connSecretRef
+    x-descriptors:
+    - urn:alm:descriptor:com.tectonic.ui:fieldGroup:SecretRef
+  - description: Name of the secret resource.
+    displayName: Secret Name
+    path: connSecretRef.name
+    x-descriptors:
+    - urn:alm:descriptor:com.tectonic.ui:fieldGroup:SecretRef
+    - urn:alm:descriptor:io.kubernetes:Secret
+  - description: Namespace that stores the secret resource.
+    displayName: Secret Namespace
+    path: connSecretRef.namespace
+    x-descriptors:
+    - urn:alm:descriptor:com.tectonic.ui:fieldGroup:SecretRef
+    - urn:alm:descriptor:io.kubernetes:Namespace
+  - description: |
+      Whether to preserve the corresponding Quay object when you delete the {{ resource.kind }} resource.
+    displayName: Preserve Object in Quay on Deletion
+    path: preserveInQuayOnDeletion
+    x-descriptors:
+    - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+  - description: |
+      Reference to the secret resource that stores the client ID associated with the OAuth application to use for generating the OAuth access token.
+    displayName: Client ID Secret
+    path: clientIdFrom
+    x-descriptors:
+    - urn:alm:descriptor:com.tectonic.ui:fieldGroup:clientIdFrom
+  - description: Name of the secret resource.
+    displayName: Secret Name
+    path: clientIdFrom.name
+    x-descriptors:
+    - urn:alm:descriptor:com.tectonic.ui:fieldGroup:clientIdFrom
+    - urn:alm:descriptor:io.kubernetes:Secret
+  - description: Namespace that stores the secret resource.
+    displayName: Secret Namespace
+    path: clientIdFrom.namespace
+    x-descriptors:
+    - urn:alm:descriptor:com.tectonic.ui:fieldGroup:clientIdFrom
+    - urn:alm:descriptor:io.kubernetes:Namespace
+  - description: In the secret resource, key that stores the client ID.
+    displayName: Key
+    path: clientIdFrom.key
+    x-descriptors:
+    - urn:alm:descriptor:com.tectonic.ui:fieldGroup:clientIdFrom
+    - urn:alm:descriptor:com.tectonic.ui:text
+  {{ spec_descriptors|indent(2) }}
+{%- if returned|length > 0 %}
+  - description: |
+      Secret resource that the {{ resource.kind }} resource creates. This secret will store the data that the resource generates.
+    displayName: Returned Data Secret
+    path: retSecretRef
+    x-descriptors:
+    - urn:alm:descriptor:com.tectonic.ui:fieldGroup:RetSecretRef
+  - description: Name of the secret resource.
+    displayName: Secret Name
+    path: retSecretRef.name
+    x-descriptors:
+    - urn:alm:descriptor:com.tectonic.ui:fieldGroup:RetSecretRef
+    - urn:alm:descriptor:com.tectonic.ui:text
+  - description: Namespace that stores the secret resource.
+    displayName: Secret Namespace
+    path: retSecretRef.namespace
+    x-descriptors:
+    - urn:alm:descriptor:com.tectonic.ui:fieldGroup:RetSecretRef
+    - urn:alm:descriptor:io.kubernetes:Namespace
+{%- endif %}
+  statusDescriptors:
+  - description: Observed conditions of Quay components.
+    displayName: Conditions
+    path: conditions
+    x-descriptors:
+    - urn:alm:descriptor:io.kubernetes.conditions
+  - description: Whether the resource has been created in Quay
+    displayName: Exist in Quay
+    path: existInQuay
+    x-descriptors:
+    - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+  - description: Error message when the process fails.
+    displayName: Error Message
+    path: message
+    x-descriptors:
+    - urn:alm:descriptor:com.tectonic.ui:text
+  version: {{ config.VERSION }}

@@ -1,0 +1,25 @@
+---
+# The resource requires that your Quay administrator configures the Quay
+# authentication method to LDAP (AUTHENTICATION_TYPE to LDAP in
+# config.yaml and the LDAP_* parameters correctly set).
+apiVersion: quay.herve4m.github.io/v1alpha1
+kind: TeamLdap
+metadata:
+  name: teamldap-sample
+spec:
+  # Connection parameters in a Secret resource
+  connSecretRef:
+    name: quay-credentials-secret
+    # By default, the operator looks for the secret in the same namespace as the
+    # teamldap resource, but you can specify a different namespace.
+    # namespace: mynamespace
+
+  # Whether to preserve the corresponding configuration in Quay when you
+  # delete the resource.
+  preserveInQuayOnDeletion: false
+
+  name: operators
+  organization: production
+  sync: true
+  groupDn: cn=op1,ou=groups
+  keepUsers: true

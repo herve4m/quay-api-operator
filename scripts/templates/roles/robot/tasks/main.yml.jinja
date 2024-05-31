@@ -1,0 +1,89 @@
+---
+- name: Ensure the {{ resource.singular }} resource exists
+  block:
+{%- raw %}
+    - name: Ensure the secret resource that stores the Quay parameters exists
+      ansible.builtin.fail:
+        msg: "connSecretRef: {{ conn_secret_ref['name'] }}: secret not found"
+      when:
+        - not secret_found
+{%- endraw %}
+
+    - name: Ensure the {{ resource.singular }} resource exists in Quay
+      {{ resource.ansible_full_name }}:
+{%- raw %}
+        quay_host: "{{ quay_host | default(omit) }}"
+        validate_certs: "{{ validate_certs | default(omit) }}"
+        quay_token: "{{ quay_token | default(omit, true) }}"
+        quay_username: "{{ omit if quay_token is defined and quay_token | length > 0 else quay_username | default(omit) }}"
+        quay_password: "{{ omit if quay_token is defined and quay_token | length > 0 else quay_password | default(omit) }}"
+{%- endraw %}
+{%- for item in options %}
+        {{ item }}: {{ "\"{{ " + item + " | default(omit) }}\"" -}}
+{% endfor %}
+      register: ret
+
+    - name: Ensure the existInQuay flag is set in the resource status
+      operator_sdk.util.k8s_status:
+        api_version: {{ config.QUALIFIED_GROUP }}/{{ config.VERSION }}
+        kind: {{ resource.kind }}
+{%- raw %}
+        name: "{{ ansible_operator_meta['name'] }}"
+        namespace: "{{ ansible_operator_meta['namespace'] }}"
+{%- endraw %}
+        status:
+          existInQuay: true
+{%- if returned | length > 0 %}
+
+    - name: Ensure the resulting data is saved in a secret
+      kubernetes.core.k8s:
+        definition:
+          apiVersion: v1
+          kind: Secret
+          type: kubernetes.io/dockerconfigjson
+          metadata:
+{%- raw %}
+            name: "{{ ret_secret_ref['name'] }}"
+            namespace: "{{ ret_secret_ref['namespace'] | default(ansible_operator_meta['namespace']) }}"
+{%- endraw %}
+          data:
+{%- for item in returned %}
+{%- if item["add_to_role"] %}
+            {{ item["k8s_name"] }}: {{ "\"{{ ret['" + item["ansible_name"] + "'] | default('', true) | ansible.builtin.b64encode }}\"" }}
+{%- if item["k8s_name"] == "name" %}
+            .dockerconfigjson: {{ "\"{{ ret['name'] | herve4m.quay.quay_docker_config(ret['token'], quay_host | default('http://127.0.0.1')) }}\"" }}
+{%- endif %}
+{%- endif %}
+{%- endfor %}
+      when:
+        - ret_secret_ref is defined
+        - "'name' in ret_secret_ref"
+        - ret_secret_ref["name"] | length > 0
+{%- endif %}
+
+  rescue:
+    - name: Ensure the error message is set in the resource status
+      operator_sdk.util.k8s_status:
+        api_version: {{ config.QUALIFIED_GROUP }}/{{ config.VERSION }}
+        kind: {{ resource.kind }}
+{%- raw %}
+        name: "{{ ansible_operator_meta['name'] }}"
+        namespace: "{{ ansible_operator_meta['namespace'] }}"
+        status:
+          message: "{{ ansible_failed_result['msg'] }}"
+
+    - name: Ensure the error is raised
+      ansible.builtin.fail:
+        msg: "{{ ansible_failed_result['msg'] }}"
+{%- endraw %}
+
+- name: Ensure the error message is cleared from the resource status
+  operator_sdk.util.k8s_status:
+    api_version: {{ config.QUALIFIED_GROUP }}/{{ config.VERSION }}
+    kind: {{ resource.kind }}
+{%- raw %}
+    name: "{{ ansible_operator_meta['name'] }}"
+    namespace: "{{ ansible_operator_meta['namespace'] }}"
+    status:
+      message: ""
+{%- endraw %}

@@ -1,0 +1,15 @@
+---
+# Use the 'create api' subcommand to add watches to this file.
+{%- for item in resources %}
+- version: {{ config.VERSION }}
+  group: {{ config.QUALIFIED_GROUP }}
+  kind: {{ item.kind }}
+  role: {{ item.singular }}
+{%- if item.singular == "apitoken" or item.singular == "firstuser" %}
+  reconcilePeriod: 87660h
+{%- endif %}
+  finalizer:
+    name: {{ config.QUALIFIED_GROUP }}/finalizer
+    role: {{ item.singular }}_delete
+{%- endfor %}
+# +kubebuilder:scaffold:watch

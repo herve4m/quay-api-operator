@@ -1,0 +1,69 @@
+---
+argument_specs:
+  main:
+    author:
+      - Hervé Quatremain
+    short_description: >
+      Retrieve Quay connection parameters from a secret resource
+    description:
+      - Retrieve the Quay Container Registry credentials from the given
+        secret resource.
+      - Store the retrieved parameters as Ansible facts so that other roles
+        can use them.
+      - The I(quay_host) fact is set from the C(host) field in the secret
+        resource.
+      - The I(validate_certs) fact is set from the C(validateCerts) field in
+        the secret resource.
+      - The I(quay_token) fact is set from the C(token) field in the secret
+        resource.
+      - The I(quay_username) fact is set from the C(username) field in the
+        secret resource.
+      - The I(quay_password) fact is set from the C(password) field in the
+        secret resource.
+      - The C(token) and the C(username)/C(password) fields are mutually
+        exclusive. If the secret resource includes all these fields, then the
+        authentication to the API uses the token, and the C(username) and
+        C(password) fields are ignored.
+    options:
+      conn_secret_ref:
+        description:
+          - Reference to the secret resource that stores the connection
+            parameters to the Quay Container Registry API.
+        type: dict
+        required: true
+        options:
+          name:
+            description:
+              - Name of the secret resource that stores the Quay Container
+                Registry credentials.
+              - In this secret resource, the C(host) fields must store the API
+                URL, such as U(https://quay.example.com:8443) for example.
+              - The C(token) field provides the OAuth access token for
+                authenticating against the API. If this field is specified, then
+                C(username) and C(password) are ignored.
+              - The C(validateCerts) field specifies whether to allow insecure
+                connections to the API.
+            type: str
+            required: true
+          namespace:
+            description:
+              - Kubernetes namespace of the secret resource.
+              - By default, the secret is retrieved from the same namespace as
+                the Quay custom resource.
+            type: str
+      ansible_operator_meta:
+        description:
+          - Ansible Operator variables.
+        type: dict
+        required: true
+        options:
+          namespace:
+            description:
+              - Kubernetes namespace of the custom resource.
+              - If I(conn_secret_ref['namespace']) is not set, then
+                I(ansible_operator_meta['namespace']) is used instead.
+            type: str
+          name:
+            description:
+              - Kubernetes name of the custom resource.
+            type: str

@@ -1,0 +1,31 @@
+# permissions for end users to edit manifestlabels.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: clusterrole
+    app.kubernetes.io/instance: manifestlabel-editor-role
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: quay-api-operator
+    app.kubernetes.io/part-of: quay-api-operator
+    app.kubernetes.io/managed-by: kustomize
+  name: manifestlabel-editor-role
+rules:
+- apiGroups:
+  - quay.herve4m.github.io
+  resources:
+  - manifestlabels
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - quay.herve4m.github.io
+  resources:
+  - manifestlabels/status
+  verbs:
+  - get

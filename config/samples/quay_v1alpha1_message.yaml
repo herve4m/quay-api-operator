@@ -1,0 +1,29 @@
+---
+apiVersion: quay.herve4m.github.io/v1alpha1
+kind: Message
+metadata:
+  name: message-sample
+spec:
+  # Connection parameters in a Secret resource
+  connSecretRef:
+    name: quay-credentials-secret
+    # By default, the operator looks for the secret in the same namespace as the
+    # message resource, but you can specify a different namespace.
+    # namespace: mynamespace
+
+  # Whether to preserve the corresponding Quay object when you
+  # delete the resource.
+  preserveInQuayOnDeletion: false
+
+  content: |
+    # Information message
+
+    Lorem **ipsum** dolor sit amet, `consectetur` adipiscing elit, sed do
+    eiusmod tempor incididunt ut labore et dolore magna aliqua:
+
+    * Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi
+      ut aliquip ex ea commodo consequat.
+    *  Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+       dolore eu fugiat nulla pariatur
+  format: markdown
+  severity: warning

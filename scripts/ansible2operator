@@ -1,0 +1,717 @@
+#!/usr/bin/env python3
+
+"""Build operator artifacts from Ansible Collection modules.
+
+From an Ansible Collection installed locally, the script generates the
+following artifacts:
+
+* Samples resources in the ``config/samples`` directory.
+  The script does not overwrite existing examples, because they might have
+  been customized.
+* Custom resource definitions (CRDs) in the ``config/crd/bases`` directory.
+  CRDs in this directory are overwritten every time you run the script.
+* The Cluster Service Version (CSV) file in the ``config/manifests/bases``
+  directory.
+* Ansible roles that the operator controller uses in the ``roles`` directory.
+  The roles are overwritten every time you run the script.
+* The ``watches.yaml`` file. The script overwrites this file every time you
+  run the script.
+
+The script uses the ``ansible-doc`` and ``operator-sdk`` commands.
+The script must be run from the operator directory.
+"""
+
+import re
+import os
+import sys
+import json
+import shutil
+import subprocess
+
+import yaml
+import jinja2
+
+
+class Config:
+    # Name of the Ansible Collection to process
+    COLLECTION = "herve4m.quay"
+    MODULE_PREFIX = "quay_"
+    FULL_PREFIX = COLLECTION + "." + MODULE_PREFIX
+    DOMAIN = "herve4m.github.io"
+    GROUP = "quay"
+    QUALIFIED_GROUP = GROUP + "." + DOMAIN
+    VERSION = "v1alpha1"
+    OPERATOR_NAME = "quay-api-operator"
+
+
+class Resource:
+    """Convert names from Ansible to/from Kubernetes."""
+
+    def __init__(self, ansible_name):
+        self.ansible_full_name = ansible_name
+        self.ansible_short_name = ansible_name.removeprefix(Config.FULL_PREFIX)
+
+        self._cap_camel = None
+        self._camel = None
+        self._singular = None
+        self._plural = None
+        self._short = None
+        self._name_with_group = None
+        self._ansible_var = None
+
+    @property
+    def kind(self):
+        if self._cap_camel is None:
+            self._cap_camel = "".join(
+                [w.capitalize() for w in self.ansible_short_name.split("_")]
+            )
+        return self._cap_camel
+
+    @property
+    def option(self):
+        if self._camel is None:
+            s = self.kind
+            self._camel = s[0].lower() + s[1:]
+        return self._camel
+
+    @property
+    def singular(self):
+        if self._singular is None:
+            self._singular = self.kind.lower()
+        return self._singular
+
+    @property
+    def plural(self):
+        if self._plural is None:
+            s = self.singular
+            if s[-1] == "y":
+                self._plural = s[:-1] + "ies"
+            else:
+                self._plural = s + "s"
+        return self._plural
+
+    @property
+    def short(self):
+        if self._short is None:
+            s = self.singular
+            if s == "organization":
+                self._short = "org"
+            elif s == "repository":
+                self._short = "repo"
+            else:
+                self._short = ""
+        return self._short
+
+    @property
+    def ansible_var(self):
+        if self._ansible_var is None:
+            self._ansible_var = (
+                "_" + Config.QUALIFIED_GROUP.replace(".", "_") + "_" + self.singular
+            )
+        return self._ansible_var
+
+
+class Return:
+    """Parse the return section of the module documentation."""
+
+    def __init__(self, return_tree, name_map):
+        self._tree = return_tree
+        self._name_map = name_map
+
+    @property
+    def keys(self):
+        lst = []
+        if self._tree is None:
+            return lst
+        has_access_token = False
+        for r, data in self._tree.items():
+            is_b64 = "_b64" in r
+            if is_b64:
+                k8s_name = Resource(r.replace("_b64", "")).option
+            else:
+                k8s_name = Resource(r).option
+            description = data.get("description", "")
+            if isinstance(description, list):
+                description = " ".join(description)
+            lst.append(
+                {
+                    "ansible_name": r,
+                    "k8s_name": k8s_name,
+                    "base64": "b64" in r,
+                    "description": parse_doc(description, self._name_map),
+                    "add_to_role": True,
+                }
+            )
+
+            # If the key is "access_token" (from an apitoken or a firstuser resource), then
+            # add three extra keys, "token", "host", and "validateCerts". This way the
+            # secret can be used as the connection secret for other resources.
+            if r == "access_token":
+                has_access_token = True
+                lst.append(
+                    {
+                        "ansible_name": "token",
+                        "k8s_name": "token",
+                        "base64": False,
+                        "description": "The OAuth access token (copy).",
+                        "add_to_role": False,
+                    }
+                )
+                lst.append(
+                    {
+                        "ansible_name": "host",
+                        "k8s_name": "host",
+                        "base64": False,
+                        "description": "URL for accessing the Quay API.",
+                        "add_to_role": False,
+                    }
+                )
+                lst.append(
+                    {
+                        "ansible_name": "validate_certs",
+                        "k8s_name": "validateCerts",
+                        "base64": False,
+                        "description": "Whether to allow insecure connections to the API.",
+                        "add_to_role": False,
+                    }
+                )
+        # Remove username and password, because they are mutually exclusive with token
+        if has_access_token:
+            return [
+                item for item in lst if item["ansible_name"] not in ["username", "password"]
+            ]
+        return lst
+
+
+class OptionsParser:
+    """Parse the Ansible module options from the module documentation."""
+
+    def __init__(self, option_tree, name_map):
+        self._tree = option_tree
+        self._name_map = name_map
+        self._required = []
+        self._options = {}
+        self._options_ansible = []
+        self._options_yaml = None
+        self._options_csv = []
+        self._additional_printer_col = {}
+        self._skip = [
+            "state",
+            "quay_username",
+            "quay_host",
+            "quay_password",
+            "quay_token",
+            "validate_certs",
+        ]
+
+    def _convert_type(self, t):
+        """Convert option types from Ansible to Kubernetes."""
+        if t == "str":
+            return "string"
+        if t == "bool":
+            return "boolean"
+        if t == "int":
+            return "integer"
+        if t == "dict":
+            return "object"
+        if t == "list":
+            return "array"
+
+    def _parse_option(self, name_obj, value):
+        required = None
+        printer_column = None
+
+        t = self._convert_type(value.get("type", "str"))
+        description = parse_doc(" ".join(value["description"]), self._name_map)
+        if "password" in name_obj.ansible_short_name:
+            format = "password"
+        elif "email" in name_obj.ansible_short_name:
+            format = "email"
+        else:
+            format = None
+
+        res = {
+            "type": t,
+            "description": description,
+        }
+        if format is not None:
+            res["format"] = format
+
+        if value.get("required", False):
+            required = [name_obj.option, t]
+
+            # Additional column to print when user run `kubectl get`
+            if name_obj.ansible_short_name in [
+                "name",
+                "organization",
+                "repository",
+                "quota",
+                "username",
+            ]:
+                printer_column = res.copy()
+                printer_column["description"] = name_obj.kind + " in Quay"
+                printer_column["name"] = "Quay " + name_obj.ansible_short_name
+                printer_column["jsonPath"] = ".spec." + name_obj.option
+
+        if value.get("default"):
+            if t == "array":
+                res["default"] = [value["default"]]
+            else:
+                res["default"] = value["default"]
+
+        if t == "array":
+            et = self._convert_type(value.get("elements", "str"))
+            items = {"type": et}
+
+            if et == "object":
+                items = items | self._parse_options(value.get("suboptions", {}))
+            elif value.get("choices"):
+                items["enum"] = value["choices"]
+            res["items"] = items
+
+        elif t == "object":
+            res = res | self._parse_options(value.get("suboptions", {}))
+
+        elif value.get("choices"):
+            res["enum"] = value["choices"]
+        return {
+            "required": required,
+            "printer_column": printer_column,
+            "properties": res,
+        }
+
+    def _parse_options(self, opts):
+        properties = {}
+
+        # List of the required options (name, type) with their k8s name (camelCase)
+        required = []
+
+        # List of the options (name, type) with their ansible name (snake_case)
+        opt_ansible = []
+
+        # List of the options {} to print as columns when user run `kubectl get` (camelCase)
+        printer_cols = []
+
+        for opt, val in opts.items():
+            if opt in self._skip:
+                continue
+            name_obj = Resource(opt)
+            parsed = self._parse_option(name_obj, val)
+            properties[name_obj.option] = parsed["properties"]
+            if parsed["required"]:
+                required.append(parsed["required"])
+            if parsed["printer_column"]:
+                printer_cols.append(parsed["printer_column"])
+            opt_ansible.append(opt)
+
+        node_spec = {"type": "object", "properties": properties}
+        if required:
+            node_spec["required"] = [t[0] for t in required]
+        self._required = required
+        self._options_ansible = opt_ansible
+        self._additional_printer_col = printer_cols
+        return node_spec
+
+    def _build_options_csv(self, options, parent_path=None):
+        for opt, val in options.items():
+            path = f"{parent_path}.{opt}" if parent_path else opt
+            o = {"path": path}
+            if "description" in val:
+                o["description"] = val["description"]
+            s = re.sub(r"([A-Z])", r" \1", opt)
+            o["displayName"] = s[0].upper() + s[1:]
+            descriptors = []
+            if "properties" in val:
+                descriptors.append("urn:alm:descriptor:com.tectonic.ui:fieldGroup:" + path)
+                self._build_options_csv(val["properties"], path)
+            elif val.get("format") == "password":
+                descriptors.append("urn:alm:descriptor:com.tectonic.ui:password")
+            elif val.get("type") == "boolean":
+                descriptors.append("urn:alm:descriptor:com.tectonic.ui:booleanSwitch")
+            elif val.get("type") == "integer":
+                descriptors.append("urn:alm:descriptor:com.tectonic.ui:number")
+            elif opt == "namespace":
+                descriptors.append("urn:alm:descriptor:io.kubernetes:Namespace")
+            else:
+                descriptors.append("urn:alm:descriptor:com.tectonic.ui:text")
+            if parent_path:
+                descriptors.append(
+                    "urn:alm:descriptor:com.tectonic.ui:fieldGroup:" + parent_path
+                )
+            o["x-descriptors"] = descriptors
+            self._options_csv.append(o)
+
+    @property
+    def options(self):
+        if self._options:
+            return self._options
+        options = self._parse_options(self._tree)
+        self._options = options["properties"]
+        return self._options
+
+    @property
+    def options_yaml(self):
+        if not self._options_yaml:
+            self._options_yaml = yaml.dump(self.options, explicit_start=False)
+        return self._options_yaml
+
+    @property
+    def options_ansible(self):
+        if not self._options:
+            self.options
+        return self._options_ansible
+
+    @property
+    def required(self):
+        if not self._options:
+            self.options
+        return self._required
+
+    @property
+    def additional_printer_col(self):
+        if not self._options:
+            self.options
+        return self._additional_printer_col
+
+    @property
+    def options_csv(self):
+        if not self._options_csv:
+            self._build_options_csv(self.options)
+        return yaml.dump(self._options_csv, explicit_start=False)
+
+
+def ansible_to_k8s_names(s):
+    """Return a dictionary that maps Ansible names to k8s resource names.
+
+    Parse the given string to locate all the fully-qualified module names.
+    Each name is parsed and converted into a Resource object.
+    """
+    pattern = re.compile(r"{full_prefix}\w+".format(full_prefix=Config.FULL_PREFIX))
+    modules = {}
+    for module in pattern.findall(s):
+        modules[module] = Resource(module)
+
+    pattern = re.compile(r"I\((\w+?)\)")
+    options = {}
+    for option in pattern.findall(s):
+        options[f"I({option})"] = "I(" + Resource(option).option + ")"
+    return [modules, options]
+
+
+# Markdown rendering for resource documentation does not work.
+# def parse_doc(s, name_map):
+#     module_map, option_map = name_map
+
+#     # Convert Ansible option names to k8s (camelCase)
+#     for key in sorted(option_map.keys(), key=lambda x: len(x), reverse=True):
+#         s = s.replace(key, option_map[key])
+#     # Italic
+#     s = re.sub(r"I\((.+?)\)", r"*\1*", s)
+#     # Monospace
+#     s = re.sub(r"C\((.+?)\)", r"``\1``", s)
+#     # Bold
+#     s = re.sub(r"B\((.+?)\)", r"**\1**", s)
+#     # Environment variables
+#     s = re.sub(r"E\((.+?)\)", r"``\1``", s)
+#     # Option name
+#     s = re.sub(r"O\((.+?)\)", r"``\1``", s)
+#     # Option value
+#     s = re.sub(r"V\((.+?)\)", r"``\1``", s)
+#     # URL
+#     s = re.sub(r"U\((.+?)\)", r"<\1>", s)
+#     # Module
+#     s = re.sub(r"M\((.+?)\)", r"``\1``", s)
+#     # Plugin
+#     s = re.sub(r"P\((.+?)\)", r"``\1``", s)
+#     for key in sorted(module_map.keys(), key=lambda x: len(x), reverse=True):
+#         s = s.replace(key, module_map[key].kind)
+#     s = s.replace(" module", " resource")
+#     s = s.replace("``yes``", "``true``")
+#     s = s.replace("``no``", "``false``")
+#     return s
+
+
+# https://docs.ansible.com/ansible/latest/dev_guide/developing_modules_documenting.html#format-macros-within-module-documentation
+def parse_doc(s, name_map):
+    module_map, option_map = name_map
+
+    # Convert Ansible option names to k8s (camelCase)
+    for key in sorted(option_map.keys(), key=lambda x: len(x), reverse=True):
+        s = s.replace(key, option_map[key])
+    # Italic
+    s = re.sub(r"I\((.+?)\)", r"'\1'", s)
+    # Monospace
+    s = re.sub(r"C\((.+?)\)", r"'\1'", s)
+    # Bold
+    s = re.sub(r"B\((.+?)\)", r"\1", s)
+    # Environment variables
+    s = re.sub(r"E\((.+?)\)", r"\1", s)
+    # Option name
+    s = re.sub(r"O\((.+?)\)", r"\1", s)
+    # Option value
+    s = re.sub(r"V\((.+?)\)", r"\1", s)
+    # URL
+    s = re.sub(r"U\((.+?)\)", r"<\1>", s)
+    # Module
+    s = re.sub(r"M\((.+?)\)", r"\1", s)
+    # Plugin
+    s = re.sub(r"P\((.+?)\)", r"\1", s)
+    for key in sorted(module_map.keys(), key=lambda x: len(x), reverse=True):
+        s = s.replace(key, module_map[key].kind)
+    s = s.replace(" module", " resource")
+    s = s.replace("'yes'", "'true'")
+    s = s.replace("'no'", "'false'")
+    return s
+
+
+def get_ansible_modules(collection):
+    """raises FileNotFoundError, subprocess.CalledProcessError"""
+
+    # Get the list of all the modules
+    ret = subprocess.run(
+        ["ansible-doc", "-t", "module", "-l", "-j", collection],
+        capture_output=True,
+        check=True,
+    )
+
+    # Get the details of all the modules
+    cmd = ["ansible-doc", "-t", "module", "-j"] + list(json.loads(ret.stdout))
+    ret = subprocess.run(
+        cmd,
+        capture_output=True,
+        check=True,
+    )
+    return ret.stdout.decode()
+
+
+def create_role(
+    templates_dir,
+    role_dir,
+    model_template,
+    jinja_env,
+    resource,
+    config,
+    returned_data,
+    options,
+):
+    os.makedirs(f"{role_dir}/meta", exist_ok=True)
+    if os.path.isfile(f"{templates_dir}/{role_dir}/meta/main.yml"):
+        shutil.copyfile(
+            f"{templates_dir}/{role_dir}/meta/main.yml",
+            f"{role_dir}/meta/main.yml",
+        )
+    else:
+        shutil.copyfile(
+            f"{templates_dir}/roles/{model_template}/meta/main.yml",
+            f"{role_dir}/meta/main.yml",
+        )
+    os.makedirs(f"{role_dir}/tasks", exist_ok=True)
+    template = jinja_env.select_template(
+        [f"{role_dir}/tasks/main.yml.jinja", f"roles/{model_template}/tasks/main.yml.jinja"]
+    )
+    content = template.render(
+        config=config,
+        resource=resource,
+        returned=returned_data,
+        options=options,
+    )
+    with open(f"{role_dir}/tasks/main.yml", "w") as task_file:
+        task_file.write(content + "\n")
+    # Cleaning up the role
+    for dir in ("defaults", "files", "handlers", "templates", "vars"):
+        shutil.rmtree(f"{role_dir}/{dir}", ignore_errors=True)
+
+
+#
+# Main
+#
+
+# Retrieve the APIs that already exist
+try:
+    with open("PROJECT", "r") as file:
+        prj = yaml.safe_load(file)
+except FileNotFoundError:
+    sys.exit(
+        "Cannot find the PROJECT file. Please run the program from the Operator directory."
+    )
+except yaml.scanner.ScannerError as err:
+    sys.exit(f"Cannot parse the PROJECT file as YAML: {err}")
+
+existing_kinds = [res["kind"] for res in prj.get("resources", []) if "kind" in res]
+
+# Get the details of the Ansible modules in the collection
+try:
+    j = get_ansible_modules(Config.COLLECTION)
+except FileNotFoundError:
+    sys.exit("ansible-doc: command not found")
+except subprocess.CalledProcessError as err:
+    sys.exit("ansible-doc: {ret}: {msg}".format(ret=err.returncode, msg=err.stderr.decode()))
+
+# Parse the string to build the translation map between the Ansible module
+# names and the k8s names.
+# This map is used to convert the description strings.
+name_map = ansible_to_k8s_names(j)
+
+# Convert the JSON string in a Python dictionary
+modules = json.loads(j)
+
+# Initialize Jinja2
+base_dir = os.path.dirname(os.path.realpath(__file__))
+env = jinja2.Environment(
+    loader=jinja2.FileSystemLoader(f"{base_dir}/templates"),
+    autoescape=jinja2.select_autoescape(),
+)
+
+# Copy the auth_secret role, which is a dependence for all the other roles
+shutil.copytree(
+    f"{base_dir}/templates/roles/auth_secret",
+    "roles/auth_secret",
+    dirs_exist_ok=True,
+)
+
+resources = []
+owned = []
+for module, data in modules.items():
+    if module.endswith("_info"):
+        print(f"Skipping the info {module} module.")
+        continue
+    print(f"Processing the {module} module.")
+
+    resource = name_map[0][module]
+    resources.append(resource)
+    options_parser = OptionsParser(data["doc"]["options"], name_map)
+    returned_data = Return(data.get("return", {}), name_map).keys
+
+    #
+    # Create the API artifacts
+    #
+    if resource.kind not in existing_kinds:
+        try:
+            ret = subprocess.run(
+                [
+                    "operator-sdk",
+                    "create",
+                    "api",
+                    f"--group={Config.GROUP}",
+                    f"--version={Config.VERSION}",
+                    f"--kind={resource.kind}",
+                    "--generate-role",
+                ],
+                capture_output=True,
+                check=True,
+            )
+        except FileNotFoundError:
+            sys.exit("operator-sdk: command not found")
+        except subprocess.CalledProcessError as err:
+            sys.exit(
+                "operator-sdk: {ret}: {msg}".format(
+                    ret=err.returncode, msg=err.stderr.decode()
+                )
+            )
+
+    #
+    # Sample resources
+    #
+    required = []
+    for req in options_parser.required:
+        if req[1] == "integer":
+            val = 123
+        elif req[1] == "boolean":
+            val = "true"
+        else:
+            val = "my" + req[0].lower()
+        required.append([req[0], val])
+
+    # Do not overwrite existing sample resources
+    file_name = f"config/samples/{Config.GROUP}_{Config.VERSION}_{resource.singular}.yaml"
+    if resource.kind not in existing_kinds or not os.path.isfile(file_name):
+        template = env.get_template("config/samples/sample.yaml.jinja")
+        content = template.render(
+            config=Config, resource=resource, required=required, returned=returned_data
+        )
+        with open(file_name, "w") as sample_file:
+            sample_file.write(content + "\n")
+
+    #
+    # CRD
+    #
+    template = env.select_template(
+        [
+            f"config/crd/bases/{resource.singular}.yaml.jinja",
+            "config/crd/bases/crd.yaml.jinja",
+        ]
+    )
+    content = template.render(
+        config=Config,
+        resource=resource,
+        required=required,
+        returned=returned_data,
+        additional_cols=options_parser.additional_printer_col,
+        description=parse_doc(data["doc"]["short_description"], name_map),
+        options_yaml=options_parser.options_yaml,
+    )
+    file_name = f"{Config.QUALIFIED_GROUP}_{resource.plural}.yaml"
+    with open(f"config/crd/bases/{file_name}", "w") as crd_file:
+        crd_file.write(content + "\n")
+
+    #
+    # Role
+    #
+    create_role(
+        f"{base_dir}/templates",
+        f"roles/{resource.singular}",
+        "template",
+        env,
+        resource,
+        Config,
+        returned_data,
+        options_parser.options_ansible,
+    )
+    create_role(
+        f"{base_dir}/templates",
+        f"roles/{resource.singular}_delete",
+        "template_delete",
+        env,
+        resource,
+        Config,
+        returned_data,
+        options_parser.options_ansible,
+    )
+
+    #
+    # Cluster Service Version owned CRD
+    #
+    description = data["doc"]["description"]
+    if isinstance(description, list):
+        description = " ".join(description)
+    s = re.sub(r"([A-Z])", r" \1", resource.kind).strip()
+    display_name = s[0].upper() + s[1:]
+    template = env.select_template(
+        [
+            f"config/manifests/bases/{resource.singular}-snippet.yaml.jinja",
+            "config/manifests/bases/owned-snippet.yaml.jinja",
+        ]
+    )
+    content = template.render(
+        config=Config,
+        resource=resource,
+        returned=returned_data,
+        description=parse_doc(description, name_map),
+        display_name=display_name,
+        spec_descriptors=options_parser.options_csv,
+    )
+    owned.append(content)
+
+# watches.yaml
+template = env.get_template("watches.yaml.jinja")
+content = template.render(config=Config, resources=resources)
+with open("watches.yaml", "w") as watches_file:
+    watches_file.write(content + "\n")
+
+# Cluster Service Version
+template = env.get_template("config/manifests/bases/clusterserviceversion.yaml.jinja")
+content = template.render(config=Config, owned=owned)
+with open(
+    f"config/manifests/bases/{Config.OPERATOR_NAME}.clusterserviceversion.yaml", "w"
+) as csv_file:
+    csv_file.write(content + "\n")

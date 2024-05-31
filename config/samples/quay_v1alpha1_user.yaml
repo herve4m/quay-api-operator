@@ -1,0 +1,21 @@
+---
+apiVersion: quay.herve4m.github.io/v1alpha1
+kind: User
+metadata:
+  name: user-sample
+spec:
+  # Connection parameters in a Secret resource
+  connSecretRef:
+    name: quay-credentials-secret
+    # By default, the operator looks for the secret in the same namespace as the
+    # user resource, but you can specify a different namespace.
+    # namespace: mynamespace
+
+  # Whether to preserve the corresponding Quay object when you
+  # delete the resource.
+  preserveInQuayOnDeletion: false
+
+  username: dwilde
+  password: vs9mrD55NP
+  email: dwilde@example.com
+  enabled: true

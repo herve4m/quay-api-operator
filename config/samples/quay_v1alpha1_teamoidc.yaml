@@ -1,0 +1,25 @@
+---
+# The resource requires that your Quay administrator configures the Quay
+# authentication method to OIDC (AUTHENTICATION_TYPE to OIDC in
+# config.yaml), and enables team synchronization (FEATURE_TEAM_SYNCING to true
+# in config.yaml).
+apiVersion: quay.herve4m.github.io/v1alpha1
+kind: TeamOidc
+metadata:
+  name: teamoidc-sample
+spec:
+  # Connection parameters in a Secret resource
+  connSecretRef:
+    name: quay-credentials-secret
+    # By default, the operator looks for the secret in the same namespace as the
+    # teamoidc resource, but you can specify a different namespace.
+    # namespace: mynamespace
+
+  # Whether to preserve the corresponding configuration in Quay when you
+  # delete the resource.
+  preserveInQuayOnDeletion: false
+
+  name: operators
+  organization: production
+  sync: true
+  groupName: op1

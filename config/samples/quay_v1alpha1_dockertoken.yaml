@@ -1,0 +1,29 @@
+---
+apiVersion: quay.herve4m.github.io/v1alpha1
+kind: DockerToken
+metadata:
+  name: dockertoken-sample
+spec:
+  # Connection parameters in a Secret resource
+  connSecretRef:
+    name: quay-credentials-secret
+    # By default, the operator looks for the secret in the same namespace as the
+    # dockertoken resource, but you can specify a different namespace.
+    # namespace: mynamespace
+
+  # Whether to preserve the corresponding Quay object when you
+  # delete the resource.
+  preserveInQuayOnDeletion: false
+
+  name: mytoken
+
+  # The Secret resource is created or updated, and stores the returned data.
+  # You can use the secret as a pull secret so that pods can pull images from
+  # Quay by using your credentials.
+  # The secret contains the .dockerconfigjson entry, which is the Base64
+  # encoded Docker configuration in JSON format
+  retSecretRef:
+    name: dockertoken-sample-ret-secret
+    # By default, the operator stores the secret in the same namespace as the
+    # dockertoken resource, but you can specify a different namespace.
+    # namespace: mynamespace

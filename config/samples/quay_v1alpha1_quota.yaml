@@ -1,0 +1,21 @@
+---
+apiVersion: quay.herve4m.github.io/v1alpha1
+kind: Quota
+metadata:
+  name: quota-sample
+spec:
+  # Connection parameters in a Secret resource
+  connSecretRef:
+    name: quay-credentials-secret
+    # By default, the operator looks for the secret in the same namespace as the
+    # quota resource, but you can specify a different namespace.
+    # namespace: mynamespace
+
+  # Whether to preserve the quota configuration in Quay when you
+  # delete the resource.
+  preserveInQuayOnDeletion: false
+
+  organization: production
+  quota: 1.5 TiB
+  warningPct: 80
+  rejectPct: 95
