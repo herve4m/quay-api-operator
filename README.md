@@ -43,7 +43,7 @@ metadata:
   name: quay-credentials
 stringData:
   host: https://quay.example.com:8443
-  validateCerts: false
+  validateCerts: "false"
   token: vFYyU2D0fHYXvcA3Y5TYfMrIMyVIH9YmxoVLsmku
 ```
 
