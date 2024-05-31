@@ -6,6 +6,9 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+
 jobs:
   publish-operator-image:
     runs-on: ubuntu-latest

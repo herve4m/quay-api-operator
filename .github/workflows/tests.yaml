@@ -8,12 +8,16 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+
 jobs:
   tests:
     runs-on: ubuntu-latest
 
     env:
-      IMG: quay.io/herve4m/quay-api-operator:latest
+      # Version and tag do not matter for the test
+      IMG: quay.io/herve4m/quay-api-operator:0.1.0
 
     steps:
       - name: Install K3D and Create a Cluster
@@ -30,17 +34,17 @@ jobs:
       - name: Build the manager container image
         run: make docker-build
         env:
-          VERSION: latest
+          VERSION: 0.1.0
 
       - name: Create the bundle
         run: make bundle
         env:
-          VERSION: latest
+          VERSION: 0.1.0
 
       - name: Build the bundle container image
         run: make bundle-build
         env:
-          VERSION: latest
+          VERSION: 0.1.0
 
       - name: Validate the bundle
         # The operator-sdk command should have been installed in ./bin by the
@@ -72,7 +76,7 @@ jobs:
       - name: Deploy the operator in the K3D cluster
         run: make deploy
         env:
-          VERSION: latest
+          VERSION: 0.1.0
 
       - name: Verify that the CRDs are available
         run: |
