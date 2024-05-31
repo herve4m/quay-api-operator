@@ -1,0 +1,26 @@
+---
+# This workflow action runs pre-commit.
+# See .pre-commit-config.yaml for more details
+name: Code Linting
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install required packages
+        run: pip install -Iv black flake8 yamllint
+
+      - uses: pre-commit/action@v3.0.1
+...
