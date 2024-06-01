@@ -155,6 +155,23 @@ Then, the `ApiToken` resource uses that new secret to generate a permanent OAuth
 
 
 [quay-connection-secret] --> fisrtuser --> [quay-temp-credentials-secret] --> organization/application/apitoken --> [quay-credentials-secret] --> ...
+flowchart TD
+    K1(quay-connection-secret) --connSecretRef-->
+    F[FirstUSer] --retSecretRef -->
+    K2(quay-temp-credentials-secret) --connSecretRef-->
+    Org[Organization]
+    K2 --connSecretRef-->
+    App[Application]
+    K2 --connSecretRef-->
+    Api[ApiToken] --retSecretRef -->
+    k3(quay-credentials-secret)
+    k3 --connSecretRef--> u[User]
+    k3 --connSecretRef--> t[Team]
+    k3 --connSecretRef--> r[Robot]
+    k3 --connSecretRef--> repo[Repository]
+    k3 --connSecretRef--> d[DockerToken]
+    k3 --connSecretRef--> etc[...]
+
 
 
 Before applying the resources, create a project and the Secret for the `FirstUser` resource.
