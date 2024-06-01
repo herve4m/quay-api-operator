@@ -86,6 +86,7 @@ __Default value__: True
 ### retSecretRef
 
 RetSecretRef is the secret resource that the ManifestLabel resource creates. This secret will store the data that the resource generates:
+
 - id - Internal identifier of the label.
 - key - Label's key.
 - mediaType - Format of the label (`text/plain` or `application/json`).

@@ -126,6 +126,7 @@ __Default value__: None
 ### retSecretRef
 
 RetSecretRef is the secret resource that the Application resource creates. This secret will store the data that the resource generates:
+
 - clientId - ID if the client associated with the application object.
 - clientSecret - Secret for the client associated with the application object.
 - name - Application name.

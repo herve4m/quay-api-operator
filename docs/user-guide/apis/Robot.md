@@ -76,6 +76,7 @@ __Default value__: False
 ### retSecretRef
 
 RetSecretRef is the secret resource that the Robot resource creates. This secret will store the data that the resource generates:
+
 - name - Token name. From this name and the token, in `token`, you can construct a Docker configuration file that you can use to manage images in the container image registry. See DockerConfig#filter.
 - token - Robot credential (token).
 

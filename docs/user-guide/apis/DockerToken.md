@@ -66,6 +66,7 @@ __Default value__: False
 ### retSecretRef
 
 RetSecretRef is the secret resource that the DockerToken resource creates. This secret will store the data that the resource generates:
+
 - auth - Base64 encoding of the username and the token (`'username`:`tokenCode``). Some client configuration files, such as the `~/.docker/config.json` Docker configuration file, require that you provide the username and the token in that format. You can decode the string by using the `base64 --decode` command. See the `base64'(1) man page.
 - created - Token creation date and time.
 - dockerconfigjson - Base64 encoding of the `~/.docker/config.json` configuration file. The `containers-auth.json`(5) man page describe the format of the file.

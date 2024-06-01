@@ -111,6 +111,7 @@ __Default value__: False
 ### retSecretRef
 
 RetSecretRef is the secret resource that the ApiToken resource creates. This secret will store the data that the resource generates:
+
 - accessToken - The OAuth access token.
 - token - The OAuth access token (copy).
 - host - URL for accessing the Quay API.

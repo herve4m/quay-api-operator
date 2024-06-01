@@ -94,6 +94,7 @@ spec:
                     FirstUser resource creates. This secret will
                     store the data that the resource generates:
 
+
                     - accessToken - The access token that you can use for subsequent resource calls. The token is valid for 2 hours 30 minutes.
 
                     - token - The OAuth access token (copy).
