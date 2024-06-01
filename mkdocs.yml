@@ -1,3 +1,18 @@
 ---
 site_name: API Operator for Quay
+repo_url: https://github.com/herve4m/quay-api-operator
+markdown_extensions:
+  - admonition
+
+nav:
+  - Home: index.md
+  - User Guide:
+      - User Guide: user-guide/
+  - Developer Guide:
+      - Developer Guide: developer-guide/
+      - Tools: developer-guide/tools.md
+      - Building: developer-guide/building.md
+      - Deploying: developer-guide/deploying.md
+      - Testing: developer-guide/testing.md
+      - Releasing to OperatorHub.io: developer-guide/releasing.md
 ...
