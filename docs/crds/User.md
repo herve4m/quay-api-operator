@@ -4,9 +4,9 @@ Instead, edit the scripts/templates/docs/api.md.jinja template, and then run
 the scripts/crd2markdown script.
 --->
 
-# ProxyCache - Manage Quay Container Registry proxy cache configurations
+# User - Manage Quay Container Registry users
 
-The ProxyCache custom resource relies on a Secret resource to provide the connection parameters to the Quay instance.
+The User custom resource relies on a Secret resource to provide the connection parameters to the Quay instance.
 This Secret resource must include the following data:
 
 * `host`: URL for accessing the Quay API, such as ``https://quay.example.com:8443`` for example.
@@ -40,23 +40,17 @@ stringData:
   token: vFYyU2D0fHYXvcA3Y5TYfMrIMyVIH9YmxoVLsmku
 ```
 
-You refer to this secret in your ProxyCache custom resources by the using the `connSecretRef` property:
+You refer to this secret in your User custom resource by using the `connSecretRef` property.
+See the [usage example](#usage-example).
 
-```yaml
----
-apiVersion: quay.herve4m.github.io/v1alpha1
-kind: ProxyCache
-metadata:
-  name: ProxyCache-sample
-spec:
-  # Connection parameters in a Secret resource
-  connSecretRef:
-    name: quay-credentials
-    # By default, the operator looks for the secret in the same namespace as
-    # the ProxyCache resource, but you can specify a different namespace.
-    # namespace: mynamespace
-...
-```
+!!! warning
+    Do not delete the Secret resource if it still referenced by a Quay custom resource.
+    If you delete the Secret resource, then the Operator cannot connect to the Quay API anymore, and cannot synchronize the Quay custom resource with its corresponding object in Quay.
+    In addition, deleting the Quay custom resource does not complete because the Operator cannot delete the corresponding object in Quay.
+
+    If you face this issue, then edit the custom resource (`kubectl edit`), and set the [.spec.preserveInQuayOnDeletion](#preserveinquayondeletion) property to `true`.
+    Alternatively, you can remove the `.metadata.finalizers` section.
+    In both case, you must manually delete the corresponding object in Quay.
 
 
 ## Usage Example
@@ -64,26 +58,25 @@ spec:
 ```yaml
 ---
 apiVersion: quay.herve4m.github.io/v1alpha1
-kind: ProxyCache
+kind: User
 metadata:
-  name: proxycache-sample
+  name: user-sample
 spec:
   # Connection parameters in a Secret resource
   connSecretRef:
-    name: quay-credentials-secret
-    # By default, the operator looks for the secret in the same namespace as the
-    # proxycache resource, but you can specify a different namespace.
+    name: quay-credentials
+    # By default, the operator looks for the secret in the same namespace as
+    # the user resource, but you can specify a different namespace.
     # namespace: mynamespace
 
-  # Whether to preserve the corresponding configuration in Quay when you
+  # Whether to preserve the corresponding Quay object when you
   # delete the resource.
   preserveInQuayOnDeletion: false
 
-  organization: production
-  registry: quay.io/prodimgs
-  username: cwade
-  password: My53cr3Tpa55
-  expiration: 172800
+  username: dwilde
+  password: vs9mrD55NP
+  email: dwilde@example.com
+  enabled: true
 
 ```
 
@@ -115,7 +108,7 @@ __Default value__: None
 
 ### connSecretRef.namespace
 
-Namespace of the secret resource. By default, the secret resource is retrieved from the same namespace as the current ProxyCache resource.
+Namespace of the secret resource. By default, the secret resource is retrieved from the same namespace as the current User resource.
 
 
 __Type__: string
@@ -124,19 +117,19 @@ __Required__: False
 
 __Default value__: None
 
-### expiration
+### email
 
-Tag expiration in seconds for cached images. 86400 (one day) by default.
+User`s email address. If your Quay administrator has enabled the mailing capability of your Quay installation (`FEATURE_MAILING` to `true` in `config.yaml`), then this `email' parameter is mandatory.
 
-__Type__: integer
+__Type__: string
 
 __Required__: False
 
-__Default value__: 86400
+__Default value__: None
 
-### insecure
+### enabled
 
-Whether to allow insecure connections to the remote registry. If `true`, then the resource does not validate SSL certificates.
+Enable (`true`) or disable (`false`) the user account. When their account is disabled, the user cannot log in to the web UI and cannot push or pull container images.
 
 __Type__: boolean
 
@@ -144,19 +137,9 @@ __Required__: False
 
 __Default value__: None
 
-### organization
-
-Name of the organization in which to create the proxy cache configuration. That organization must exist.
-
-__Type__: string
-
-__Required__: True
-
-__Default value__: None
-
 ### password
 
-User's password as a clear string. Do not set a password for a public access to the remote registry.
+User's password as a clear string. The password must be at least eight characters long and must not contain white spaces.
 
 __Type__: string
 
@@ -166,7 +149,7 @@ __Default value__: None
 
 ### preserveInQuayOnDeletion
 
-Whether to preserve the corresponding Quay object when you delete the ProxyCache resource. When set to `false` (the default), the object is deleted from Quay.
+Whether to preserve the corresponding Quay object when you delete the User resource. When set to `false` (the default), the object is deleted from Quay.
 
 
 __Type__: boolean
@@ -175,31 +158,31 @@ __Required__: False
 
 __Default value__: False
 
-### registry
+### superuser
 
-Name of the remote registry. Add a namespace to the remote registry to restrict caching images from that namespace.
+Grant superuser permissions to the user. Granting superuser privileges to a user is not immediate and usually requires a restart of the Quay Container Registry service. You cannot revoke superuser permissions.
 
-__Type__: string
-
-__Required__: False
-
-__Default value__: quay.io
-
-### username
-
-Name of the user account to use for authenticating with the remote registry. Do not set a username for a public access to the remote registry.
-
-__Type__: string
+__Type__: boolean
 
 __Required__: False
 
 __Default value__: None
 
+### username
 
-## Listing the ProxyCache Resources
+Name of the user account to create, remove, or modify.
 
-You can retrieve the list of the ProxyCache custom resources in a namespace by using the `kubectl get` command:
+__Type__: string
+
+__Required__: True
+
+__Default value__: None
+
+
+## Listing the User Resources
+
+You can retrieve the list of the User custom resources in a namespace by using the `kubectl get` command:
 
 ```sh
-kubectl get proxycaches.quay.herve4m.github.io -n <namespace>
+kubectl get users.quay.herve4m.github.io -n <namespace>
 ```

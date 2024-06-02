@@ -9,8 +9,8 @@ spec:
   # you cannot authenticate with a token to create another token.
   connSecretRef:
     name: quay-temp-credentials-secret
-    # By default, the operator looks for the secret in the same namespace as the
-    # apitoken resource, but you can specify a different namespace.
+    # By default, the operator looks for the secret in the same namespace as
+    # the apitoken resource, but you can specify a different namespace.
     # namespace: mynamespace
 
   # You can specify the client ID by using the clientId parameter, or you can

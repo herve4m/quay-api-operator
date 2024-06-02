@@ -90,8 +90,13 @@ for crd in yaml.safe_load_all(ret.stdout.decode()):
     )
     for version in crd["spec"]["versions"]:
         if version["name"] == Config.VERSION:
+            print(f"Processing the {kind} custom resource.")
             break
     else:
+        print(
+            f"Skipping the {kind} custom resource (the {Config.VERSION}"
+            + " version is not defined in the CRD)."
+        )
         continue
     description = version["schema"]["openAPIV3Schema"]["description"]
     properties = parse_properties(
@@ -109,7 +114,7 @@ for crd in yaml.safe_load_all(ret.stdout.decode()):
     except FileNotFoundError:
         example = None
 
-    template = env.select_template([f"docs/{kind}.md.jinja", "docs/api.md.jinja"])
+    template = env.select_template([f"docs/{kind}.md.jinja", "docs/crd.md.jinja"])
     content = template.render(
         full_name=full_name,
         kind=kind,
@@ -118,7 +123,7 @@ for crd in yaml.safe_load_all(ret.stdout.decode()):
         properties=properties,
         example=example,
     )
-    with open(f"docs/user-guide/apis/{kind}.md", "w") as doc_file:
+    with open(f"docs/crds/{kind}.md", "w") as doc_file:
         doc_file.write(content + "\n")
 
     kinds.append({"kind": kind, "description": description})
@@ -130,5 +135,5 @@ with open("mkdocs.yml", "w") as mkdocs_conf:
 
 template = env.get_template("docs/index.md.jinja")
 content = template.render(kinds=kinds)
-with open("docs/user-guide/apis/README.md", "w") as index_file:
+with open("docs/crds/README.md", "w") as index_file:
     index_file.write(content + "\n")

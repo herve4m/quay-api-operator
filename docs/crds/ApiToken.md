@@ -12,18 +12,16 @@ This Secret resource must include the following data:
 * `host`: URL for accessing the Quay API, such as ``https://quay.example.com:8443`` for example.
 * `validateCerts`: Whether to allow insecure connections to the API.
   By default, insecure connections are refused.
-* `token`: OAuth access token for authenticating against the API.
-  To create such a token see the [Creating an OAuth Access Token](https://access.redhat.com/documentation/en-us/red_hat_quay/3/html-single/red_hat_quay_api_guide/index#creating-oauth-access-token) documentation.
-  You can also use the [ApiToken](ApiToken.md) custom resource to create this token.
 * `username`: The username to use for authenticating against the API.
-  If `token` is set, then `username` is ignored.
 * `password`: The password to use for authenticating against the API.
-  If `token` is set, then `password` is ignored.
+
+In contrast to the other custom resources, you cannot authenticate by using an existing OAuth access token, and the secret must provide the `username` and the `password` parameters.
+The OAuth access token that the ApiToken custom resource generates acts on behalf of the user account that you use in this secret.
 
 You can create the secret by using the `kubectl create secret` command:
 
 ```sh
-kubectl create secret generic quay-credentials --from-literal host=https://quay.example.com:8443 --from-literal validateCerts=false --from-literal token=vFYyU2D0fHYXvcA3Y5TYfMrIMyVIH9YmxoVLsmku
+kubectl create secret generic quay-credentials --from-literal host=https://quay.example.com:8443 --from-literal validateCerts=false --from-literal username=admin --from-literal password=Sup3r53cr3L
 ```
 
 Or you can create the secret from a resource file:
@@ -37,26 +35,15 @@ metadata:
 stringData:
   host: https://quay.example.com:8443
   validateCerts: "false"
-  token: vFYyU2D0fHYXvcA3Y5TYfMrIMyVIH9YmxoVLsmku
+  username: admin
+  password: Sup3r53cr3L
 ```
 
-You refer to this secret in your ApiToken custom resources by the using the `connSecretRef` property:
+You refer to this secret in your ApiToken custom resource by using the `connSecretRef` property.
+See the [usage example](#usage-example).
 
-```yaml
----
-apiVersion: quay.herve4m.github.io/v1alpha1
-kind: ApiToken
-metadata:
-  name: ApiToken-sample
-spec:
-  # Connection parameters in a Secret resource
-  connSecretRef:
-    name: quay-credentials
-    # By default, the operator looks for the secret in the same namespace as
-    # the ApiToken resource, but you can specify a different namespace.
-    # namespace: mynamespace
-...
-```
+The ApiToken custom resource generates an OAuth access token for authenticating against the API, and stores it in the Secret resource that you specify by using the [retSecretRef](#retsecretref) property.
+You can use that secret as an input for other custom resources, by specifying it in the `connSecretRef` property of these resources.
 
 
 ## Usage Example
@@ -72,9 +59,9 @@ spec:
   # The secret MUST include the "username" and "password" parameters, because
   # you cannot authenticate with a token to create another token.
   connSecretRef:
-    name: quay-temp-credentials-secret
-    # By default, the operator looks for the secret in the same namespace as the
-    # apitoken resource, but you can specify a different namespace.
+    name: quay-credentials
+    # By default, the operator looks for the secret in the same namespace as
+    # the apitoken resource, but you can specify a different namespace.
     # namespace: mynamespace
 
   # You can specify the client ID by using the clientId parameter, or you can

@@ -64,7 +64,7 @@ stringData:
   token: vFYyU2D0fHYXvcA3Y5TYfMrIMyVIH9YmxoVLsmku
 ```
 
-You refer to this secret in your Quay custom resources by the using the `connSecretRef` option:
+You refer to this secret in your Quay custom resources by using the `connSecretRef` option:
 
 ```yaml
 ---

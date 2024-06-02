@@ -4,9 +4,9 @@ Instead, edit the scripts/templates/docs/api.md.jinja template, and then run
 the scripts/crd2markdown script.
 --->
 
-# DefaultPerm - Manage Quay Container Registry default repository permissions
+# TeamOidc - Synchronize Quay Container Registry teams with OIDC groups
 
-The DefaultPerm custom resource relies on a Secret resource to provide the connection parameters to the Quay instance.
+The TeamOidc custom resource relies on a Secret resource to provide the connection parameters to the Quay instance.
 This Secret resource must include the following data:
 
 * `host`: URL for accessing the Quay API, such as ``https://quay.example.com:8443`` for example.
@@ -40,49 +40,47 @@ stringData:
   token: vFYyU2D0fHYXvcA3Y5TYfMrIMyVIH9YmxoVLsmku
 ```
 
-You refer to this secret in your DefaultPerm custom resources by the using the `connSecretRef` property:
+You refer to this secret in your TeamOidc custom resource by using the `connSecretRef` property.
+See the [usage example](#usage-example).
 
-```yaml
----
-apiVersion: quay.herve4m.github.io/v1alpha1
-kind: DefaultPerm
-metadata:
-  name: DefaultPerm-sample
-spec:
-  # Connection parameters in a Secret resource
-  connSecretRef:
-    name: quay-credentials
-    # By default, the operator looks for the secret in the same namespace as
-    # the DefaultPerm resource, but you can specify a different namespace.
-    # namespace: mynamespace
-...
-```
+!!! warning
+    Do not delete the Secret resource if it still referenced by a Quay custom resource.
+    If you delete the Secret resource, then the Operator cannot connect to the Quay API anymore, and cannot synchronize the Quay custom resource with its corresponding object in Quay.
+    In addition, deleting the Quay custom resource does not complete because the Operator cannot delete the corresponding object in Quay.
+
+    If you face this issue, then edit the custom resource (`kubectl edit`), and set the [.spec.preserveInQuayOnDeletion](#preserveinquayondeletion) property to `true`.
+    Alternatively, you can remove the `.metadata.finalizers` section.
+    In both case, you must manually delete the corresponding object in Quay.
 
 
 ## Usage Example
 
 ```yaml
 ---
+# The resource requires that your Quay administrator configures the Quay
+# authentication method to OIDC (AUTHENTICATION_TYPE to OIDC in
+# config.yaml), and enables team synchronization (FEATURE_TEAM_SYNCING to true
+# in config.yaml).
 apiVersion: quay.herve4m.github.io/v1alpha1
-kind: DefaultPerm
+kind: TeamOidc
 metadata:
-  name: defaultperm-sample
+  name: teamoidc-sample
 spec:
   # Connection parameters in a Secret resource
   connSecretRef:
-    name: quay-credentials-secret
-    # By default, the operator looks for the secret in the same namespace as the
-    # defaultperm resource, but you can specify a different namespace.
+    name: quay-credentials
+    # By default, the operator looks for the secret in the same namespace as
+    # the teamoidc resource, but you can specify a different namespace.
     # namespace: mynamespace
 
-  # Whether to preserve the corresponding Quay object when you
+  # Whether to preserve the corresponding configuration in Quay when you
   # delete the resource.
   preserveInQuayOnDeletion: false
 
+  name: operators
   organization: production
-  name: production+robotprod1
-  type: user
-  role: write
+  sync: true
+  groupName: op1
 
 ```
 
@@ -114,7 +112,7 @@ __Default value__: None
 
 ### connSecretRef.namespace
 
-Namespace of the secret resource. By default, the secret resource is retrieved from the same namespace as the current DefaultPerm resource.
+Namespace of the secret resource. By default, the secret resource is retrieved from the same namespace as the current TeamOidc resource.
 
 
 __Type__: string
@@ -123,9 +121,9 @@ __Required__: False
 
 __Default value__: None
 
-### creator
+### groupName
 
-Quay applies the default permission only when repositories are created by the user that you define in `creator`. By default, if you do not provide that `creator` parameter, then Quay applies the default permission to all new repositories, whoever creates them. You cannot use robot accounts or teams for the `creator` parameter. You can only use regular user accounts.
+OIDC group name. `groupName` is required when `sync` is `true`.
 
 __Type__: string
 
@@ -135,7 +133,7 @@ __Default value__: None
 
 ### name
 
-Name of the user or team that gets permission to new created repositories in the organization. For robot accounts use the `namespace`+`shortrobotname` format.
+Name of the team to synchronize or unsynchronize with an OIDC group. That team must exist (see the Team resource to create it).
 
 __Type__: string
 
@@ -145,7 +143,7 @@ __Default value__: None
 
 ### organization
 
-Name of the organization for the default permission. That organization must exist.
+Name of the organization for the team. That organization must exist.
 
 __Type__: string
 
@@ -155,7 +153,7 @@ __Default value__: None
 
 ### preserveInQuayOnDeletion
 
-Whether to preserve the corresponding Quay object when you delete the DefaultPerm resource. When set to `false` (the default), the object is deleted from Quay.
+Whether to preserve the corresponding Quay object when you delete the TeamOidc resource. When set to `false` (the default), the object is deleted from Quay.
 
 
 __Type__: boolean
@@ -164,31 +162,21 @@ __Required__: False
 
 __Default value__: False
 
-### role
+### sync
 
-Permission that Quay automatically grants to the user or team on new created repositories in the organization. If you do not provide that parameter, then the resource uses `read` by default.
+If `true`, then the team members are retrieved from the OIDC group that you define in `groupName`. The pre-existing members are removed from the team before the synchronization process starts. Existing robot account members are not removed. If `false`, then the synchronization from OIDC is disabled.
 
-__Type__: string
-
-__Required__: False
-
-__Default value__: None
-
-### type
-
-Type of the account defined in `name`. Choose `user` for both user and robot accounts.
-
-__Type__: string
+__Type__: boolean
 
 __Required__: False
 
-__Default value__: user
+__Default value__: True
 
 
-## Listing the DefaultPerm Resources
+## Listing the TeamOidc Resources
 
-You can retrieve the list of the DefaultPerm custom resources in a namespace by using the `kubectl get` command:
+You can retrieve the list of the TeamOidc custom resources in a namespace by using the `kubectl get` command:
 
 ```sh
-kubectl get defaultperms.quay.herve4m.github.io -n <namespace>
+kubectl get teamoidcs.quay.herve4m.github.io -n <namespace>
 ```

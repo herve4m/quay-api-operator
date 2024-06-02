@@ -40,23 +40,17 @@ stringData:
   token: vFYyU2D0fHYXvcA3Y5TYfMrIMyVIH9YmxoVLsmku
 ```
 
-You refer to this secret in your Application custom resources by the using the `connSecretRef` property:
+You refer to this secret in your Application custom resource by using the `connSecretRef` property.
+See the [usage example](#usage-example).
 
-```yaml
----
-apiVersion: quay.herve4m.github.io/v1alpha1
-kind: Application
-metadata:
-  name: Application-sample
-spec:
-  # Connection parameters in a Secret resource
-  connSecretRef:
-    name: quay-credentials
-    # By default, the operator looks for the secret in the same namespace as
-    # the Application resource, but you can specify a different namespace.
-    # namespace: mynamespace
-...
-```
+!!! warning
+    Do not delete the Secret resource if it still referenced by a Quay custom resource.
+    If you delete the Secret resource, then the Operator cannot connect to the Quay API anymore, and cannot synchronize the Quay custom resource with its corresponding object in Quay.
+    In addition, deleting the Quay custom resource does not complete because the Operator cannot delete the corresponding object in Quay.
+
+    If you face this issue, then edit the custom resource (`kubectl edit`), and set the [.spec.preserveInQuayOnDeletion](#preserveinquayondeletion) property to `true`.
+    Alternatively, you can remove the `.metadata.finalizers` section.
+    In both case, you must manually delete the corresponding object in Quay.
 
 
 ## Usage Example
@@ -70,9 +64,9 @@ metadata:
 spec:
   # Connection parameters in a Secret resource
   connSecretRef:
-    name: quay-temp-credentials-secret
-    # By default, the operator looks for the secret in the same namespace as the
-    # application resource, but you can specify a different namespace.
+    name: quay-credentials
+    # By default, the operator looks for the secret in the same namespace as
+    # the application resource, but you can specify a different namespace.
     # namespace: mynamespace
 
   # Whether to preserve the corresponding Quay object when you
@@ -87,7 +81,8 @@ spec:
   redirectUri: http://redirecturi.example.com
 
   # The Secret resource is created or updated, and stores the returned data.
-  # You can use that secret with an apitoken resource to create an OAuth token.
+  # You can use that secret with an ApiToken custom resource to create an
+  # OAuth access token.
   retSecretRef:
     name: application-secret
     # By default, the operator stores the secret in the same namespace as the

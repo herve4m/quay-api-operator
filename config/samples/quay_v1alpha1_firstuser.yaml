@@ -8,8 +8,8 @@ spec:
   # Only the host and optionally the validateCerts parameters are used.
   connSecretRef:
     name: quay-connection-secret
-    # By default, the operator looks for the secret in the same namespace as the
-    # firstuser resource, but you can specify a different namespace.
+    # By default, the operator looks for the secret in the same namespace as
+    # the firstuser resource, but you can specify a different namespace.
     # namespace: mynamespace
 
   username: admin
@@ -19,9 +19,9 @@ spec:
 
   # The Secret resource is created or updated, and stores the "accessToken"
   # parameter.
-  # "host", "validateCerts", "token", "username", and "password" parameters are
-  # also added, so that you can use the secret with other Quay resources to
-  # access the API.
+  # "host", "validateCerts", "token", "username", and "password" parameters
+  # are also added, so that you can use the secret with other Quay resources
+  # to access the API.
   # The token is valid only for 2 hours and 20 minutes.
   retSecretRef:
     name: quay-temp-credentials-secret

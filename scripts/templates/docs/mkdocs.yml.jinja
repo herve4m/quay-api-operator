@@ -24,9 +24,9 @@ nav:
   - User Guide:
       - User Guide: user-guide/
   - Custom Resources:
-      - Operator Custom Resources: user-guide/apis/
+      - Operator Custom Resources: crds/
 {%- for item in kinds %}
-      - {{ item.kind }}: user-guide/apis/{{ item.kind }}.md
+      - {{ item.kind }}: crds/{{ item.kind }}.md
 {%- endfor %}
   - Developer Guide:
       - Developer Guide: developer-guide/

@@ -24,26 +24,26 @@ nav:
   - User Guide:
       - User Guide: user-guide/
   - Custom Resources:
-      - Operator Custom Resources: user-guide/apis/
-      - ApiToken: user-guide/apis/ApiToken.md
-      - Application: user-guide/apis/Application.md
-      - DefaultPerm: user-guide/apis/DefaultPerm.md
-      - DockerToken: user-guide/apis/DockerToken.md
-      - FirstUser: user-guide/apis/FirstUser.md
-      - ManifestLabel: user-guide/apis/ManifestLabel.md
-      - Message: user-guide/apis/Message.md
-      - Notification: user-guide/apis/Notification.md
-      - Organization: user-guide/apis/Organization.md
-      - ProxyCache: user-guide/apis/ProxyCache.md
-      - Quota: user-guide/apis/Quota.md
-      - Repository: user-guide/apis/Repository.md
-      - RepositoryMirror: user-guide/apis/RepositoryMirror.md
-      - Robot: user-guide/apis/Robot.md
-      - Tag: user-guide/apis/Tag.md
-      - TeamLdap: user-guide/apis/TeamLdap.md
-      - TeamOidc: user-guide/apis/TeamOidc.md
-      - Team: user-guide/apis/Team.md
-      - User: user-guide/apis/User.md
+      - Operator Custom Resources: crds/
+      - ApiToken: crds/ApiToken.md
+      - Application: crds/Application.md
+      - DefaultPerm: crds/DefaultPerm.md
+      - DockerToken: crds/DockerToken.md
+      - FirstUser: crds/FirstUser.md
+      - ManifestLabel: crds/ManifestLabel.md
+      - Message: crds/Message.md
+      - Notification: crds/Notification.md
+      - Organization: crds/Organization.md
+      - ProxyCache: crds/ProxyCache.md
+      - Quota: crds/Quota.md
+      - Repository: crds/Repository.md
+      - RepositoryMirror: crds/RepositoryMirror.md
+      - Robot: crds/Robot.md
+      - Tag: crds/Tag.md
+      - TeamLdap: crds/TeamLdap.md
+      - TeamOidc: crds/TeamOidc.md
+      - Team: crds/Team.md
+      - User: crds/User.md
   - Developer Guide:
       - Developer Guide: developer-guide/
       - Tools: developer-guide/tools.md
