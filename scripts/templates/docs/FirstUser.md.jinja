@@ -6,24 +6,23 @@ the scripts/crd2markdown script.
 
 # {{ kind }} - {{ description }}
 
+The {{ kind }} custom resource requires Quay version 3.6 or later.
+To use the resource, you must enable the first user creation feature of your Quay installation (`FEATURE_USER_INITIALIZE` in `config.yaml`).
+You must also use the internal database of your Quay installation for authentication (`AUTHENTICATION_TYPE` to `Database` in `config.yaml`).",
+Use the module just after installing Quay, when the database is empty.
+The resource fails if user accounts are already defined in the database.
+
 The {{ kind }} custom resource relies on a Secret resource to provide the connection parameters to the Quay instance.
 This Secret resource must include the following data:
 
 * `host`: URL for accessing the Quay API, such as ``https://quay.example.com:8443`` for example.
 * `validateCerts`: Whether to allow insecure connections to the API.
   By default, insecure connections are refused.
-* `token`: OAuth access token for authenticating against the API.
-  To create such a token see the [Creating an OAuth Access Token](https://access.redhat.com/documentation/en-us/red_hat_quay/3/html-single/red_hat_quay_api_guide/index#creating-oauth-access-token) documentation.
-  You can also use the [ApiToken](ApiToken.md) custom resource to create this token.
-* `username`: The username to use for authenticating against the API.
-  If `token` is set, then `username` is ignored.
-* `password`: The password to use for authenticating against the API.
-  If `token` is set, then `password` is ignored.
 
 You can create the secret by using the `kubectl create secret` command:
 
 ```sh
-kubectl create secret generic quay-credentials --from-literal host=https://quay.example.com:8443 --from-literal validateCerts=false --from-literal token=vFYyU2D0fHYXvcA3Y5TYfMrIMyVIH9YmxoVLsmku
+kubectl create secret generic quay-connection-secret --from-literal host=https://quay.example.com:8443 --from-literal validateCerts=false
 ```
 
 Or you can create the secret from a resource file:
@@ -33,11 +32,10 @@ Or you can create the secret from a resource file:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: quay-credentials
+  name: quay-connection-secret
 stringData:
   host: https://quay.example.com:8443
   validateCerts: "false"
-  token: vFYyU2D0fHYXvcA3Y5TYfMrIMyVIH9YmxoVLsmku
 ```
 
 You refer to this secret in your {{ kind }} custom resources by the using the `connSecretRef` property:
@@ -57,6 +55,12 @@ spec:
     # namespace: mynamespace
 ...
 ```
+
+The {{ kind }} custom resource generates an OAuth access token for authenticating against the API, and stores it in the Secret resource that you specify by using the [retSecretRef](#retsecretref) property.
+You can use that secret as an input for other custom resources, by specifying it in the `connSecretRef` property of these resources.
+The OAuth access token that the {{ kind }} custom resource generates is valid for only 2 hours and 20 minutes.
+For a permanent token, see the [ApiToken](ApiToken.md) custom resource.
+
 
 {% if example is not none %}
 ## Usage Example

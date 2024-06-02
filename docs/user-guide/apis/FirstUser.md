@@ -6,6 +6,100 @@ the scripts/crd2markdown script.
 
 # FirstUser - Create the first user account
 
+The FirstUser custom resource requires Quay version 3.6 or later.
+To use the resource, you must enable the first user creation feature of your Quay installation (`FEATURE_USER_INITIALIZE` in `config.yaml`).
+You must also use the internal database of your Quay installation for authentication (`AUTHENTICATION_TYPE` to `Database` in `config.yaml`).",
+Use the module just after installing Quay, when the database is empty.
+The resource fails if user accounts are already defined in the database.
+
+The FirstUser custom resource relies on a Secret resource to provide the connection parameters to the Quay instance.
+This Secret resource must include the following data:
+
+* `host`: URL for accessing the Quay API, such as ``https://quay.example.com:8443`` for example.
+* `validateCerts`: Whether to allow insecure connections to the API.
+  By default, insecure connections are refused.
+
+You can create the secret by using the `kubectl create secret` command:
+
+```sh
+kubectl create secret generic quay-connection-secret --from-literal host=https://quay.example.com:8443 --from-literal validateCerts=false
+```
+
+Or you can create the secret from a resource file:
+
+```yaml
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: quay-connection-secret
+stringData:
+  host: https://quay.example.com:8443
+  validateCerts: "false"
+```
+
+You refer to this secret in your FirstUser custom resources by the using the `connSecretRef` property:
+
+```yaml
+---
+apiVersion: quay.herve4m.github.io/v1alpha1
+kind: FirstUser
+metadata:
+  name: FirstUser-sample
+spec:
+  # Connection parameters in a Secret resource
+  connSecretRef:
+    name: quay-credentials
+    # By default, the operator looks for the secret in the same namespace as
+    # the FirstUser resource, but you can specify a different namespace.
+    # namespace: mynamespace
+...
+```
+
+The FirstUser custom resource generates an OAuth access token for authenticating against the API, and stores it in the Secret resource that you specify by using the [retSecretRef](#retsecretref) property.
+You can use that secret as an input for other custom resources, by specifying it in the `connSecretRef` property of these resources.
+The OAuth access token that the FirstUser custom resource generates is valid for only 2 hours and 20 minutes.
+For a permanent token, see the [ApiToken](ApiToken.md) custom resource.
+
+
+
+## Usage Example
+
+```yaml
+---
+apiVersion: quay.herve4m.github.io/v1alpha1
+kind: FirstUser
+metadata:
+  name: firstuser-sample
+spec:
+  # Connection parameters in a Secret resource.
+  # Only the host and optionally the validateCerts parameters are used.
+  connSecretRef:
+    name: quay-connection-secret
+    # By default, the operator looks for the secret in the same namespace as the
+    # firstuser resource, but you can specify a different namespace.
+    # namespace: mynamespace
+
+  username: admin
+  password: Sup3r53cr3L
+  email: admin@example.com
+  createToken: true
+
+  # The Secret resource is created or updated, and stores the "accessToken"
+  # parameter.
+  # "host", "validateCerts", "token", "username", and "password" parameters are
+  # also added, so that you can use the secret with other Quay resources to
+  # access the API.
+  # The token is valid only for 2 hours and 20 minutes.
+  retSecretRef:
+    name: quay-temp-credentials-secret
+    # By default, the operator stores the secret in the same namespace as the
+    # firstuser resource, but you can specify a different namespace.
+    # namespace: mynamespace
+
+```
+
+
 ## Properties
 
 
@@ -133,47 +227,10 @@ __Required__: True
 __Default value__: None
 
 
-## List the Resources
+## Listing the FirstUser Resources
+
+You can retrieve the list of the FirstUser custom resources in a namespace by using the `kubectl get` command:
 
 ```sh
-kubectl get firstusers.quay.herve4m.github.io
-```
-
-
-
-
-## Usage Example
-
-```yaml
----
-apiVersion: quay.herve4m.github.io/v1alpha1
-kind: FirstUser
-metadata:
-  name: firstuser-sample
-spec:
-  # Connection parameters in a Secret resource.
-  # Only the host and optionally the validateCerts parameters are used.
-  connSecretRef:
-    name: quay-connection-secret
-    # By default, the operator looks for the secret in the same namespace as the
-    # firstuser resource, but you can specify a different namespace.
-    # namespace: mynamespace
-
-  username: admin
-  password: Sup3r53cr3L
-  email: admin@example.com
-  createToken: true
-
-  # The Secret resource is created or updated, and stores the "accessToken"
-  # parameter.
-  # "host", "validateCerts", "token", "username", and "password" parameters are
-  # also added, so that you can use the secret with other Quay resources to
-  # access the API.
-  # The token is valid only for 2 hours and 20 minutes.
-  retSecretRef:
-    name: quay-temp-credentials-secret
-    # By default, the operator stores the secret in the same namespace as the
-    # firstuser resource, but you can specify a different namespace.
-    # namespace: mynamespace
-
+kubectl get firstusers.quay.herve4m.github.io -n <namespace>
 ```

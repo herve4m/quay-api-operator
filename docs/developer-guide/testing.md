@@ -153,26 +153,40 @@ The resources refer to Secrets to retrieve the Quay connection parameters.
 However, you only have to create the Secret for the `FirstUser` resource, which in turn creates a Secret to store the temporary Quay credentials.
 Then, the `ApiToken` resource uses that new secret to generate a permanent OAuth token that it stores in a third Secret resource, which in turn is used by all the other resources.
 
-
-[quay-connection-secret] --> fisrtuser --> [quay-temp-credentials-secret] --> organization/application/apitoken --> [quay-credentials-secret] --> ...
+```mermaid
 flowchart TD
-    K1(quay-connection-secret) --connSecretRef-->
-    F[FirstUSer] --retSecretRef -->
-    K2(quay-temp-credentials-secret) --connSecretRef-->
-    Org[Organization]
-    K2 --connSecretRef-->
-    App[Application]
-    K2 --connSecretRef-->
-    Api[ApiToken] --retSecretRef -->
-    k3(quay-credentials-secret)
-    k3 --connSecretRef--> u[User]
-    k3 --connSecretRef--> t[Team]
-    k3 --connSecretRef--> r[Robot]
-    k3 --connSecretRef--> repo[Repository]
-    k3 --connSecretRef--> d[DockerToken]
-    k3 --connSecretRef--> etc[...]
+    K1["`__Secret__
+        _quay-connection-secret_`"]:::keyStyle
+    K2["`__Secret__
+        _quay-temp-credentials-secret_`"]:::keyStyle
+    K3["`__Secret__
+        _quay-credentials-secret_`"]:::keyStyle
 
+    FirstUser[FirstUser]:::QuayStyle
+    ApiToken[Organization/Application/ApiToken]:::QuayStyle
+    User[User]:::QuayStyle
+    Team[Team]:::QuayStyle
+    Robot[Robot]:::QuayStyle
+    Repository[Repository]:::QuayStyle
+    DockerToken[DockerToken]:::QuayStyle
+    etc[...]:::ETC
 
+    K1 --connSecretRef--> FirstUser
+    FirstUser --retSecretRef --> K2
+    K2 --connSecretRef--> ApiToken
+    ApiToken --retSecretRef --> K3
+    K3 --connSecretRef--> User
+    K3 --connSecretRef--> Team
+    K3 --connSecretRef--> Robot
+    K3 --connSecretRef--> Repository
+    K3 --connSecretRef--> DockerToken
+    K3 --> etc
+
+    classDef keyStyle fill:#ffe8cc,stroke:#f8ae54,font-size:10pt;
+    classDef QuayStyle fill:#cce3ff,stroke:#549ef8;
+    classDef ETC fill:#fff,stroke:#fff;
+
+```
 
 Before applying the resources, create a project and the Secret for the `FirstUser` resource.
 In the following command, replace the `<DNS-domain>` placeholder by the domain of your OpenShift cluster.
@@ -225,10 +239,30 @@ done
 
 ### Deleting the Test Resources
 
-Delete the resources by using the `oc delete` command:
+Delete the resources by using the `oc delete` command.
+Delete the Organization, Application, ApiToken, and FirstUser resources at the end, because they control the secrets  that the other resources uses to access Quay.
 
 ```sh
-oc delete -k config/samples
+oc delete defaultperm.quay.herve4m.github.com/defaultperm-sample \
+  dockertoken.quay.herve4m.github.com/dockertoken-sample \
+  manifestlabel.quay.herve4m.github.com/manifestlabel-sample \
+  message.quay.herve4m.github.com/message-sample \
+  notification.quay.herve4m.github.com/notification-sample \
+  proxycache.quay.herve4m.github.com/proxycache-sample \
+  quota.quay.herve4m.github.com/quota-sample \
+  repository.quay.herve4m.github.com/repository-sample-1 \
+  repository.quay.herve4m.github.com/repository-sample-2 \
+  repositorymirror.quay.herve4m.github.com/repositorymirror-sample \
+  robot.quay.herve4m.github.com/robot-sample \
+  tag.quay.herve4m.github.com/tag-sample \
+  team.quay.herve4m.github.com/team-sample \
+  teamldap.quay.herve4m.github.com/teamldap-sample \
+  teamoidc.quay.herve4m.github.com/teamoidc-sample \
+  user.quay.herve4m.github.com/user-sample
+oc delete apitoken.quay.herve4m.github.com/apitoken-sample \
+  application.quay.herve4m.github.com/application-sample \
+  organization.quay.herve4m.github.com/organization-sample
+oc delete firstuser.quay.herve4m.github.com/firstuser-sample
 oc delete project test-operator
 ```
 

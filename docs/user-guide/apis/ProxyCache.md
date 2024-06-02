@@ -6,6 +6,88 @@ the scripts/crd2markdown script.
 
 # ProxyCache - Manage Quay Container Registry proxy cache configurations
 
+The ProxyCache custom resource relies on a Secret resource to provide the connection parameters to the Quay instance.
+This Secret resource must include the following data:
+
+* `host`: URL for accessing the Quay API, such as ``https://quay.example.com:8443`` for example.
+* `validateCerts`: Whether to allow insecure connections to the API.
+  By default, insecure connections are refused.
+* `token`: OAuth access token for authenticating against the API.
+  To create such a token see the [Creating an OAuth Access Token](https://access.redhat.com/documentation/en-us/red_hat_quay/3/html-single/red_hat_quay_api_guide/index#creating-oauth-access-token) documentation.
+  You can also use the [ApiToken](ApiToken.md) custom resource to create this token.
+* `username`: The username to use for authenticating against the API.
+  If `token` is set, then `username` is ignored.
+* `password`: The password to use for authenticating against the API.
+  If `token` is set, then `password` is ignored.
+
+You can create the secret by using the `kubectl create secret` command:
+
+```sh
+kubectl create secret generic quay-credentials --from-literal host=https://quay.example.com:8443 --from-literal validateCerts=false --from-literal token=vFYyU2D0fHYXvcA3Y5TYfMrIMyVIH9YmxoVLsmku
+```
+
+Or you can create the secret from a resource file:
+
+```yaml
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: quay-credentials
+stringData:
+  host: https://quay.example.com:8443
+  validateCerts: "false"
+  token: vFYyU2D0fHYXvcA3Y5TYfMrIMyVIH9YmxoVLsmku
+```
+
+You refer to this secret in your ProxyCache custom resources by the using the `connSecretRef` property:
+
+```yaml
+---
+apiVersion: quay.herve4m.github.io/v1alpha1
+kind: ProxyCache
+metadata:
+  name: ProxyCache-sample
+spec:
+  # Connection parameters in a Secret resource
+  connSecretRef:
+    name: quay-credentials
+    # By default, the operator looks for the secret in the same namespace as
+    # the ProxyCache resource, but you can specify a different namespace.
+    # namespace: mynamespace
+...
+```
+
+
+## Usage Example
+
+```yaml
+---
+apiVersion: quay.herve4m.github.io/v1alpha1
+kind: ProxyCache
+metadata:
+  name: proxycache-sample
+spec:
+  # Connection parameters in a Secret resource
+  connSecretRef:
+    name: quay-credentials-secret
+    # By default, the operator looks for the secret in the same namespace as the
+    # proxycache resource, but you can specify a different namespace.
+    # namespace: mynamespace
+
+  # Whether to preserve the corresponding configuration in Quay when you
+  # delete the resource.
+  preserveInQuayOnDeletion: false
+
+  organization: production
+  registry: quay.io/prodimgs
+  username: cwade
+  password: My53cr3Tpa55
+  expiration: 172800
+
+```
+
+
 ## Properties
 
 
@@ -114,39 +196,10 @@ __Required__: False
 __Default value__: None
 
 
-## List the Resources
+## Listing the ProxyCache Resources
+
+You can retrieve the list of the ProxyCache custom resources in a namespace by using the `kubectl get` command:
 
 ```sh
-kubectl get proxycaches.quay.herve4m.github.io
-```
-
-
-
-
-## Usage Example
-
-```yaml
----
-apiVersion: quay.herve4m.github.io/v1alpha1
-kind: ProxyCache
-metadata:
-  name: proxycache-sample
-spec:
-  # Connection parameters in a Secret resource
-  connSecretRef:
-    name: quay-credentials-secret
-    # By default, the operator looks for the secret in the same namespace as the
-    # proxycache resource, but you can specify a different namespace.
-    # namespace: mynamespace
-
-  # Whether to preserve the corresponding configuration in Quay when you
-  # delete the resource.
-  preserveInQuayOnDeletion: false
-
-  organization: production
-  registry: quay.io/prodimgs
-  username: cwade
-  password: My53cr3Tpa55
-  expiration: 172800
-
+kubectl get proxycaches.quay.herve4m.github.io -n <namespace>
 ```

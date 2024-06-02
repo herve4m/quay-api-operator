@@ -63,8 +63,6 @@ env = jinja2.Environment(
     loader=jinja2.FileSystemLoader(f"{base_dir}/templates"),
     autoescape=jinja2.select_autoescape(),
 )
-template = env.get_template("docs/api.md.jinja")
-
 
 try:
     ret = subprocess.run(
@@ -111,6 +109,7 @@ for crd in yaml.safe_load_all(ret.stdout.decode()):
     except FileNotFoundError:
         example = None
 
+    template = env.select_template([f"docs/{kind}.md.jinja", "docs/api.md.jinja"])
     content = template.render(
         full_name=full_name,
         kind=kind,

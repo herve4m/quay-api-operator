@@ -6,6 +6,97 @@ the scripts/crd2markdown script.
 
 # Application - Manage Quay Container Registry applications
 
+The Application custom resource relies on a Secret resource to provide the connection parameters to the Quay instance.
+This Secret resource must include the following data:
+
+* `host`: URL for accessing the Quay API, such as ``https://quay.example.com:8443`` for example.
+* `validateCerts`: Whether to allow insecure connections to the API.
+  By default, insecure connections are refused.
+* `token`: OAuth access token for authenticating against the API.
+  To create such a token see the [Creating an OAuth Access Token](https://access.redhat.com/documentation/en-us/red_hat_quay/3/html-single/red_hat_quay_api_guide/index#creating-oauth-access-token) documentation.
+  You can also use the [ApiToken](ApiToken.md) custom resource to create this token.
+* `username`: The username to use for authenticating against the API.
+  If `token` is set, then `username` is ignored.
+* `password`: The password to use for authenticating against the API.
+  If `token` is set, then `password` is ignored.
+
+You can create the secret by using the `kubectl create secret` command:
+
+```sh
+kubectl create secret generic quay-credentials --from-literal host=https://quay.example.com:8443 --from-literal validateCerts=false --from-literal token=vFYyU2D0fHYXvcA3Y5TYfMrIMyVIH9YmxoVLsmku
+```
+
+Or you can create the secret from a resource file:
+
+```yaml
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: quay-credentials
+stringData:
+  host: https://quay.example.com:8443
+  validateCerts: "false"
+  token: vFYyU2D0fHYXvcA3Y5TYfMrIMyVIH9YmxoVLsmku
+```
+
+You refer to this secret in your Application custom resources by the using the `connSecretRef` property:
+
+```yaml
+---
+apiVersion: quay.herve4m.github.io/v1alpha1
+kind: Application
+metadata:
+  name: Application-sample
+spec:
+  # Connection parameters in a Secret resource
+  connSecretRef:
+    name: quay-credentials
+    # By default, the operator looks for the secret in the same namespace as
+    # the Application resource, but you can specify a different namespace.
+    # namespace: mynamespace
+...
+```
+
+
+## Usage Example
+
+```yaml
+---
+apiVersion: quay.herve4m.github.io/v1alpha1
+kind: Application
+metadata:
+  name: application-sample
+spec:
+  # Connection parameters in a Secret resource
+  connSecretRef:
+    name: quay-temp-credentials-secret
+    # By default, the operator looks for the secret in the same namespace as the
+    # application resource, but you can specify a different namespace.
+    # namespace: mynamespace
+
+  # Whether to preserve the corresponding Quay object when you
+  # delete the resource.
+  preserveInQuayOnDeletion: false
+
+  name: extapp
+  organization: production
+  description: External application
+  applicationUri: http://applicationuri.example.com
+  avatarEmail: avatarextapp@example.com
+  redirectUri: http://redirecturi.example.com
+
+  # The Secret resource is created or updated, and stores the returned data.
+  # You can use that secret with an apitoken resource to create an OAuth token.
+  retSecretRef:
+    name: application-secret
+    # By default, the operator stores the secret in the same namespace as the
+    # application resource, but you can specify a different namespace.
+    # namespace: mynamespace
+
+```
+
+
 ## Properties
 
 
@@ -160,48 +251,10 @@ __Required__: False
 __Default value__: None
 
 
-## List the Resources
+## Listing the Application Resources
+
+You can retrieve the list of the Application custom resources in a namespace by using the `kubectl get` command:
 
 ```sh
-kubectl get applications.quay.herve4m.github.io
-```
-
-
-
-
-## Usage Example
-
-```yaml
----
-apiVersion: quay.herve4m.github.io/v1alpha1
-kind: Application
-metadata:
-  name: application-sample
-spec:
-  # Connection parameters in a Secret resource
-  connSecretRef:
-    name: quay-temp-credentials-secret
-    # By default, the operator looks for the secret in the same namespace as the
-    # application resource, but you can specify a different namespace.
-    # namespace: mynamespace
-
-  # Whether to preserve the corresponding Quay object when you
-  # delete the resource.
-  preserveInQuayOnDeletion: false
-
-  name: extapp
-  organization: production
-  description: External application
-  applicationUri: http://applicationuri.example.com
-  avatarEmail: avatarextapp@example.com
-  redirectUri: http://redirecturi.example.com
-
-  # The Secret resource is created or updated, and stores the returned data.
-  # You can use that secret with an apitoken resource to create an OAuth token.
-  retSecretRef:
-    name: application-secret
-    # By default, the operator stores the secret in the same namespace as the
-    # application resource, but you can specify a different namespace.
-    # namespace: mynamespace
-
+kubectl get applications.quay.herve4m.github.io -n <namespace>
 ```

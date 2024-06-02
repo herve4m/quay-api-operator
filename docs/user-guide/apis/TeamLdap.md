@@ -6,6 +6,91 @@ the scripts/crd2markdown script.
 
 # TeamLdap - Synchronize Quay Container Registry teams with LDAP groups
 
+The TeamLdap custom resource relies on a Secret resource to provide the connection parameters to the Quay instance.
+This Secret resource must include the following data:
+
+* `host`: URL for accessing the Quay API, such as ``https://quay.example.com:8443`` for example.
+* `validateCerts`: Whether to allow insecure connections to the API.
+  By default, insecure connections are refused.
+* `token`: OAuth access token for authenticating against the API.
+  To create such a token see the [Creating an OAuth Access Token](https://access.redhat.com/documentation/en-us/red_hat_quay/3/html-single/red_hat_quay_api_guide/index#creating-oauth-access-token) documentation.
+  You can also use the [ApiToken](ApiToken.md) custom resource to create this token.
+* `username`: The username to use for authenticating against the API.
+  If `token` is set, then `username` is ignored.
+* `password`: The password to use for authenticating against the API.
+  If `token` is set, then `password` is ignored.
+
+You can create the secret by using the `kubectl create secret` command:
+
+```sh
+kubectl create secret generic quay-credentials --from-literal host=https://quay.example.com:8443 --from-literal validateCerts=false --from-literal token=vFYyU2D0fHYXvcA3Y5TYfMrIMyVIH9YmxoVLsmku
+```
+
+Or you can create the secret from a resource file:
+
+```yaml
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: quay-credentials
+stringData:
+  host: https://quay.example.com:8443
+  validateCerts: "false"
+  token: vFYyU2D0fHYXvcA3Y5TYfMrIMyVIH9YmxoVLsmku
+```
+
+You refer to this secret in your TeamLdap custom resources by the using the `connSecretRef` property:
+
+```yaml
+---
+apiVersion: quay.herve4m.github.io/v1alpha1
+kind: TeamLdap
+metadata:
+  name: TeamLdap-sample
+spec:
+  # Connection parameters in a Secret resource
+  connSecretRef:
+    name: quay-credentials
+    # By default, the operator looks for the secret in the same namespace as
+    # the TeamLdap resource, but you can specify a different namespace.
+    # namespace: mynamespace
+...
+```
+
+
+## Usage Example
+
+```yaml
+---
+# The resource requires that your Quay administrator configures the Quay
+# authentication method to LDAP (AUTHENTICATION_TYPE to LDAP in
+# config.yaml and the LDAP_* parameters correctly set).
+apiVersion: quay.herve4m.github.io/v1alpha1
+kind: TeamLdap
+metadata:
+  name: teamldap-sample
+spec:
+  # Connection parameters in a Secret resource
+  connSecretRef:
+    name: quay-credentials-secret
+    # By default, the operator looks for the secret in the same namespace as the
+    # teamldap resource, but you can specify a different namespace.
+    # namespace: mynamespace
+
+  # Whether to preserve the corresponding configuration in Quay when you
+  # delete the resource.
+  preserveInQuayOnDeletion: false
+
+  name: operators
+  organization: production
+  sync: true
+  groupDn: cn=op1,ou=groups
+  keepUsers: true
+
+```
+
+
 ## Properties
 
 
@@ -104,42 +189,10 @@ __Required__: False
 __Default value__: True
 
 
-## List the Resources
+## Listing the TeamLdap Resources
+
+You can retrieve the list of the TeamLdap custom resources in a namespace by using the `kubectl get` command:
 
 ```sh
-kubectl get teamldaps.quay.herve4m.github.io
-```
-
-
-
-
-## Usage Example
-
-```yaml
----
-# The resource requires that your Quay administrator configures the Quay
-# authentication method to LDAP (AUTHENTICATION_TYPE to LDAP in
-# config.yaml and the LDAP_* parameters correctly set).
-apiVersion: quay.herve4m.github.io/v1alpha1
-kind: TeamLdap
-metadata:
-  name: teamldap-sample
-spec:
-  # Connection parameters in a Secret resource
-  connSecretRef:
-    name: quay-credentials-secret
-    # By default, the operator looks for the secret in the same namespace as the
-    # teamldap resource, but you can specify a different namespace.
-    # namespace: mynamespace
-
-  # Whether to preserve the corresponding configuration in Quay when you
-  # delete the resource.
-  preserveInQuayOnDeletion: false
-
-  name: operators
-  organization: production
-  sync: true
-  groupDn: cn=op1,ou=groups
-  keepUsers: true
-
+kubectl get teamldaps.quay.herve4m.github.io -n <namespace>
 ```
