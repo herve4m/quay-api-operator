@@ -19,7 +19,7 @@ The [Developer Guide](https://herve4m.github.io/quay-api-operator/developer-guid
 We welcome community contributions to this operator.
 If you find problems, then please open an [issue](https://github.com/herve4m/quay-api-operator/issues) or create a [pull request](https://github.com/herve4m/quay-api-operator/pulls).
 
-More information about contributing can be found in the [Contribution Guidelines](https://github.com/herve4m/quay-api-operator/blob/main/CONTRIBUTING.md).
+More information about contributing can be found in the [Contribution Guidelines](CONTRIBUTING.md).
 
 
 ## License
