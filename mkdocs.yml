@@ -20,11 +20,9 @@ plugins:
         theme: neutral
 
 nav:
-  - Home: index.md
-  - User Guide:
-      - User Guide: user-guide/
+  - User Guide: README.md
   - Custom Resources:
-      - Operator Custom Resources: crds/
+      - Operator Custom Resources: crds/README.md
       - ApiToken: crds/ApiToken.md
       - Application: crds/Application.md
       - DefaultPerm: crds/DefaultPerm.md
@@ -45,7 +43,7 @@ nav:
       - Team: crds/Team.md
       - User: crds/User.md
   - Developer Guide:
-      - Developer Guide: developer-guide/
+      - Developer Guide: developer-guide/README.md
       - Tools: developer-guide/tools.md
       - Building: developer-guide/building.md
       - Deploying: developer-guide/deploying.md

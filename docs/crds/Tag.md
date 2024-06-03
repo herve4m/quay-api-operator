@@ -44,7 +44,7 @@ You refer to this secret in your Tag custom resource by using the `connSecretRef
 See the [usage example](#usage-example).
 
 !!! warning
-    Do not delete the Secret resource if it still referenced by a Quay custom resource.
+    Do not delete the Secret resource if a Quay custom resource still references it.
     If you delete the Secret resource, then the Operator cannot connect to the Quay API anymore, and cannot synchronize the Quay custom resource with its corresponding object in Quay.
     In addition, deleting the Quay custom resource does not complete because the Operator cannot delete the corresponding object in Quay.
 
