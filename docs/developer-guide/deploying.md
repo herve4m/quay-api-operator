@@ -89,27 +89,35 @@ operator-sdk olm install
 
 ### Deploy the Operator
 
+Create the `quay-api-operator` namespace to host the Operator:
+
+```sh
+kubectl create namespace quay-api-operator
+```
+
 Use the `operator-sdk run bundle` command to install the Operator in your cluster:
 
 ```sh
-operator-sdk run bundle ${BUNDLE_IMG}
+operator-sdk run bundle -n quay-api-operator ${BUNDLE_IMG}
 ```
 
 The command create the `CatalogSource`, `OperatorGroup`, `Subscription`, and `ClusterServiceVersion` resources, and then wait for the Operator to complete its deployment.
 
 ### Undeploy the Operator
 
-Undeploy the Operator, delete the OLM resources:
+Undeploy the Operator and delete the OLM resources:
 
 ```sh
-kubectl get Subscription | grep quay-api-operator
-kubectl delete Subscription quay-api-operator-<version>
+kubectl get Subscription -n quay-api-operator | grep quay-api-operator
+kubectl delete Subscription -n quay-api-operator quay-api-operator-<version>
 
 kubectl get ClusterServiceVersion | grep quay-api-operator
 kubectl delete ClusterServiceVersion quay-api-operator.<version>
 
-kubectl delete OperatorGroup operator-sdk-og
-kubectl delete CatalogSource quay-api-operator-catalog
+kubectl delete OperatorGroup -n quay-api-operator operator-sdk-og
+kubectl delete CatalogSource -n quay-api-operator quay-api-operator-catalog
+
+kubectl delete namespace quay-api-operator
 ```
 
 For more details, review the [OLM Integration Bundle Tutorial][] and the [Deploy Your Operator with OLM][] section of the [Run the Operator][] guide.

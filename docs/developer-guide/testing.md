@@ -208,26 +208,26 @@ It takes 30 minutes to reconcile.
 You can review the status of the resources by using the following loop:
 
 ```sh
-for i in apitoken.quay.herve4m.github.com/apitoken-sample \
-  application.quay.herve4m.github.com/application-sample \
-  defaultperm.quay.herve4m.github.com/defaultperm-sample \
-  dockertoken.quay.herve4m.github.com/dockertoken-sample \
-  firstuser.quay.herve4m.github.com/firstuser-sample \
-  manifestlabel.quay.herve4m.github.com/manifestlabel-sample \
-  message.quay.herve4m.github.com/message-sample \
-  notification.quay.herve4m.github.com/notification-sample \
-  organization.quay.herve4m.github.com/organization-sample \
-  proxycache.quay.herve4m.github.com/proxycache-sample \
-  quota.quay.herve4m.github.com/quota-sample \
-  repository.quay.herve4m.github.com/repository-sample-1 \
-  repository.quay.herve4m.github.com/repository-sample-2 \
-  repositorymirror.quay.herve4m.github.com/repositorymirror-sample \
-  robot.quay.herve4m.github.com/robot-sample \
-  tag.quay.herve4m.github.com/tag-sample \
-  team.quay.herve4m.github.com/team-sample \
-  teamldap.quay.herve4m.github.com/teamldap-sample \
-  teamoidc.quay.herve4m.github.com/teamoidc-sample \
-  user.quay.herve4m.github.com/user-sample
+for i in apitoken.quay.herve4m.github.io/apitoken-sample \
+  application.quay.herve4m.github.io/application-sample \
+  defaultperm.quay.herve4m.github.io/defaultperm-sample \
+  dockertoken.quay.herve4m.github.io/dockertoken-sample \
+  firstuser.quay.herve4m.github.io/firstuser-sample \
+  manifestlabel.quay.herve4m.github.io/manifestlabel-sample \
+  message.quay.herve4m.github.io/message-sample \
+  notification.quay.herve4m.github.io/notification-sample \
+  organization.quay.herve4m.github.io/organization-sample \
+  proxycache.quay.herve4m.github.io/proxycache-sample \
+  quota.quay.herve4m.github.io/quota-sample \
+  repository.quay.herve4m.github.io/repository-sample-1 \
+  repository.quay.herve4m.github.io/repository-sample-2 \
+  repositorymirror.quay.herve4m.github.io/repositorymirror-sample \
+  robot.quay.herve4m.github.io/robot-sample \
+  tag.quay.herve4m.github.io/tag-sample \
+  team.quay.herve4m.github.io/team-sample \
+  teamldap.quay.herve4m.github.io/teamldap-sample \
+  teamoidc.quay.herve4m.github.io/teamoidc-sample \
+  user.quay.herve4m.github.io/user-sample
 do
   oc get --no-headers $i
 done
@@ -243,26 +243,26 @@ Delete the resources by using the `oc delete` command.
 Delete the Organization, Application, ApiToken, and FirstUser resources at the end, because they control the secrets  that the other resources uses to access Quay.
 
 ```sh
-oc delete defaultperm.quay.herve4m.github.com/defaultperm-sample \
-  dockertoken.quay.herve4m.github.com/dockertoken-sample \
-  manifestlabel.quay.herve4m.github.com/manifestlabel-sample \
-  message.quay.herve4m.github.com/message-sample \
-  notification.quay.herve4m.github.com/notification-sample \
-  proxycache.quay.herve4m.github.com/proxycache-sample \
-  quota.quay.herve4m.github.com/quota-sample \
-  repository.quay.herve4m.github.com/repository-sample-1 \
-  repository.quay.herve4m.github.com/repository-sample-2 \
-  repositorymirror.quay.herve4m.github.com/repositorymirror-sample \
-  robot.quay.herve4m.github.com/robot-sample \
-  tag.quay.herve4m.github.com/tag-sample \
-  team.quay.herve4m.github.com/team-sample \
-  teamldap.quay.herve4m.github.com/teamldap-sample \
-  teamoidc.quay.herve4m.github.com/teamoidc-sample \
-  user.quay.herve4m.github.com/user-sample
-oc delete apitoken.quay.herve4m.github.com/apitoken-sample \
-  application.quay.herve4m.github.com/application-sample \
-  organization.quay.herve4m.github.com/organization-sample
-oc delete firstuser.quay.herve4m.github.com/firstuser-sample
+oc delete defaultperm.quay.herve4m.github.io/defaultperm-sample \
+  dockertoken.quay.herve4m.github.io/dockertoken-sample \
+  manifestlabel.quay.herve4m.github.io/manifestlabel-sample \
+  message.quay.herve4m.github.io/message-sample \
+  notification.quay.herve4m.github.io/notification-sample \
+  proxycache.quay.herve4m.github.io/proxycache-sample \
+  quota.quay.herve4m.github.io/quota-sample \
+  repository.quay.herve4m.github.io/repository-sample-1 \
+  repository.quay.herve4m.github.io/repository-sample-2 \
+  repositorymirror.quay.herve4m.github.io/repositorymirror-sample \
+  robot.quay.herve4m.github.io/robot-sample \
+  tag.quay.herve4m.github.io/tag-sample \
+  team.quay.herve4m.github.io/team-sample \
+  teamldap.quay.herve4m.github.io/teamldap-sample \
+  teamoidc.quay.herve4m.github.io/teamoidc-sample \
+  user.quay.herve4m.github.io/user-sample
+oc delete apitoken.quay.herve4m.github.io/apitoken-sample \
+  application.quay.herve4m.github.io/application-sample \
+  organization.quay.herve4m.github.io/organization-sample
+oc delete firstuser.quay.herve4m.github.io/firstuser-sample
 oc delete project test-operator
 ```
 
