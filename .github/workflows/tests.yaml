@@ -16,7 +16,8 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      # Version and tag do not matter for the test
+      # Version and tag do not matter for the test.
+      # However, do not use "latest" for the tag
       IMG: quay.io/herve4m/quay-api-operator:0.1.0
 
     steps:
@@ -67,11 +68,11 @@ jobs:
       - name: Import the local image into the K3D cluster
         run: k3d image import ${IMG}
 
-      - name: Configure the manager to use the local image
-        run: |
-          set -x
-          cp config/testing/pull_policy/Never.yaml config/manager
-          cd config/manager && kustomize edit add patch --path Never.yaml
+      # - name: Configure the manager to use the local image
+      #   run: |
+      #     set -x
+      #     cp config/testing/pull_policy/Never.yaml config/manager
+      #     cd config/manager && kustomize edit add patch --path Never.yaml
 
       - name: Deploy the operator in the K3D cluster
         run: make deploy
