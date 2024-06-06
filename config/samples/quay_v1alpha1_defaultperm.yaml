@@ -1,0 +1,21 @@
+---
+apiVersion: quay.herve4m.github.io/v1alpha1
+kind: DefaultPerm
+metadata:
+  name: defaultperm-sample
+spec:
+  # Connection parameters in a Secret resource
+  connSecretRef:
+    name: quay-credentials-secret
+    # By default, the operator looks for the secret in the same namespace as
+    # the defaultperm resource, but you can specify a different namespace.
+    # namespace: mynamespace
+
+  # Whether to preserve the corresponding Quay object when you
+  # delete the resource.
+  preserveInQuayOnDeletion: false
+
+  organization: production
+  name: production+robotprod1
+  type: user
+  role: write

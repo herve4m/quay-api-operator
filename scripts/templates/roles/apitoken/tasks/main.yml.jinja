@@ -1,0 +1,132 @@
+---
+- name: Ensure the {{ resource.singular }} resource exists
+  block:
+{%- raw %}
+    - name: Ensure the secret resource that stores the Quay parameters exists
+      ansible.builtin.fail:
+        msg: "connSecretRef: {{ conn_secret_ref['name'] }}: secret not found"
+      when:
+        - not secret_found
+
+    - name: Retrieve the client ID from the provided secret resource
+      when:
+        - client_id_from is defined
+        - "'name' in client_id_from"
+        - client_id_from['name'] | length > 0
+        - client_id is undefined or client_id | length == 0
+      block:
+        - name: Retrieve the secret that stores the client ID
+          kubernetes.core.k8s_info:
+            api_version: v1
+            kind: Secret
+            name: "{{ client_id_from['name'] }}"
+            namespace: "{{ client_id_from['namespace']
+              | default(ansible_operator_meta['namespace']) }}"
+          register: client_id_r
+
+        - name: Ensure the secret is found
+          ansible.builtin.fail:
+            msg: "clientIdFrom: {{ client_id_from['name'] }}: secret not found"
+          when:
+            - "client_id_r['resources'] | length == 0 or
+              'data' not in client_id_r['resources'][0]"
+
+        - name: Declare the client ID from the secret key
+          ansible.builtin.set_fact:
+            client_id_value: "{{ client_id_r['resources'][0]['data'][client_id_from['key'] | default('clientId', true)]
+              | default('') | ansible.builtin.b64decode }}"
+
+    - name: Declare the client ID from the given clientId parameter
+      ansible.builtin.set_fact:
+        client_id_value: "{{ client_id }}"
+      when:
+        - client_id is defined
+        - client_id | length > 0
+{%- endraw %}
+
+    - name: Ensure the {{ resource.singular }} resource exists in Quay
+      {{ resource.ansible_full_name }}:
+{%- raw %}
+        quay_host: "{{ quay_host | default(omit) }}"
+        validate_certs: "{{ validate_certs | default(omit) }}"
+        quay_username: "{{ quay_username | default(omit) }}"
+        quay_password: "{{ quay_password | default(omit) }}"
+        client_id: "{{ client_id_value }}"
+{%- endraw %}
+{%- for item in options %}
+{%- if item != "client_id" %}
+        {{ item }}: {{ "\"{{ " + item + " | default(omit) }}\"" -}}
+{%- endif %}
+{%- endfor %}
+      register: ret
+
+    - name: Ensure the existInQuay flag is set in the resource status
+      operator_sdk.util.k8s_status:
+        api_version: {{ config.QUALIFIED_GROUP }}/{{ config.VERSION }}
+        kind: {{ resource.kind }}
+{%- raw %}
+        name: "{{ ansible_operator_meta['name'] }}"
+        namespace: "{{ ansible_operator_meta['namespace'] }}"
+{%- endraw %}
+        status:
+          existInQuay: true
+{%- if returned | length > 0 %}
+
+    - name: Ensure the resulting data is saved in a secret
+      kubernetes.core.k8s:
+        definition:
+          apiVersion: v1
+          kind: Secret
+          type: Opaque
+          metadata:
+{%- raw %}
+            name: "{{ ret_secret_ref['name'] }}"
+            namespace: "{{ ret_secret_ref['namespace'] | default(ansible_operator_meta['namespace']) }}"
+{%- endraw %}
+          data:
+{%- for item in returned %}
+{%- if item["add_to_role"] %}
+{%- if item["k8s_name"] == "accessToken" %}
+            token: {{ "\"{{ ret['" + item["ansible_name"] + "'] | default('', true) | ansible.builtin.b64encode }}\"" }}
+            host: {{ "\"{{ quay_host | default('http://127.0.0.1') | ansible.builtin.b64encode }}\"" }}
+            validateCerts: {{ "\"{{ validate_certs | default('true') | ansible.builtin.b64encode }}\"" }}
+{%- endif %}
+{%- if item["base64"] %}
+            {{ item["k8s_name"] }}: {{ "\"{{ ret['" + item["ansible_name"] + "'] | default('', true) }}\"" }}
+{%- else %}
+            {{ item["k8s_name"] }}: {{ "\"{{ ret['" + item["ansible_name"] + "'] | default('', true) | ansible.builtin.b64encode }}\"" }}
+{%- endif %}
+{%- endif %}
+{%- endfor %}
+      when:
+        - ret_secret_ref is defined
+        - "'name' in ret_secret_ref"
+        - ret_secret_ref["name"] | length > 0
+{%- endif %}
+
+  rescue:
+    - name: Ensure the error message is set in the resource status
+      operator_sdk.util.k8s_status:
+        api_version: {{ config.QUALIFIED_GROUP }}/{{ config.VERSION }}
+        kind: {{ resource.kind }}
+{%- raw %}
+        name: "{{ ansible_operator_meta['name'] }}"
+        namespace: "{{ ansible_operator_meta['namespace'] }}"
+        status:
+          message: "{{ ansible_failed_result['msg'] }}"
+
+    - name: Ensure the error is raised
+      ansible.builtin.fail:
+        msg: "{{ ansible_failed_result['msg'] }}"
+{%- endraw %}
+
+- name: Ensure the error message is cleared from the resource status
+  operator_sdk.util.k8s_status:
+    api_version: {{ config.QUALIFIED_GROUP }}/{{ config.VERSION }}
+    kind: {{ resource.kind }}
+{%- raw %}
+    name: "{{ ansible_operator_meta['name'] }}"
+    namespace: "{{ ansible_operator_meta['namespace'] }}"
+    status:
+      message: ""
+{%- endraw %}

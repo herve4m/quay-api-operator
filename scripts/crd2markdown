@@ -1,0 +1,139 @@
+#!/usr/bin/env python3
+
+import os
+import sys
+import subprocess
+import re
+
+import yaml
+import jinja2
+
+
+class Config:
+    # Name of the Ansible Collection to process
+    COLLECTION = "herve4m.quay"
+    MODULE_PREFIX = "quay_"
+    FULL_PREFIX = COLLECTION + "." + MODULE_PREFIX
+    DOMAIN = "herve4m.github.io"
+    GROUP = "quay"
+    QUALIFIED_GROUP = GROUP + "." + DOMAIN
+    VERSION = "v1alpha1"
+    OPERATOR_NAME = "quay-api-operator"
+
+
+def text2markdown(s):
+    s = re.sub(r"'(.+?)'", r"`\1`", s)
+    return s
+
+
+def parse_properties(properties, required, parent=None):
+    res = []
+    for name, val in properties.items():
+        full_name = (parent + "." + name) if parent else name
+        p_type = val.get("type", "string")
+        if p_type == "object":
+            p_type = "object (see the following properties)"
+        p = {
+            "name": full_name,
+            "description": text2markdown(val["description"]),
+            "required": name in required,
+            "type": p_type,
+            "default": val.get("default"),
+        }
+        res.append(p)
+        if "properties" in val:
+            res.extend(
+                parse_properties(val["properties"], val.get("required", []), full_name)
+            )
+    return res
+
+
+#
+# Main
+#
+
+if not os.path.isfile("PROJECT"):
+    sys.exit(
+        "Cannot find the PROJECT file. Please run the program from the Operator directory."
+    )
+
+# Initialize Jinja2
+base_dir = os.path.dirname(os.path.realpath(__file__))
+env = jinja2.Environment(
+    loader=jinja2.FileSystemLoader(f"{base_dir}/templates"),
+    autoescape=jinja2.select_autoescape(),
+)
+
+try:
+    ret = subprocess.run(
+        [
+            "kustomize",
+            "build",
+            "config/crd",
+        ],
+        capture_output=True,
+        check=True,
+    )
+except FileNotFoundError:
+    sys.exit("kustomize: command not found")
+except subprocess.CalledProcessError as err:
+    sys.exit("kustomize: {ret}: {msg}".format(ret=err.returncode, msg=err.stderr.decode()))
+
+kinds = []
+for crd in yaml.safe_load_all(ret.stdout.decode()):
+    full_name = crd["metadata"]["name"]
+    kind = crd["spec"]["names"]["kind"]
+    short = (
+        crd["spec"]["names"]["shortNames"][0]
+        if "shortNames" in crd["spec"]["names"]
+        else None
+    )
+    for version in crd["spec"]["versions"]:
+        if version["name"] == Config.VERSION:
+            print(f"Processing the {kind} custom resource.")
+            break
+    else:
+        print(
+            f"Skipping the {kind} custom resource (the {Config.VERSION}"
+            + " version is not defined in the CRD)."
+        )
+        continue
+    description = version["schema"]["openAPIV3Schema"]["description"]
+    properties = parse_properties(
+        version["schema"]["openAPIV3Schema"]["properties"]["spec"]["properties"],
+        version["schema"]["openAPIV3Schema"]["properties"]["spec"].get("required", []),
+    )
+    try:
+        example_file = (
+            "config/samples/"
+            + "_".join([Config.GROUP, Config.VERSION, kind.lower()])
+            + ".yaml"
+        )
+        with open(example_file, "r") as file:
+            example = file.read()
+    except FileNotFoundError:
+        example = None
+
+    template = env.select_template([f"docs/{kind}.md.jinja", "docs/crd.md.jinja"])
+    content = template.render(
+        full_name=full_name,
+        kind=kind,
+        short=short,
+        description=description,
+        properties=properties,
+        example=example,
+    )
+    with open(f"docs/crds/{kind}.md", "w") as doc_file:
+        doc_file.write(content + "\n")
+
+    kinds.append({"kind": kind, "description": description})
+
+template = env.get_template("docs/mkdocs.yml.jinja")
+content = template.render(kinds=kinds)
+with open("mkdocs.yml", "w") as mkdocs_conf:
+    mkdocs_conf.write(content + "\n")
+
+template = env.get_template("docs/index.md.jinja")
+content = template.render(kinds=kinds)
+with open("docs/crds/README.md", "w") as index_file:
+    index_file.write(content + "\n")

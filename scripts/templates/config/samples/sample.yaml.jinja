@@ -1,0 +1,27 @@
+---
+apiVersion: {{ config.QUALIFIED_GROUP }}/{{ config.VERSION }}
+kind: {{ resource.kind }}
+metadata:
+  name: {{ resource.singular }}-sample
+spec:
+  # Connection parameters in a Secret resource
+  connSecretRef:
+    name: quay-credentials-secret
+    # By default, the operator looks for the secret in the same namespace as
+    # the {{ resource.singular }} resource, but you can specify a different namespace.
+    # namespace: mynamespace
+
+  # Whether to preserve the corresponding Quay object when you
+  # delete the {{ resource.kind }} resource.
+  preserveInQuayOnDeletion: false
+{%- for item in required %}
+  {{ item[0] }}: {{ item[1] }}
+{%- endfor %}
+{%- if returned|length > 0 %}
+  # The Secret resource is created or updated, and stores the returned data
+  retSecretRef:
+    name: {{ resource.singular }}-sample-ret-secret
+    # By default, the operator stores the secret in the same namespace as the
+    # {{ resource.singular }} resource, but you can specify a different namespace.
+    # namespace: mynamespace
+{%- endif %}

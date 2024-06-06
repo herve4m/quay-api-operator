@@ -1,0 +1,58 @@
+---
+apiVersion: quay.herve4m.github.io/v1alpha1
+kind: Repository
+metadata:
+  name: repository-sample-1
+spec:
+  # Connection parameters in a Secret resource
+  connSecretRef:
+    name: quay-credentials-secret
+    # By default, the operator looks for the secret in the same namespace as
+    # the repository resource, but you can specify a different namespace.
+    # namespace: mynamespace
+
+  # Whether to preserve the corresponding Quay object when you
+  # delete the resource.
+  preserveInQuayOnDeletion: false
+
+  name: production/smallimage
+  visibility: public
+  description: |
+    # My first repository
+
+    * smallimage is a small GNU/linux container image.
+    * Use podman to start a container using that image.
+  perms:
+    - name: operators
+      type: team
+      role: read
+    - name: dwilde
+      type: user
+      role: read
+    - name: production+robotprod1
+      type: user
+      role: admin
+  append: true
+  autoPruneMethod: date
+  autoPruneValue: 4w
+  star: true
+  repoState: NORMAL
+---
+apiVersion: quay.herve4m.github.io/v1alpha1
+kind: Repository
+metadata:
+  name: repository-sample-2
+spec:
+  # Connection parameters in a Secret resource
+  connSecretRef:
+    name: quay-credentials-secret
+    # By default, the operator looks for the secret in the same namespace as the
+    # repository resource, but you can specify a different namespace.
+    # repository: mynamespace
+
+  # Whether to preserve the corresponding Quay object when you
+  # delete the resource.
+  preserveInQuayOnDeletion: false
+
+  name: production/ubi9
+  repoState: MIRROR

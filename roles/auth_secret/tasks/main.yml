@@ -1,0 +1,56 @@
+---
+- name: Retrieve the secret that stores the Quay connection parameters
+  kubernetes.core.k8s_info:
+    api_version: v1
+    kind: Secret
+    name: "{{ conn_secret_ref['name'] }}"
+    namespace: "{{ conn_secret_ref['namespace']
+      | default(ansible_operator_meta['namespace']) }}"
+  register: auth_secret_r
+
+# - debug: msg={{ auth_secret_r }}
+# Example of an auth_secret_r value:
+# {
+#     "api_found": true,
+#     "changed": false,
+#     "failed": false,
+#     "resources": [
+#         {
+#             "apiVersion": "v1",
+#             "data": {
+#                 "host": "aHR0cHM6Ly8xMjcuMC4wLjE=",
+#                 "password": "czNjcjN0",
+#                 "token": "WFla",
+#                 "username": "YWRtaW4=",
+#                 "validateCerts": "dHJ1ZQ=="
+#             },
+#             "kind": "Secret",
+#             "metadata": { ... },
+#             "type": "Opaque"
+#         }
+#     ]
+# }
+
+- name: Declare the status of the secret (not found)
+  ansible.builtin.set_fact:
+    secret_found: false
+  when:
+    - "auth_secret_r['resources'] | length == 0 or
+      'data' not in auth_secret_r['resources'][0]"
+
+- name: Declare facts from the connection parameters
+  ansible.builtin.set_fact:
+    secret_found: true
+    quay_host: "{{ auth_secret_r['resources'][0]['data']['host']
+      | default('') | ansible.builtin.b64decode | default(omit, true) }}"
+    quay_token: "{{ auth_secret_r['resources'][0]['data']['token']
+      | default('') | ansible.builtin.b64decode | default(omit, true) }}"
+    quay_username: "{{ auth_secret_r['resources'][0]['data']['username']
+      | default('') | ansible.builtin.b64decode | default(omit, true) }}"
+    quay_password: "{{ auth_secret_r['resources'][0]['data']['password']
+      | default('') | ansible.builtin.b64decode | default(omit, true) }}"
+    validate_certs: "{{ auth_secret_r['resources'][0]['data']['validateCerts']
+      | default('') | ansible.builtin.b64decode | default(omit, true) }}"
+  when:
+    - auth_secret_r['resources'] | length > 0
+    - "'data' in auth_secret_r['resources'][0]"

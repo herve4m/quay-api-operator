@@ -1,0 +1,132 @@
+---
+apiVersion: operators.coreos.com/v1alpha1
+kind: ClusterServiceVersion
+metadata:
+  annotations:
+    alm-examples: '[]'
+    capabilities: Basic Install
+    categories: Integration & Delivery
+    containerImage: quay.io/herve4m/quay-api-operator:0.1.0
+    createdAt: "2024-06-01T20:59:59Z"
+    description: |
+      Manage Quay Container Registry deployments by using Kubernetes resources.
+    repository: https://github.com/herve4m/quay-api-operator
+    support: Quay Community
+  name: quay-api-operator.v0.0.0
+  namespace: placeholder
+spec:
+  apiservicedefinitions: {}
+  customresourcedefinitions:
+    owned:
+{%- for item in owned %}
+    {{ item|indent(4) }}
+{%- endfor %}
+  description: |
+    ## Overview
+
+    The API Operator for Quay manages Quay Container Registry components.
+    The operator does not install Quay, which you can install in Kubernetes by using the [Quay Operator](https://operatorhub.io/operator/project-quay), or outside Kubernetes as a standalone deployment.
+
+    The operator provides Kubernetes custom resources to create, configure, and delete Quay objects.
+    For example, the operator can manage Quay organizations, repositories, teams, and user and robot accounts.
+    It can also configure organization quotas, repository mirroring, and proxy caches.
+
+    ## Usage
+
+    All the operator's custom resources rely on a Secret resource to provide the connection parameters to the Quay instance.
+
+    This secret resource must include the following data.
+
+    * `host` - URL for accessing the Quay API, such as https://quay.example.com:8443 for example.
+    * `validateCerts` - Whether to allow insecure connections to the API.
+      By default, insecure connections are refused.
+    * `token` - OAuth access token for authenticating against the API.
+      To create such a token see the [Creating an OAuth Access Token](https://access.redhat.com/documentation/en-us/red_hat_quay/3/html-single/red_hat_quay_api_guide/index#creating-oauth-access-token) documentation.
+    * `username` - The username to use for authenticating against the API.
+      If `token` is set, then `username` is ignored.
+    * `password` - The password to use for authenticating against the API.
+      If `token` is set, then `password` is ignored.
+
+    You can create the secret by using the `kubectl create secret` command.
+
+    ```sh
+    kubectl create secret generic quay-credentials --from-literal host=https://quay.example.com:8443 --from-literal validateCerts=false --from-literal token=vFYyU2D0fHYXvcA3Y5TYfMrIMyVIH9YmxoVLsmku
+    ```
+
+    Or you can create the secret from a resource file.
+
+    ```yaml
+    apiVersion: v1
+    kind: Secret
+    metadata:
+      name: quay-credentials
+    stringData:
+      host: https://quay.example.com:8443
+      validateCerts: "false"
+      token: vFYyU2D0fHYXvcA3Y5TYfMrIMyVIH9YmxoVLsmku
+    ```
+
+    You refer to this secret in your Quay custom resources by using the `connSecretRef` option.
+
+    ```yaml
+    apiVersion: {{ config.QUALIFIED_GROUP }}/{{ config.VERSION }}
+    kind: Organization
+    metadata:
+      name: organization-sample
+    spec:
+      # Connection parameters in a Secret resource
+      connSecretRef:
+        name: quay-credentials
+        # By default, the operator looks for the secret in the same namespace as
+        # the organization resource, but you can specify a different namespace.
+        # namespace: mynamespace
+
+      name: production
+      email: prodlist@example.com
+      timeMachineExpiration: 7d
+      autoPruneMethod: tags
+      autoPruneValue: "20"
+      preserveInQuayOnDeletion: false
+    ```
+
+    More examples are available on [GitHub](https://github.com/herve4m/quay-api-operator/tree/main/config/samples).
+  displayName: API Operator for Quay
+  icon:
+  - base64data: PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTguNTEgMjU4LjUxIj48ZGVmcz48c3R5bGU+LmNscy0xe2ZpbGw6I2QxZDFkMTt9LmNscy0ye2ZpbGw6IzhkOGQ4Zjt9PC9zdHlsZT48L2RlZnM+PHRpdGxlPkFzc2V0IDQ8L3RpdGxlPjxnIGlkPSJMYXllcl8yIiBkYXRhLW5hbWU9IkxheWVyIDIiPjxnIGlkPSJMYXllcl8xLTIiIGRhdGEtbmFtZT0iTGF5ZXIgMSI+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJNMTI5LjI1LDIwQTEwOS4xLDEwOS4xLDAsMCwxLDIwNi40LDIwNi40LDEwOS4xLDEwOS4xLDAsMSwxLDUyLjExLDUyLjExLDEwOC40NSwxMDguNDUsMCwwLDEsMTI5LjI1LDIwbTAtMjBoMEM1OC4xNiwwLDAsNTguMTYsMCwxMjkuMjVIMGMwLDcxLjA5LDU4LjE2LDEyOS4yNiwxMjkuMjUsMTI5LjI2aDBjNzEuMDksMCwxMjkuMjYtNTguMTcsMTI5LjI2LTEyOS4yNmgwQzI1OC41MSw1OC4xNiwyMDAuMzQsMCwxMjkuMjUsMFoiLz48cGF0aCBjbGFzcz0iY2xzLTIiIGQ9Ik0xNzcuNTQsMTAzLjQxSDE0MS42NkwxNTQuOSw2NS43NmMxLjI1LTQuNC0yLjMzLTguNzYtNy4yMS04Ljc2SDEwMi45M2E3LjMyLDcuMzIsMCwwLDAtNy40LDZsLTEwLDY5LjYxYy0uNTksNC4xNywyLjg5LDcuODksNy40LDcuODloMzYuOUwxMTUuNTUsMTk3Yy0xLjEyLDQuNDEsMi40OCw4LjU1LDcuMjQsOC41NWE3LjU4LDcuNTgsMCwwLDAsNi40Ny0zLjQ4TDE4NCwxMTMuODVDMTg2Ljg2LDEwOS4yNCwxODMuMjksMTAzLjQxLDE3Ny41NCwxMDMuNDFaIi8+PC9nPjwvZz48L3N2Zz4=
+    mediatype: image/svg+xml
+  install:
+    spec:
+      deployments: null
+    strategy: ""
+  installModes:
+  - supported: true
+    type: OwnNamespace
+  - supported: true
+    type: SingleNamespace
+  - supported: true
+    type: MultiNamespace
+  - supported: true
+    type: AllNamespaces
+  keywords:
+  - API
+  - Quay
+  - containers
+  - registry
+  - gitops
+  links:
+  - name: Operator Documentation
+    url: https://herve4m.github.io/quay-api-operator/
+  - name: Project Quay
+    url: https://www.projectquay.io/
+  maintainers:
+  - email: herve.quatremain@redhat.com
+    name: Hervé Quatremain
+  maturity: alpha
+  minKubeVersion: 1.27.0
+  nativeAPIs:
+  - group: ""
+    kind: Secret
+    version: v1
+  provider:
+    name: Quay Community
+  version: 0.0.0

@@ -1,0 +1,31 @@
+---
+apiVersion: quay.herve4m.github.io/v1alpha1
+kind: RepositoryMirror
+metadata:
+  name: repositorymirror-sample
+spec:
+  # Connection parameters in a Secret resource
+  connSecretRef:
+    name: quay-credentials-secret
+    # By default, the operator looks for the secret in the same namespace as
+    # the repositorymirror resource, but you can specify a different namespace.
+    # namespace: mynamespace
+
+  # Whether to preserve the corresponding configuration in Quay when you
+  # delete the resource.
+  preserveInQuayOnDeletion: false
+
+  name: production/ubi9
+  isEnabled: true
+  externalReference: registry.access.redhat.com/ubi9-micro
+  verifyTls: true
+  httpProxy: http://proxy.example.com:3128
+  noProxy: registry.access.redhat.com
+  # externalRegistryUsername: jsmith
+  # externalRegistryPassword: Sup3r53cr3t
+  robotUsername: production+robotprod1
+  imageTags:
+    - "9.4"
+    - "9.3"
+  syncInterval: 172800
+  syncStartDate: 2023-05-25T21:06:00Z

@@ -1,0 +1,121 @@
+---
+apiVersion: v1
+kind: List
+metadata: {}
+items:
+  - apiVersion: v1
+    kind: Secret
+    metadata:
+      name: postgresql
+      labels:
+        app: postgresql
+    stringData:
+      database-name: quay
+      database-password: quaypass
+      database-user: quayuser
+      database-admin-password: adminpass
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: postgresql
+      labels:
+        app: postgresql
+    data:
+      postgresql-extension.sh: |
+        #!/bin/sh
+        echo '>>>>>> Extension start'
+        psql -d $POSTGRESQL_DATABASE -U $POSTGRESQL_USER -c 'CREATE EXTENSION IF NOT EXISTS pg_trgm'
+        echo '>>>>>> Extension finish'
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: postgresql
+      labels:
+        app: postgresql
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          app: postgresql
+      strategy:
+        type: Recreate
+      template:
+        metadata:
+          labels:
+            app: postgresql
+        spec:
+          containers:
+            - capabilities: {}
+              env:
+                - name: POSTGRESQL_USER
+                  valueFrom:
+                    secretKeyRef:
+                      key: database-user
+                      name: postgresql
+                - name: POSTGRESQL_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      key: database-password
+                      name: postgresql
+                - name: POSTGRESQL_DATABASE
+                  valueFrom:
+                    secretKeyRef:
+                      key: database-name
+                      name: postgresql
+                - name: POSTGRESQL_ADMIN_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      key: database-admin-password
+                      name: postgresql
+              image: registry.redhat.io/rhel9/postgresql-15:1
+              imagePullPolicy: IfNotPresent
+              livenessProbe:
+                exec:
+                  command:
+                    - /usr/libexec/check-container
+                    - --live
+                initialDelaySeconds: 120
+                timeoutSeconds: 10
+              name: postgresql
+              ports:
+                - containerPort: 5432
+                  protocol: TCP
+              readinessProbe:
+                exec:
+                  command:
+                    - /usr/libexec/check-container
+                initialDelaySeconds: 5
+                timeoutSeconds: 1
+              resources:
+                limits:
+                  memory: 512Mi
+              securityContext:
+                capabilities: {}
+                privileged: false
+              terminationMessagePath: /dev/termination-log
+              volumeMounts:
+                - mountPath: /var/lib/pgsql/data
+                  name: postgresql-data
+                - mountPath: /opt/app-root/src/postgresql-start
+                  name: extension
+          volumes:
+            - emptyDir:
+                medium: ""
+              name: postgresql-data
+            - name: extension
+              configMap:
+                name: postgresql
+                defaultMode: 0777
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      labels:
+        app: postgresql
+      name: postgresql
+    spec:
+      ports:
+        - port: 5432
+          protocol: TCP
+          targetPort: 5432
+      selector:
+        app: postgresql

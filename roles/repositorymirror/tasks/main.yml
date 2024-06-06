@@ -1,0 +1,63 @@
+---
+- name: Ensure the repositorymirror resource exists
+  block:
+    - name: Ensure the secret resource that stores the Quay parameters exists
+      ansible.builtin.fail:
+        msg: "connSecretRef: {{ conn_secret_ref['name'] }}: secret not found"
+      when:
+        - not secret_found
+
+    - name: Ensure the repositorymirror resource exists in Quay
+      herve4m.quay.quay_repository_mirror:
+        quay_host: "{{ quay_host | default(omit) }}"
+        validate_certs: "{{ validate_certs | default(omit) }}"
+        quay_token: "{{ quay_token | default(omit, true) }}"
+        quay_username: "{{ omit if quay_token is defined and quay_token | length > 0 else quay_username | default(omit) }}"
+        quay_password: "{{ omit if quay_token is defined and quay_token | length > 0 else quay_password | default(omit) }}"
+        external_reference: "{{ external_reference | default(omit) }}"
+        external_registry_password: "{{ external_registry_password | default(omit) }}"
+        external_registry_username: "{{ external_registry_username | default(omit) }}"
+        force_sync: "{{ force_sync | default(omit) }}"
+        http_proxy: "{{ http_proxy | default(omit) }}"
+        https_proxy: "{{ https_proxy | default(omit) }}"
+        image_tags: "{{ image_tags | default(omit) }}"
+        is_enabled: "{{ is_enabled | default(omit) }}"
+        name: "{{ name | default(omit) }}"
+        no_proxy: "{{ no_proxy | default(omit) }}"
+        robot_username: "{{ robot_username | default(omit) }}"
+        sync_interval: "{{ sync_interval | default(omit) }}"
+        sync_start_date: "{{ sync_start_date | default(omit) }}"
+        verify_tls: "{{ verify_tls | default(omit) }}"
+      register: ret
+
+    - name: Ensure the existInQuay flag is set in the resource status
+      operator_sdk.util.k8s_status:
+        api_version: quay.herve4m.github.io/v1alpha1
+        kind: RepositoryMirror
+        name: "{{ ansible_operator_meta['name'] }}"
+        namespace: "{{ ansible_operator_meta['namespace'] }}"
+        status:
+          existInQuay: true
+
+  rescue:
+    - name: Ensure the error message is set in the resource status
+      operator_sdk.util.k8s_status:
+        api_version: quay.herve4m.github.io/v1alpha1
+        kind: RepositoryMirror
+        name: "{{ ansible_operator_meta['name'] }}"
+        namespace: "{{ ansible_operator_meta['namespace'] }}"
+        status:
+          message: "{{ ansible_failed_result['msg'] }}"
+
+    - name: Ensure the error is raised
+      ansible.builtin.fail:
+        msg: "{{ ansible_failed_result['msg'] }}"
+
+- name: Ensure the error message is cleared from the resource status
+  operator_sdk.util.k8s_status:
+    api_version: quay.herve4m.github.io/v1alpha1
+    kind: RepositoryMirror
+    name: "{{ ansible_operator_meta['name'] }}"
+    namespace: "{{ ansible_operator_meta['namespace'] }}"
+    status:
+      message: ""

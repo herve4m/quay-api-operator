@@ -1,0 +1,179 @@
+---
+apiVersion: v1
+kind: List
+metadata: {}
+items:
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: quay
+      labels:
+        app: quay
+    data:
+      config.yaml: |
+        FEATURE_USER_INITIALIZE: true
+        ALLOW_PULLS_WITHOUT_STRICT_LOGGING: true
+        AUTHENTICATION_TYPE: Database
+        BUILDLOGS_REDIS:
+          host: redis
+          password: strongpassword
+          port: 6379
+        DATABASE_SECRET_KEY: 73556fef-7ba0-4997-a84c-c45a93545be6
+        DB_CONNECTION_ARGS: {}
+        DB_URI: postgresql://quayuser:quaypass@postgresql:5432/quay
+        DISTRIBUTED_STORAGE_CONFIG:
+          default:
+            - LocalStorage
+            - storage_path: /datastorage/registry
+        DISTRIBUTED_STORAGE_DEFAULT_LOCATIONS: []
+        DISTRIBUTED_STORAGE_PREFERENCE:
+          - default
+        FEATURE_ACI_CONVERSION: false
+        FEATURE_APP_REGISTRY: false
+        FEATURE_BUILD_SUPPORT: false
+        FEATURE_MAILING: false
+        FEATURE_PROXY_CACHE: true
+        FEATURE_UI_V2: true
+        FEATURE_UI_V2_REPO_SETTINGS: true
+        FEATURE_AUTO_PRUNE: true
+        FEATURE_QUOTA_MANAGEMENT: true
+        FEATURE_REPO_MIRROR: true
+        FEATURE_RESTRICTED_V1_PUSH: true
+        FEATURE_SECURITY_SCANNER: true
+        FEATURE_TEAM_SYNCING: true
+        FEATURE_USER_RENAME: true
+        FEATURE_USERNAME_CONFIRMATION: false
+        GPG2_PRIVATE_KEY_FILENAME: signing-private.gpg
+        GPG2_PUBLIC_KEY_FILENAME: signing-public.gpg
+        LDAP_ADMIN_DN: cn=admin,dc=example,dc=org
+        LDAP_ADMIN_PASSWD: redhat123
+        LDAP_ALLOW_INSECURE_FALLBACK: false
+        LDAP_BASE_DN:
+          - dc=example
+          - dc=org
+        LDAP_EMAIL_ATTR: mail
+        LDAP_UID_ATTR: uid
+        LDAP_URI: ldap://localhost:1389
+        LDAP_USER_RDN:
+          - ou=users
+        MAIL_DEFAULT_SENDER: support@quay.io
+        MAIL_PORT: 25
+        MAIL_SERVER: localhost
+        MAIL_USE_AUTH: false
+        MAIL_USE_TLS: false
+        TESTING: false
+        REPO_MIRROR_TLS_VERIFY: false
+        SECRET_KEY: 4fe64516-c1cc-4715-a30f-6a4bde223847
+        SECURITY_SCANNER_V4_ENDPOINT: http://fake-clair
+        SECURITY_SCANNER_V4_PSK: MmNiOTBoNWdnNzli
+        # CHANGE_ME:
+        # oc get ingresscontroller/default -n openshift-ingress-operator -o jsonpath='{.spec.domain}'
+        SERVER_HOSTNAME: quay-quay.<CHANGE_ME>
+        PREFERRED_URL_SCHEME: https
+        EXTERNAL_TLS_TERMINATION: true
+        SETUP_COMPLETE: true
+        SUPER_USERS:
+          - admin
+          - admin1
+        USER_EVENTS_REDIS:
+          host: redis
+          password: strongpassword
+          port: 6379
+        USERFILES_LOCATION: default
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      labels:
+        app: quay
+      name: quay
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          app: quay
+      template:
+        metadata:
+          labels:
+            app: quay
+        spec:
+          initContainers:
+            - name: setup-configs
+              image: registry.access.redhat.com/ubi9/ubi:latest
+              command:
+                - sh
+                - -c
+                - "cp /tmp/src/config.yaml /tmp/dest/config.yaml && chmod 777 /tmp/dest/config.yaml"
+              securityContext:
+                capabilities:
+                  drop:
+                    - ALL
+                allowPrivilegeEscalation: false
+              volumeMounts:
+                - mountPath: /tmp/src
+                  name: config
+                - mountPath: /tmp/dest
+                  name: config-emptydir
+          containers:
+            - name: quay
+              image: quay.io/projectquay/quay:v3.11.0
+              resources:
+                requests:
+                  memory: 1Gi
+              ports:
+                - containerPort: 8080
+              readinessProbe:
+                initialDelaySeconds: 20
+                httpGet:
+                  path: /health/instance
+                  port: 8080
+              livenessProbe:
+                initialDelaySeconds: 35
+                httpGet:
+                  path: /health/instance
+                  port: 8080
+              securityContext:
+                capabilities:
+                  drop:
+                    - ALL
+                allowPrivilegeEscalation: false
+              volumeMounts:
+                - name: config-emptydir
+                  mountPath: /conf/stack
+          securityContext:
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
+          volumes:
+            - name: config-emptydir
+              emptyDir: {}
+            - name: config
+              configMap:
+                name: quay
+                defaultMode: 0777
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      labels:
+        app: quay
+      name: quay
+    spec:
+      ports:
+        - protocol: TCP
+          port: 8080
+          targetPort: 8080
+      selector:
+        app: quay
+  - apiVersion: route.openshift.io/v1
+    kind: Route
+    metadata:
+      labels:
+        app: quay
+      name: quay
+    spec:
+      port:
+        targetPort: 8080
+      to:
+        kind: Service
+        name: quay
+      tls:
+        termination: edge

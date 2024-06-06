@@ -1,0 +1,29 @@
+---
+apiVersion: quay.herve4m.github.io/v1alpha1
+kind: Team
+metadata:
+  name: team-sample
+spec:
+  # Connection parameters in a Secret resource
+  connSecretRef:
+    name: quay-credentials-secret
+    # By default, the operator looks for the secret in the same namespace as
+    # the team resource, but you can specify a different namespace.
+    # namespace: mynamespace
+
+  # Whether to preserve the corresponding Quay object when you
+  # delete the resource.
+  preserveInQuayOnDeletion: false
+
+  name: operators
+  organization: production
+  description: |
+    # Operation Team
+
+    * Operators can create repositories
+    * Operators can store their images in those repositories
+  role: creator
+  members:
+    - dwilde
+    - production+robotprod1
+  append: false

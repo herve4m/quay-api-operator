@@ -1,0 +1,24 @@
+---
+apiVersion: quay.herve4m.github.io/v1alpha1
+kind: Notification
+metadata:
+  name: notification-sample
+spec:
+  # Connection parameters in a Secret resource
+  connSecretRef:
+    name: quay-credentials-secret
+    # By default, the operator looks for the secret in the same namespace as
+    # the notification resource, but you can specify a different namespace.
+    # namespace: mynamespace
+
+  # Whether to preserve the corresponding Quay object when you
+  # delete the resource.
+  preserveInQuayOnDeletion: false
+
+  repository: production/smallimage
+  title: Notify critical image vulnerabilities to Slack
+  event: vulnerability_found
+  vulnerabilityLevel: critical
+  method: slack
+  config:
+    url: https://hooks.slack.com/services/XXX/YYY/ZZZ

@@ -1,0 +1,56 @@
+---
+# In Quay, the mirroring configuration cannot be removed. It can only be
+# disabled.
+- name: Ensure the resource does not exist in Quay
+  when:
+    - {{ resource.ansible_var }} is defined
+    - "'status' in {{ resource.ansible_var }}"
+    - "'existInQuay' in {{ resource.ansible_var }}['status']"
+    - {{ resource.ansible_var }}['status']['existInQuay']
+    - "'spec' not in {{ resource.ansible_var }}
+      or 'preserveInQuayOnDeletion' not in {{ resource.ansible_var }}['spec']
+      or not {{ resource.ansible_var }}['spec']['preserveInQuayOnDeletion']"
+  block:
+{%- raw %}
+    - name: Ensure the secret resource that stores the Quay parameters exists
+      ansible.builtin.fail:
+        msg: "connSecretRef: {{ conn_secret_ref['name'] }}: secret not found"
+      when:
+        - not secret_found
+{%- endraw %}
+
+    - name: Ensure mirroring is disabled
+      {{ resource.ansible_full_name }}:
+        is_enabled: false
+{%- raw %}
+        quay_host: "{{ quay_host | default(omit) }}"
+        validate_certs: "{{ validate_certs | default(omit) }}"
+        quay_token: "{{ quay_token | default(omit, true) }}"
+        quay_username: "{{ omit if quay_token is defined and quay_token | length > 0 else quay_username | default(omit) }}"
+        quay_password: "{{ omit if quay_token is defined and quay_token | length > 0 else quay_password | default(omit) }}"
+{%- endraw %}
+{%- for item in options %}
+{%- if item != "is_enabled" %}
+        {{ item }}: {{ "\"{{ " + item + " | default(omit) }}\"" -}}
+{%- endif %}
+{%- endfor %}
+      register: ret
+      failed_when:
+        - ret['failed']
+        - "'not_found' not in ret['msg']"
+
+  rescue:
+    - name: Ensure the error message is set in the resource status
+      operator_sdk.util.k8s_status:
+        api_version: {{ config.QUALIFIED_GROUP }}/{{ config.VERSION }}
+        kind: {{ resource.kind }}
+{%- raw %}
+        name: "{{ ansible_operator_meta['name'] }}"
+        namespace: "{{ ansible_operator_meta['namespace'] }}"
+        status:
+          message: "{{ ansible_failed_result['msg'] }}"
+
+    - name: Ensure the error is raised
+      ansible.builtin.fail:
+        msg: "{{ ansible_failed_result['msg'] }}"
+{%- endraw %}

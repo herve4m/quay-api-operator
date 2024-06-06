@@ -1,0 +1,29 @@
+---
+apiVersion: quay.herve4m.github.io/v1alpha1
+kind: ManifestLabel
+metadata:
+  name: manifestlabel-sample
+spec:
+  # Connection parameters in a Secret resource
+  connSecretRef:
+    name: quay-credentials-secret
+    # By default, the operator looks for the secret in the same namespace as
+    # the manifestlabel resource, but you can specify a different namespace.
+    # namespace: mynamespace
+
+  # Whether to preserve the corresponding Quay object when you
+  # delete the resource.
+  preserveInQuayOnDeletion: false
+
+  image: production/smallimage:v1.4.3
+  key: component
+  value: front
+  replace: true
+
+  # The Secret resource is created or updated, and stores the returned data.
+  # Some details of the manifest label are stored in this secret.
+  retSecretRef:
+    name: manifestlabel-sample-ret-secret
+    # By default, the operator stores the secret in the same namespace as the
+    # manifestlabel resource, but you can specify a different namespace.
+    # namespace: mynamespace

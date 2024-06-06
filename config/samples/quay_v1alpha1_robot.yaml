@@ -1,0 +1,32 @@
+---
+apiVersion: quay.herve4m.github.io/v1alpha1
+kind: Robot
+metadata:
+  name: robot-sample
+spec:
+  # Connection parameters in a Secret resource
+  connSecretRef:
+    name: quay-credentials-secret
+    # By default, the operator looks for the secret in the same namespace as
+    # the robot resource, but you can specify a different namespace.
+    # namespace: mynamespace
+
+  # Whether to preserve the corresponding Quay object when you
+  # delete the resource.
+  preserveInQuayOnDeletion: false
+
+  name: production+robotprod1
+  description: Robot account for production
+
+  # The Secret resource is created or updated, and stores the returned data.
+  # You can use the secret as a pull secret so that pods can pull images from
+  # Quay by using the robot account credentials.
+  # The secret contains three entries:
+  # - name: the token name (same as .spec.name), such as production+robotprod1
+  # - token: robot credential
+  # - .dockerconfigjson: Base64 encoded Docker configuration in JSON format
+  retSecretRef:
+    name: robot-sample-ret-secret
+    # By default, the operator stores the secret in the same namespace as the
+    # robot resource, but you can specify a different namespace.
+    # namespace: mynamespace
