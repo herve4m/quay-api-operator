@@ -68,12 +68,6 @@ jobs:
       - name: Import the local image into the K3D cluster
         run: k3d image import ${IMG}
 
-      # - name: Configure the manager to use the local image
-      #   run: |
-      #     set -x
-      #     cp config/testing/pull_policy/Never.yaml config/manager
-      #     cd config/manager && kustomize edit add patch --path Never.yaml
-
       - name: Deploy the operator in the K3D cluster
         run: make deploy
         env:
