@@ -68,9 +68,9 @@ items:
         SECURITY_SCANNER_V4_PSK: MmNiOTBoNWdnNzli
         # CHANGE_ME:
         # oc get ingresscontroller/default -n openshift-ingress-operator -o jsonpath='{.spec.domain}'
-        SERVER_HOSTNAME: quay-quay.<CHANGE_ME>
+        SERVER_HOSTNAME: quay.quay.svc.cluster.local
         PREFERRED_URL_SCHEME: https
-        EXTERNAL_TLS_TERMINATION: true
+        EXTERNAL_TLS_TERMINATION: false
         SETUP_COMPLETE: true
         SUPER_USERS:
           - admin
@@ -80,6 +80,93 @@ items:
           password: strongpassword
           port: 6379
         USERFILES_LOCATION: default
+      # openssl req -x509 -newkey rsa:4096 -sha256 -days 3650 -nodes -keyout ssl.key -out ssl.cert -subj "/CN=quay.quay.svc.cluster.local" -addext "subjectAltName=DNS:quay.quay.svc.cluster.local,DNS:*.quay.svc.cluster.local"
+      ssl.key: |
+        -----BEGIN PRIVATE KEY-----
+        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
+        cTT9NSYBzjO1G8ephou8Apy1y5kJbXFx
+        -----END PRIVATE KEY-----
+      ssl.cert: |
+        -----BEGIN CERTIFICATE-----
+        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
+        7/+wb+8=
+        -----END CERTIFICATE-----
   - apiVersion: apps/v1
     kind: Deployment
     metadata:
@@ -102,8 +189,9 @@ items:
               command:
                 - sh
                 - -c
-                - "cp /tmp/src/config.yaml /tmp/dest/config.yaml && chmod 777 /tmp/dest/config.yaml"
+                - "cp /tmp/src/{config.yaml,ssl.*} /tmp/dest/ && chmod 777 /tmp/dest/{config.yaml,ssl.*}"
               securityContext:
+                runAsNonRoot: false
                 capabilities:
                   drop:
                     - ALL
@@ -118,19 +206,21 @@ items:
               image: quay.io/projectquay/quay:v3.11.0
               resources:
                 requests:
-                  memory: 1Gi
+                  memory: 128Mi
               ports:
-                - containerPort: 8080
+                - containerPort: 8443
               readinessProbe:
-                initialDelaySeconds: 20
+                initialDelaySeconds: 30
                 httpGet:
+                  scheme: HTTPS
                   path: /health/instance
-                  port: 8080
+                  port: 8443
               livenessProbe:
-                initialDelaySeconds: 35
+                initialDelaySeconds: 45
                 httpGet:
+                  scheme: HTTPS
                   path: /health/instance
-                  port: 8080
+                  port: 8443
               securityContext:
                 capabilities:
                   drop:
@@ -159,21 +249,21 @@ items:
     spec:
       ports:
         - protocol: TCP
-          port: 8080
-          targetPort: 8080
+          port: 443
+          targetPort: 8443
       selector:
         app: quay
-  - apiVersion: route.openshift.io/v1
-    kind: Route
-    metadata:
-      labels:
-        app: quay
-      name: quay
-    spec:
-      port:
-        targetPort: 8080
-      to:
-        kind: Service
-        name: quay
-      tls:
-        termination: edge
+# - apiVersion: route.openshift.io/v1
+#   kind: Route
+#   metadata:
+#     labels:
+#       app: quay
+#     name: quay
+#   spec:
+#     port:
+#       targetPort: 8443
+#     to:
+#       kind: Service
+#       name: quay
+#     tls:
+#       termination: edge

@@ -30,16 +30,13 @@ items:
             app: redis
         spec:
           containers:
-            - capabilities: {}
-              env:
+            - env:
                 - name: REDIS_PASSWORD
                   valueFrom:
                     secretKeyRef:
                       key: database-password
                       name: redis
-              image: registry.redhat.io/rhel9/redis-7:1
-              imagePullPolicy: IfNotPresent
-
+              image: quay.io/fedora/redis-7:latest
               livenessProbe:
                 initialDelaySeconds: 30
                 tcpSocket:
@@ -60,7 +57,7 @@ items:
                 timeoutSeconds: 1
               resources:
                 limits:
-                  memory: 512Mi
+                  memory: 64Mi
               securityContext:
                 capabilities: {}
                 privileged: false
