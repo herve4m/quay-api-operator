@@ -99,49 +99,36 @@ Before you can test the Operator, you need to prepare your cluster:
 1. [Build and publish](building.md) the container image.
 2. [Deploy](deploying.md) the Operator.
 3. Deploy a Quay instance for running the tests.
-   You can use the [Quay Operator](https://github.com/quay/quay-operator), or use the following instructions to deploy a test Quay instance in OpenShift.
+   You can use the [Quay Operator](https://github.com/quay/quay-operator), or use the following instructions to deploy a test Quay instance in Kubernetes or OpenShift.
 
-### Deploying Quay in OpenShift
+### Deploying Quay in Kubernetes or OpenShift
 
-The following instructions require an OpenShift cluster, with at least 3 GiB of memory available on a node.
+The following instructions require a Kubernetes or OpenShift cluster, with at least 3 GiB of memory available on a node.
 The Quay instance uses ephemeral storage, and you should use it only for testing the Operator.
 
 The resources in YAML format are available in the `scripts/Quay-in-OpenShift` directory.
 
-1. Retrieve the DNS domain of your cluster.
-   The following `oc` command might provide you with that information, otherwise review the domain of the existing route resources (`oc get routes -A`):
-
-        oc get ingresscontroller/default -n openshift-ingress-operator -o jsonpath='{.spec.domain}'
-
-2. Change to the `scripts/Quay-in-OpenShift` directory.
+1. Change to the `scripts/Quay-in-OpenShift` directory.
 
         cd ./scripts/Quay-in-OpenShift
 
-3. Edit the `quay.yaml` file, and replace the `<CHANGE_ME>` placeholder in the `SERVER_HOSTNAME` variable with the DNS domain:
+2. Create the `quay` Kubernetes namespace to host the Quay instance.
+   Do not use a different name, because the resources rely on this name.
 
-        ...
-        SECURITY_SCANNER_V4_ENDPOINT: http://fake-clair
-        SECURITY_SCANNER_V4_PSK: MmNiOTBoNWdnNzli
-        # CHANGE_ME:
-        # oc get ingresscontroller/default -n openshift-ingress-operator -o jsonpath='{.spec.domain}'
-        SERVER_HOSTNAME: quay-quay.<DNS-domain>
-        PREFERRED_URL_SCHEME: https
-        EXTERNAL_TLS_TERMINATION: true
-        ...
+        kubectl create namespace quay
 
-4. Create a new OpenShift project to host the Quay instance:
+3. Deploy the resources from the YAML files:
 
-        oc new-project quay
+        kubectl apply -n quay -f postgresql.yaml
+        kubectl apply -n quay -f redis.yaml
+        kubectl apply -n quay -f fake-clair.yaml
+        sleep 20   # Give time for the pods to be up and running
+        kubectl apply -n quay -f quay.yaml
+        sleep 60   # Give time for Quay to start (it might restart a few times)
+        kubectl get pods -n quay # All pods should be up and running
 
-5. Deploy the resources from the YAML files:
-
-        oc apply -f postgresql.yaml
-        oc apply -f redis.yaml
-        oc apply -f fake-clair.yaml
-        sleep 20   # Give time to the pods to be up and running
-        oc apply -f quay.yaml
-        sleep 60   # Give time to Quay to start (it might restart a few times)
-        oc get pods  # All pods should be up and running
+The Quay instance is accessible only as a service, and is not accessible from outside the cluster.
+The Quay instance is available at `https://quay.quay.svc.cluster.local` from inside the cluster.
 
 This Quay installation enables the first user creation feature (`FEATURE_USER_INITIALIZE` in `config.yaml`), which allows you to test the `FirstUser` Kubernetes resource to bootstrap Quay.
 
@@ -151,7 +138,7 @@ The `config/samples` directory stores some sample resource files in YAML format 
 
 The resources refer to Secrets to retrieve the Quay connection parameters.
 However, you only have to create the Secret for the `FirstUser` resource, which in turn creates a Secret to store the temporary Quay credentials.
-Then, the `ApiToken` resource uses that new secret to generate a permanent OAuth token that it stores in a third Secret resource, which in turn is used by all the other resources.
+Then, the `ApiToken` resource uses that new secret to generate a permanent OAuth access token that it stores in a third Secret resource, which in turn is used by all the other resources.
 
 ```mermaid
 flowchart TD
@@ -188,18 +175,19 @@ flowchart TD
 
 ```
 
-Before applying the resources, create a project and the Secret for the `FirstUser` resource.
-In the following command, replace the `<DNS-domain>` placeholder by the domain of your OpenShift cluster.
+Before applying the resources, create a namespace and the Secret for the `FirstUser` resource.
 
 ```sh
-oc new-project test-operator
-oc create secret generic quay-connection-secret --from-literal host=https://quay-quay.<DNS-domain> --from-literal validateCerts=false
+kubectl create namespace test-operator
+kubectl create secret generic quay-connection-secret -n test-operator \
+  --from-literal host=https://quay.quay.svc.cluster.local \
+  --from-literal validateCerts=false
 ```
 
-Use the `oc apply` command to deploy all the resources:
+Use the `kubectl apply` command to deploy all the resources:
 
 ```sh
-oc apply -k config/samples
+kubectl apply -n test-operator -k config/samples
 ```
 
 Most resources initially report an error state, because the Secret that provides the Quay connection parameters does not exist yet (the `FirstUser` and `ApiToken` resources must complete first).
@@ -229,7 +217,7 @@ for i in apitoken.quay.herve4m.github.io/apitoken-sample \
   teamoidc.quay.herve4m.github.io/teamoidc-sample \
   user.quay.herve4m.github.io/user-sample
 do
-  oc get --no-headers $i
+  kubectl get -n test-operator --no-headers $i
 done
 ```
 
@@ -239,11 +227,12 @@ done
 
 ### Deleting the Test Resources
 
-Delete the resources by using the `oc delete` command.
+Delete the resources by using the `kubectl delete` command.
 Delete the Organization, Application, ApiToken, and FirstUser resources at the end, because they control the secrets  that the other resources uses to access Quay.
 
 ```sh
-oc delete defaultperm.quay.herve4m.github.io/defaultperm-sample \
+kubectl delete -n test-operator \
+  defaultperm.quay.herve4m.github.io/defaultperm-sample \
   dockertoken.quay.herve4m.github.io/dockertoken-sample \
   manifestlabel.quay.herve4m.github.io/manifestlabel-sample \
   message.quay.herve4m.github.io/message-sample \
@@ -259,15 +248,16 @@ oc delete defaultperm.quay.herve4m.github.io/defaultperm-sample \
   teamldap.quay.herve4m.github.io/teamldap-sample \
   teamoidc.quay.herve4m.github.io/teamoidc-sample \
   user.quay.herve4m.github.io/user-sample
-oc delete apitoken.quay.herve4m.github.io/apitoken-sample \
+kubectl delete -n test-operator \
+  apitoken.quay.herve4m.github.io/apitoken-sample \
   application.quay.herve4m.github.io/application-sample \
   organization.quay.herve4m.github.io/organization-sample
-oc delete firstuser.quay.herve4m.github.io/firstuser-sample
-oc delete project test-operator
+kubectl delete -n test-operator firstuser.quay.herve4m.github.io/firstuser-sample
+kubectl delete namespace test-operator
 ```
 
-You can delete the Quay installation by deleting the `quay` project:
+You can delete the Quay installation by deleting the `quay` namespace:
 
 ```sh
-oc delete project quay
+kubectl delete namespace quay
 ```
