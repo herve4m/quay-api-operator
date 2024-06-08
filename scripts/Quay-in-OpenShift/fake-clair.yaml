@@ -32,7 +32,7 @@ items:
               image: registry.access.redhat.com/ubi9/httpd-24:1
               resources:
                 requests:
-                  memory: 256Mi
+                  memory: 64Mi
               ports:
                 - containerPort: 8080
               livenessProbe:
