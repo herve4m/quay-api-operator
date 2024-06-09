@@ -12,6 +12,7 @@ provisioner:
   playbooks:
     prepare: ../default/prepare.yml
     verify: ../default/verify.yml
+    cleanup: ../default/cleanup.yml
   inventory:
     group_vars:
       all:
