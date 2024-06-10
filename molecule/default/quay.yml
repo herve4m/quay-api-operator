@@ -11,10 +11,9 @@
     namespace: quay
     state: '{{ state }}'
     wait: true
-    wait_timeout: 300
     definition: "{{ item | ansible.builtin.from_yaml_all }}"
   with_file:
-    - ../../scripts/Quay-in-OpenShift/postgresql.yaml
-    - ../../scripts/Quay-in-OpenShift/redis.yaml
-    - ../../scripts/Quay-in-OpenShift/fake-clair.yaml
-    - ../../scripts/Quay-in-OpenShift/quay.yaml
+    - quay/postgresql.yaml
+    - quay/redis.yaml
+    - quay/fake-clair.yaml
+    - quay/quay.yaml

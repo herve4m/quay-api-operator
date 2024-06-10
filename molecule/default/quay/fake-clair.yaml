@@ -1,0 +1,79 @@
+---
+apiVersion: v1
+kind: List
+metadata: {}
+items:
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: fake-clair
+      labels:
+        app: fake-clair
+    data:
+      index.html: Hello world
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      labels:
+        app: fake-clair
+      name: fake-clair
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          app: fake-clair
+      template:
+        metadata:
+          labels:
+            app: fake-clair
+        spec:
+          containers:
+            - name: fake-clair
+              image: registry.access.redhat.com/ubi9/httpd-24:1
+              resources:
+                requests:
+                  memory: 64Mi
+              ports:
+                - containerPort: 8080
+              livenessProbe:
+                httpGet:
+                  path: /
+                  port: 8080
+                initialDelaySeconds: 30
+                timeoutSeconds: 3
+              readinessProbe:
+                httpGet:
+                  path: /
+                  port: 8080
+                initialDelaySeconds: 3
+                timeoutSeconds: 3
+              securityContext:
+                capabilities:
+                  drop:
+                    - ALL
+                allowPrivilegeEscalation: false
+              volumeMounts:
+                - name: index
+                  mountPath: /var/www/html
+          securityContext:
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
+          volumes:
+            - name: index
+              configMap:
+                name: fake-clair
+                defaultMode: 0444
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      labels:
+        app: fake-clair
+      name: fake-clair
+    spec:
+      ports:
+        - protocol: TCP
+          port: 8089
+          targetPort: 8080
+      selector:
+        app: fake-clair

@@ -1,0 +1,18 @@
+---
+- name: Create the quay.herve4m.github.io/v1alpha1.TeamLdap
+  kubernetes.core.k8s:
+    state: absent
+    namespace: '{{ namespace }}'
+    definition: "{{ lookup('ansible.builtin.template', '/'.join([samples_dir, cr_file])) | ansible.builtin.from_yaml }}"
+    wait: true
+    wait_timeout: 300
+    wait_condition:
+      type: Successful
+      status: "True"
+  vars:
+    cr_file: 'quay_v1alpha1_teamldap.yaml'
+
+- name: Add assertions here
+  assert:
+    that: false
+    fail_msg: FIXME Add real assertions for your operator
