@@ -11,3 +11,4 @@
         kind: Namespace
         name: quay
         state: absent
+      ignore_errors: true

@@ -14,7 +14,7 @@
         - name: Import all test files from tasks/
           ansible.builtin.include_tasks:
             file: "{{ item }}"
-          loop: "{{ query('ansible.builtin.fileglob', 'tasks/*.yaml') | sort }}"
+          loop: "{{ query('ansible.builtin.fileglob', 'tasks/[0-9]*.yml') | sort }}"
 
       rescue:
         - name: Retrieve relevant resources

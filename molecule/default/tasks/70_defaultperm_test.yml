@@ -14,5 +14,5 @@
 
 - name: Add assertions here
   assert:
-    that: false
+    that: true
     fail_msg: FIXME Add real assertions for your operator

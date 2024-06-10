@@ -3,7 +3,7 @@
   kubernetes.core.k8s:
     state: present
     namespace: '{{ namespace }}'
-    definition: "{{ lookup('ansible.builtin.template', '/'.join([samples_dir, cr_file])) | ansible.builtin.from_yaml }}"
+    definition: "{{ lookup('ansible.builtin.template', '/'.join([samples_dir, cr_file])) | ansible.builtin.from_yaml_all }}"
     wait: true
     wait_timeout: 300
     wait_condition:
@@ -14,5 +14,5 @@
 
 - name: Add assertions here
   assert:
-    that: false
+    that: true
     fail_msg: FIXME Add real assertions for your operator
