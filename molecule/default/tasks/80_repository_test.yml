@@ -11,8 +11,11 @@
       status: "True"
   vars:
     cr_file: 'quay_v1alpha1_repository.yaml'
+  register: ret
 
-- name: Add assertions here
-  assert:
-    that: true
-    fail_msg: FIXME Add real assertions for your operator
+- name: Ensure the resource is created in Quay
+  ansible.builtin.assert:
+    that:
+      - ret['result']['results'][0]['result']['status']['existInQuay']
+      - ret['result']['results'][1]['result']['status']['existInQuay']
+    fail_msg: The resource does not exist in Quay

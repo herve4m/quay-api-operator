@@ -1,8 +1,6 @@
 ---
 dependency:
   name: galaxy
-driver:
-  name: delegated
 platforms:
   - name: cluster
     groups:

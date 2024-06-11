@@ -11,8 +11,10 @@
       status: "True"
   vars:
     cr_file: 'quay_v1alpha1_teamldap.yaml'
+  register: ret
 
-- name: Add assertions here
-  assert:
+- name: Ensure the resource is created in Quay
+  ansible.builtin.assert:
+    # that: ret['result']['status']['existInQuay']
     that: true
-    fail_msg: FIXME Add real assertions for your operator
+    fail_msg: The resource does not exist in Quay
