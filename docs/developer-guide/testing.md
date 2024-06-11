@@ -106,11 +106,11 @@ Before you can test the Operator, you need to prepare your cluster:
 The following instructions require a Kubernetes or OpenShift cluster, with at least 3 GiB of memory available on a node.
 The Quay instance uses ephemeral storage, and you should use it only for testing the Operator.
 
-The resources in YAML format are available in the `scripts/Quay-in-OpenShift` directory.
+The resources in YAML format are available in the `molecule/default/quay` directory.
 
-1. Change to the `scripts/Quay-in-OpenShift` directory.
+1. Change to the `molecule/default/quay` directory.
 
-        cd ./scripts/Quay-in-OpenShift
+        cd ./molecule/default/quay
 
 2. Create the `quay` Kubernetes namespace to host the Quay instance.
    Do not use a different name, because the resources rely on this name.
