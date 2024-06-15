@@ -6,7 +6,7 @@
 
   tasks:
     - name: Build operator image
-      docker_image:
+      community.docker.docker_image:
         build:
           path: '{{ project_dir }}'
           pull: no

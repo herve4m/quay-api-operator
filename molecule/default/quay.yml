@@ -1,0 +1,19 @@
+---
+- name: Ensure the Quay namespace exists
+  kubernetes.core.k8s:
+    api_version: v1
+    kind: Namespace
+    name: quay
+    state: '{{ state }}'
+
+- name: Ensure the Quay resources are running
+  kubernetes.core.k8s:
+    namespace: quay
+    state: '{{ state }}'
+    wait: true
+    definition: "{{ item | ansible.builtin.from_yaml_all }}"
+  with_file:
+    - quay/postgresql.yaml
+    - quay/redis.yaml
+    - quay/fake-clair.yaml
+    - quay/quay.yaml

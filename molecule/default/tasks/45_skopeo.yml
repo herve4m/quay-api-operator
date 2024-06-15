@@ -1,0 +1,34 @@
+---
+- name: Ensure an image is available in production/smallimage
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: batch/v1
+      kind: Job
+      metadata:
+        name: skopeo
+        namespace: "{{ namespace }}"
+      spec:
+        template:
+          spec:
+            containers:
+              - name: skopeo
+                image: registry.access.redhat.com/ubi9/skopeo:latest
+                command:
+                  - skopeo
+                  - copy
+                  - --remove-signatures
+                  - --dest-authfile
+                  - /var/run/containers/.dockerconfigjson
+                  - --dest-tls-verify=false
+                  - docker://registry.access.redhat.com/ubi9-minimal:latest
+                  - docker://quay.quay.svc.cluster.local/production/smallimage:v1.4.3
+                volumeMounts:
+                  - name: dockerconf
+                    mountPath: /var/run/containers
+            restartPolicy: Never
+            volumes:
+              - name: dockerconf
+                secret:
+                  secretName: robot-sample-ret-secret
+        backoffLimit: 4

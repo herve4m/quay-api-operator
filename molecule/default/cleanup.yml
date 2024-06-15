@@ -1,0 +1,14 @@
+---
+- name: Cleanup
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  tasks:
+    - name: Delete the quay namespace
+      kubernetes.core.k8s:
+        api_version: v1
+        kind: Namespace
+        name: quay
+        state: absent
+      ignore_errors: true

@@ -1,0 +1,19 @@
+---
+- name: Create the quay.herve4m.github.io/v1alpha1.Tag
+  kubernetes.core.k8s:
+    state: present
+    namespace: '{{ namespace }}'
+    definition: "{{ lookup('ansible.builtin.template', '/'.join([samples_dir, cr_file])) | ansible.builtin.from_yaml }}"
+    wait: true
+    wait_timeout: 300
+    wait_condition:
+      type: Successful
+      status: "True"
+  vars:
+    cr_file: 'quay_v1alpha1_tag.yaml'
+  register: ret
+
+- name: Ensure the resource is created in Quay
+  ansible.builtin.assert:
+    that: ret['result']['status']['existInQuay']
+    fail_msg: The resource does not exist in Quay
