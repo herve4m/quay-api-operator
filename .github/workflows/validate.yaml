@@ -21,15 +21,6 @@ jobs:
       IMG: quay.io/herve4m/quay-api-operator:0.1.0
 
     steps:
-      - name: Install K3D and Create a Cluster
-        run: |
-          set -x
-          curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
-          sudo mkdir -p $HOME/.kube && sudo chown -R runner $HOME/.kube
-          k3d cluster create --servers 3
-          kubectl version
-          k3d version
-
       - uses: actions/checkout@v4
 
       - name: Build the manager container image
@@ -62,13 +53,16 @@ jobs:
       - name: Validate the bundle by using the k8s community validator
         run: k8s-community-bundle-validator bundle
 
+      - name: Create a Kind cluster
+        run: kind create cluster --wait 5m
+
       - name: Run scorecard tests
         run: ./bin/operator-sdk scorecard bundle
 
-      - name: Import the local image into the K3D cluster
-        run: k3d image import ${IMG}
+      - name: Import the local image into the Kind cluster
+        run: kind load docker-image ${IMG}
 
-      - name: Deploy the operator in the K3D cluster
+      - name: Deploy the operator in the Kind cluster
         run: make deploy
         env:
           VERSION: 0.1.0
