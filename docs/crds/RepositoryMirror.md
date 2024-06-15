@@ -66,7 +66,7 @@ spec:
   connSecretRef:
     name: quay-credentials
     # By default, the operator looks for the secret in the same namespace as
-    # the repositorymirror resource, but you can specify a different namespace.
+    # the RepositoryMirror resource, but you can specify a different namespace.
     # namespace: mynamespace
 
   # Whether to preserve the corresponding configuration in Quay when you
