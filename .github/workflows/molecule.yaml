@@ -12,7 +12,7 @@ permissions:
   contents: read
 
 jobs:
-  pre-commit:
+  molecule-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -26,4 +26,6 @@ jobs:
 
       - name: Run the kind molecule test
         run: molecule test --scenario-name kind
+        env:
+          ANSIBLE_FORCE_COLOR: '1'
 ...
