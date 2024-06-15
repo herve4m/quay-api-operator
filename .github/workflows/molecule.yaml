@@ -1,0 +1,29 @@
+---
+# This workflow action runs molecule.
+name: Test the Operator with Molecule
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install required packages
+        run: pip install -Iv molecule kubernetes
+
+      - name: Run the kind molecule test
+        run: molecule test --scenario-name kind
+...

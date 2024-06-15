@@ -99,7 +99,7 @@ jobs:
       - name: Verify that the manager pod is running
         run: |
           set -x
-          sleep 120
+          sleep 60
           kubectl get deploy quay-api-operator-controller-manager -n quay-api-operator-system  -o jsonpath='{.status.readyReplicas}' | grep -q 1
           if [ $? -ne 0 ]
           then
