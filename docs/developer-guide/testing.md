@@ -49,7 +49,7 @@ Each test reports its status in the `State` field:
 
 ```text
 --------------------------------------------------------------------------------
-Image:      quay.io/operator-framework/scorecard-test:v1.34.2
+Image:      quay.io/operator-framework/scorecard-test:v1.35.0
 Entrypoint: [scorecard-test olm-bundle-validation]
 Labels:
 	"suite":"olm"
@@ -67,7 +67,7 @@ Results:
 
 
 --------------------------------------------------------------------------------
-Image:      quay.io/operator-framework/scorecard-test:v1.34.2
+Image:      quay.io/operator-framework/scorecard-test:v1.35.0
 Entrypoint: [scorecard-test basic-check-spec]
 Labels:
 	"suite":"basic"
@@ -78,7 +78,7 @@ Results:
 
 
 --------------------------------------------------------------------------------
-Image:      quay.io/operator-framework/scorecard-test:v1.34.2
+Image:      quay.io/operator-framework/scorecard-test:v1.35.0
 Entrypoint: [scorecard-test olm-crds-have-resources]
 Labels:
 	"suite":"olm"

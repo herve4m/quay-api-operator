@@ -1,23 +1,22 @@
----
 ## Append samples of your project ##
 resources:
-  - quay_v1alpha1_apitoken.yaml
-  - quay_v1alpha1_application.yaml
-  - quay_v1alpha1_defaultperm.yaml
-  - quay_v1alpha1_dockertoken.yaml
-  - quay_v1alpha1_firstuser.yaml
-  - quay_v1alpha1_manifestlabel.yaml
-  - quay_v1alpha1_message.yaml
-  - quay_v1alpha1_notification.yaml
-  - quay_v1alpha1_organization.yaml
-  - quay_v1alpha1_proxycache.yaml
-  - quay_v1alpha1_quota.yaml
-  - quay_v1alpha1_repository.yaml
-  - quay_v1alpha1_repositorymirror.yaml
-  - quay_v1alpha1_robot.yaml
-  - quay_v1alpha1_tag.yaml
-  - quay_v1alpha1_team.yaml
-  - quay_v1alpha1_teamldap.yaml
-  - quay_v1alpha1_teamoidc.yaml
-  - quay_v1alpha1_user.yaml
+- quay_v1alpha1_apitoken.yaml
+- quay_v1alpha1_application.yaml
+- quay_v1alpha1_defaultperm.yaml
+- quay_v1alpha1_dockertoken.yaml
+- quay_v1alpha1_firstuser.yaml
+- quay_v1alpha1_manifestlabel.yaml
+- quay_v1alpha1_message.yaml
+- quay_v1alpha1_notification.yaml
+- quay_v1alpha1_organization.yaml
+- quay_v1alpha1_proxycache.yaml
+- quay_v1alpha1_quota.yaml
+- quay_v1alpha1_repository.yaml
+- quay_v1alpha1_repositorymirror.yaml
+- quay_v1alpha1_robot.yaml
+- quay_v1alpha1_tag.yaml
+- quay_v1alpha1_team.yaml
+- quay_v1alpha1_teamldap.yaml
+- quay_v1alpha1_teamoidc.yaml
+- quay_v1alpha1_user.yaml
 #+kubebuilder:scaffold:manifestskustomizesamples
