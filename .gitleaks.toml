@@ -1,0 +1,7 @@
+[allowlist]
+  description = "Global Allowlist"
+
+  # The Quay installation for testing with Molecule includes a TLS secret key
+  paths = [
+    '''quay\.yaml$''',
+  ]
