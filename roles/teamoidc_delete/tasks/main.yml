@@ -18,7 +18,7 @@
         - not secret_found
 
     - name: Ensure the OIDC configuration is disabled
-      herve4m.quay.quay_team_oidc:
+      infra.quay_configuration.quay_team_oidc:
         sync: false
         quay_host: "{{ quay_host | default(omit) }}"
         validate_certs: "{{ validate_certs | default(omit) }}"

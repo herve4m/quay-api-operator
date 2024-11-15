@@ -8,7 +8,7 @@
         - not secret_found
 
     - name: Ensure the firstuser resource exists in Quay
-      herve4m.quay.quay_first_user:
+      infra.quay_configuration.quay_first_user:
         quay_host: "{{ quay_host | default(omit) }}"
         validate_certs: "{{ validate_certs | default(omit) }}"
         create_token: "{{ create_token | default(omit) }}"

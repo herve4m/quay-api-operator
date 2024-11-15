@@ -43,7 +43,7 @@
         - client_id | length > 0
 
     - name: Ensure the apitoken resource exists in Quay
-      herve4m.quay.quay_api_token:
+      infra.quay_configuration.quay_api_token:
         quay_host: "{{ quay_host | default(omit) }}"
         validate_certs: "{{ validate_certs | default(omit) }}"
         quay_username: "{{ quay_username | default(omit) }}"

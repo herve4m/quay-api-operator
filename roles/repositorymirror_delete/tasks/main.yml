@@ -18,7 +18,7 @@
         - not secret_found
 
     - name: Ensure mirroring is disabled
-      herve4m.quay.quay_repository_mirror:
+      infra.quay_configuration.quay_repository_mirror:
         is_enabled: false
         quay_host: "{{ quay_host | default(omit) }}"
         validate_certs: "{{ validate_certs | default(omit) }}"

@@ -16,7 +16,7 @@
         - not secret_found
 
     - name: Ensure the message resource does not exist
-      herve4m.quay.quay_message:
+      infra.quay_configuration.quay_message:
         state: absent
         quay_host: "{{ quay_host | default(omit) }}"
         validate_certs: "{{ validate_certs | default(omit) }}"

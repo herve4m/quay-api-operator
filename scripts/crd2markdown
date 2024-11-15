@@ -11,7 +11,7 @@ import jinja2
 
 class Config:
     # Name of the Ansible Collection to process
-    COLLECTION = "herve4m.quay"
+    COLLECTION = "infra.quay_configuration"
     MODULE_PREFIX = "quay_"
     FULL_PREFIX = COLLECTION + "." + MODULE_PREFIX
     DOMAIN = "herve4m.github.io"

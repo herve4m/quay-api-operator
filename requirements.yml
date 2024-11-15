@@ -8,4 +8,4 @@ collections:
     version: "2.1.1"
   - name: community.docker
     version: "3.10.3"
-  - name: herve4m.quay
+  - name: infra.quay_configuration

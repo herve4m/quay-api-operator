@@ -16,7 +16,7 @@
         - not secret_found
 
     - name: Ensure the application resource does not exist
-      herve4m.quay.quay_application:
+      infra.quay_configuration.quay_application:
         state: absent
         quay_host: "{{ quay_host | default(omit) }}"
         validate_certs: "{{ validate_certs | default(omit) }}"

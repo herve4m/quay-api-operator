@@ -16,7 +16,7 @@
         - not secret_found
 
     - name: Ensure the user resource does not exist
-      herve4m.quay.quay_user:
+      infra.quay_configuration.quay_user:
         state: absent
         quay_host: "{{ quay_host | default(omit) }}"
         validate_certs: "{{ validate_certs | default(omit) }}"
