@@ -100,7 +100,7 @@ The Molecule scenario tests the API Operator resources.
 The scenario creates a [Kind](https://kind.sigs.k8s.io/) Kubernetes cluster, deploys a Quay Container Registry instance in this cluster, deploys the API Operator for Quay, and then uses test resources to verify that the Operator operates correctly.
 
 The Molecule scenario configuration is stored in the `molecule/kind` directory.
-Some files in this directory refer to files from the `molecule/directory` directory.
+Some files in this directory refer to files from the `molecule/default` directory.
 
 ### Requirements
 
