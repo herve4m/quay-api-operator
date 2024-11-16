@@ -49,6 +49,7 @@
         quay_username: "{{ quay_username | default(omit) }}"
         quay_password: "{{ quay_password | default(omit) }}"
         client_id: "{{ client_id_value }}"
+        for_user: "{{ for_user | default(omit) }}"
         rights: "{{ rights | default(omit) }}"
       register: ret
 

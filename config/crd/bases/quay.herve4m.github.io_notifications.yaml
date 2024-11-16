@@ -112,8 +112,8 @@ spec:
                       type: string
                     type:
                       default: user
-                      description: Specifies the type of the account defined in 'name'. Only applies
-                        to the Quay Notification method.
+                      description: Specifies the type of the account defined in 'config.name'. Only
+                        applies to the Quay Notification method.
                       enum:
                       - user
                       - team
@@ -138,7 +138,13 @@ spec:
                   - repo_mirror_sync_started
                   - repo_mirror_sync_success
                   - repo_mirror_sync_failed
+                  - repo_image_expiry
                   type: string
+                imageExpiryDays:
+                  default: 7
+                  description: Only used when 'event' is 'repo_image_expiry'. The notification is
+                    triggered when the image expires in the specified number of days.
+                  type: integer
                 method:
                   description: Notification method. Each method requires a specific set of options
                     that you define by using the 'config' parameter. The email notification method
@@ -185,8 +191,8 @@ spec:
                   type: string
                 vulnerabilityLevel:
                   description: Only used when 'event' is 'vulnerability_found'. The notification is
-                    triggered when the vulnerability has a level equal or higher to the level you
-                    define is 'vulnerabilityLevel'.
+                    triggered when the vulnerability has a level equal or higher to the level that
+                    you define in 'vulnerabilityLevel'.
                   enum:
                   - critical
                   - high

@@ -216,6 +216,8 @@ class OptionsParser:
             return "object"
         if t == "list":
             return "array"
+        if t == "jsonarg":
+            return "string"
 
     def _parse_option(self, name_obj, value):
         required = None
@@ -391,10 +393,13 @@ def ansible_to_k8s_names(s):
     for module in pattern.findall(s):
         modules[module] = Resource(module)
 
-    pattern = re.compile(r"I\((\w+?)\)")
+    pattern = re.compile(r"O\((\w+?)\)")
     options = {}
     for option in pattern.findall(s):
-        options[f"I({option})"] = "I(" + Resource(option).option + ")"
+        options[f"O({option})"] = "O(" + Resource(option).option + ")"
+    pattern = re.compile(r"RV\((\w+?)\)")
+    for option in pattern.findall(s):
+        options[f"RV({option})"] = "RV(" + Resource(option).option + ")"
     return [modules, options]
 
 
@@ -447,9 +452,11 @@ def parse_doc(s, name_map):
     # Environment variables
     s = re.sub(r"E\((.+?)\)", r"\1", s)
     # Option name
-    s = re.sub(r"O\((.+?)\)", r"\1", s)
+    s = re.sub(r"O\((.+?)\)", r"'\1'", s)
+    # Return value
+    s = re.sub(r"RV\((.+?)\)", r"'\1'", s)
     # Option value
-    s = re.sub(r"V\((.+?)\)", r"\1", s)
+    s = re.sub(r"V\((.+?)\)", r"'\1'", s)
     # URL
     s = re.sub(r"U\((.+?)\)", r"<\1>", s)
     # Module

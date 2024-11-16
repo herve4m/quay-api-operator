@@ -83,6 +83,14 @@ spec:
         path: clientId
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
+      - description: The username to generate an OAuth access token for. The user receives
+          a notification in the web interface, which enables the user to retrieve the token.
+          When you use this option, the resource does not return the token. Requires Quay
+          version 3.12 or later.
+        displayName: For User
+        path: forUser
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
       - description: List of permissions to grant to the user account. 'all' means all the
           permissions.
         displayName: Rights
@@ -777,6 +785,12 @@ spec:
         path: event
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
+      - description: Only used when 'event' is 'repo_image_expiry'. The notification is
+          triggered when the image expires in the specified number of days.
+        displayName: Image Expiry Days
+        path: imageExpiryDays
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:number
       - description: Notification method. Each method requires a specific set of options
           that you define by using the 'config' parameter. The email notification method
           is only available on Quay installations where the mailing capability has been
@@ -829,8 +843,8 @@ spec:
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
       - description: Only used when 'event' is 'vulnerability_found'. The notification is
-          triggered when the vulnerability has a level equal or higher to the level you
-          define is 'vulnerabilityLevel'.
+          triggered when the vulnerability has a level equal or higher to the level that
+          you define in 'vulnerabilityLevel'.
         displayName: Vulnerability Level
         path: vulnerabilityLevel
         x-descriptors:
@@ -897,11 +911,11 @@ spec:
         path: autoPruneMethod
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
-      - description: Number of tags to keep when 'autoPruneValue' is 'tags'. The value must
-          be 1 or more. Period of time when 'autoPruneValue' is 'date'. The value must be
-          1 or more, and must be followed by a suffix; s (for second), m (for minute), h
-          (for hour), d (for day), or w (for week). 'autoPruneMethod' is required when 'autoPruneValue'
-          is set.
+      - description: Number of tags to keep when 'autoPruneMethod' is 'tags'. The value
+          must be 1 or more. Period of time when 'autoPruneMethod' is 'date'. The value
+          must be 1 or more, and must be followed by a suffix; s (for second), m (for minute),
+          h (for hour), d (for day), or w (for week). 'autoPruneMethod' is required when
+          'autoPruneValue' is set.
         displayName: Auto Prune Value
         path: autoPruneValue
         x-descriptors:
@@ -1168,11 +1182,11 @@ spec:
         path: autoPruneMethod
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
-      - description: Number of tags to keep when 'autoPruneValue' is 'tags'. The value must
-          be 1 or more. Period of time when 'autoPruneValue' is 'date'. The value must be
-          1 or more, and must be followed by a suffix; s (for second), m (for minute), h
-          (for hour), d (for day), or w (for week). 'autoPruneMethod' is required when 'autoPruneValue'
-          is set.
+      - description: Number of tags to keep when 'autoPruneMethod' is 'tags'. The value
+          must be 1 or more. Period of time when 'autoPruneMethod' is 'date'. The value
+          must be 1 or more, and must be followed by a suffix; s (for second), m (for minute),
+          h (for hour), d (for day), or w (for week). 'autoPruneMethod' is required when
+          'autoPruneValue' is set.
         displayName: Auto Prune Value
         path: autoPruneValue
         x-descriptors:
