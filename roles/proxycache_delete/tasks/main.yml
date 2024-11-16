@@ -16,7 +16,7 @@
         - not secret_found
 
     - name: Ensure the proxycache resource does not exist
-      herve4m.quay.quay_proxy_cache:
+      infra.quay_configuration.quay_proxy_cache:
         state: absent
         quay_host: "{{ quay_host | default(omit) }}"
         validate_certs: "{{ validate_certs | default(omit) }}"

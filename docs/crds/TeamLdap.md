@@ -73,7 +73,7 @@ spec:
     # namespace: mynamespace
 
   # Whether to preserve the corresponding configuration in Quay when you
-  # delete the resource.
+  # delete the TeamLdap resource.
   preserveInQuayOnDeletion: false
 
   name: operators

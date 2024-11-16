@@ -12,7 +12,7 @@ spec:
     # namespace: mynamespace
 
   # Whether to preserve the corresponding Quay object when you
-  # delete the resource.
+  # delete the Repository resource.
   preserveInQuayOnDeletion: false
 
   name: production/smallimage

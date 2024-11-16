@@ -16,7 +16,7 @@
         - not secret_found
 
     - name: Ensure the defaultperm resource does not exist
-      herve4m.quay.quay_default_perm:
+      infra.quay_configuration.quay_default_perm:
         state: absent
         quay_host: "{{ quay_host | default(omit) }}"
         validate_certs: "{{ validate_certs | default(omit) }}"

@@ -18,7 +18,7 @@
         - not secret_found
 
     - name: Ensure the LDAP configuration is disabled
-      herve4m.quay.quay_team_ldap:
+      infra.quay_configuration.quay_team_ldap:
         sync: false
         quay_host: "{{ quay_host | default(omit) }}"
         validate_certs: "{{ validate_certs | default(omit) }}"

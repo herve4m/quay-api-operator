@@ -8,7 +8,7 @@
         - not secret_found
 
     - name: Ensure the repositorymirror resource exists in Quay
-      herve4m.quay.quay_repository_mirror:
+      infra.quay_configuration.quay_repository_mirror:
         quay_host: "{{ quay_host | default(omit) }}"
         validate_certs: "{{ validate_certs | default(omit) }}"
         quay_token: "{{ quay_token | default(omit, true) }}"

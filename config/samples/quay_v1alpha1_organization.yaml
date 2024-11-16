@@ -12,7 +12,7 @@ spec:
     # namespace: mynamespace
 
   # Whether to preserve the corresponding Quay object when you
-  # delete the resource.
+  # delete the Organization resource.
   preserveInQuayOnDeletion: false
 
   name: production

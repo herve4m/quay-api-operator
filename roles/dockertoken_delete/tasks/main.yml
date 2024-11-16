@@ -16,7 +16,7 @@
         - not secret_found
 
     - name: Ensure the dockertoken resource does not exist
-      herve4m.quay.quay_docker_token:
+      infra.quay_configuration.quay_docker_token:
         state: absent
         quay_host: "{{ quay_host | default(omit) }}"
         validate_certs: "{{ validate_certs | default(omit) }}"

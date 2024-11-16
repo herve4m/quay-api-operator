@@ -70,7 +70,7 @@ spec:
     # namespace: mynamespace
 
   # Whether to preserve the corresponding Quay object when you
-  # delete the resource.
+  # delete the DefaultPerm resource.
   preserveInQuayOnDeletion: false
 
   organization: production

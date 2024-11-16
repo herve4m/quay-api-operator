@@ -8,7 +8,7 @@
         - not secret_found
 
     - name: Ensure the manifestlabel resource exists in Quay
-      herve4m.quay.quay_manifest_label:
+      infra.quay_configuration.quay_manifest_label:
         quay_host: "{{ quay_host | default(omit) }}"
         validate_certs: "{{ validate_certs | default(omit) }}"
         quay_token: "{{ quay_token | default(omit, true) }}"

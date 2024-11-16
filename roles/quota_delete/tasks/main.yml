@@ -16,7 +16,7 @@
         - not secret_found
 
     - name: Ensure the quota resource does not exist
-      herve4m.quay.quay_quota:
+      infra.quay_configuration.quay_quota:
         state: absent
         quay_host: "{{ quay_host | default(omit) }}"
         validate_certs: "{{ validate_certs | default(omit) }}"

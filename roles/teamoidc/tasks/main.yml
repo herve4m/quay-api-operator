@@ -8,7 +8,7 @@
         - not secret_found
 
     - name: Ensure the teamoidc resource exists in Quay
-      herve4m.quay.quay_team_oidc:
+      infra.quay_configuration.quay_team_oidc:
         quay_host: "{{ quay_host | default(omit) }}"
         validate_certs: "{{ validate_certs | default(omit) }}"
         quay_token: "{{ quay_token | default(omit, true) }}"

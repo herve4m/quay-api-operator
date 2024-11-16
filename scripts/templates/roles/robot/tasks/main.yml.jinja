@@ -51,7 +51,7 @@
 {%- if item["add_to_role"] %}
             {{ item["k8s_name"] }}: {{ "\"{{ ret['" + item["ansible_name"] + "'] | default('', true) | ansible.builtin.b64encode }}\"" }}
 {%- if item["k8s_name"] == "name" %}
-            .dockerconfigjson: {{ "\"{{ ret['name'] | herve4m.quay.quay_docker_config(ret['token'], quay_host | default('http://127.0.0.1')) }}\"" }}
+            .dockerconfigjson: {{ "\"{{ ret['name'] | infra.quay_configuration.quay_docker_config(ret['token'], quay_host | default('http://127.0.0.1')) }}\"" }}
 {%- endif %}
 {%- endif %}
 {%- endfor %}

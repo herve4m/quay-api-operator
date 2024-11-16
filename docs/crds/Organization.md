@@ -70,7 +70,7 @@ spec:
     # namespace: mynamespace
 
   # Whether to preserve the corresponding Quay object when you
-  # delete the resource.
+  # delete the Organization resource.
   preserveInQuayOnDeletion: false
 
   name: production
@@ -97,7 +97,7 @@ __Default value__: None
 
 ### autoPruneValue
 
-Number of tags to keep when `autoPruneValue` is `tags`. The value must be 1 or more. Period of time when `autoPruneValue` is `date`. The value must be 1 or more, and must be followed by a suffix; s (for second), m (for minute), h (for hour), d (for day), or w (for week). `autoPruneMethod` is required when `autoPruneValue` is set.
+Number of tags to keep when `autoPruneMethod` is `tags`. The value must be 1 or more. Period of time when `autoPruneMethod` is `date`. The value must be 1 or more, and must be followed by a suffix; s (for second), m (for minute), h (for hour), d (for day), or w (for week). `autoPruneMethod` is required when `autoPruneValue` is set.
 
 __Type__: string
 

@@ -70,7 +70,7 @@ spec:
     # namespace: mynamespace
 
   # Whether to preserve the corresponding Quay object when you
-  # delete the resource.
+  # delete the Notification resource.
   preserveInQuayOnDeletion: false
 
   repository: production/smallimage
@@ -159,7 +159,7 @@ __Default value__: None
 
 ### config.type
 
-Specifies the type of the account defined in `name`. Only applies to the Quay Notification method.
+Specifies the type of the account defined in `config.name`. Only applies to the Quay Notification method.
 
 __Type__: string
 
@@ -219,6 +219,16 @@ __Type__: string
 __Required__: False
 
 __Default value__: None
+
+### imageExpiryDays
+
+Only used when `event` is `repo_image_expiry`. The notification is triggered when the image expires in the specified number of days.
+
+__Type__: integer
+
+__Required__: False
+
+__Default value__: 7
 
 ### method
 
@@ -303,7 +313,7 @@ __Default value__: None
 
 ### vulnerabilityLevel
 
-Only used when `event` is `vulnerability_found`. The notification is triggered when the vulnerability has a level equal or higher to the level you define is `vulnerabilityLevel`.
+Only used when `event` is `vulnerability_found`. The notification is triggered when the vulnerability has a level equal or higher to the level that you define in `vulnerabilityLevel`.
 
 __Type__: string
 

@@ -70,7 +70,7 @@ spec:
     # namespace: mynamespace
 
   # Whether to preserve the quota configuration in Quay when you
-  # delete the resource.
+  # delete the Quota resource.
   preserveInQuayOnDeletion: false
 
   organization: production

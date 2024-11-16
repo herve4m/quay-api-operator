@@ -8,7 +8,7 @@
         - not secret_found
 
     - name: Ensure the notification resource exists in Quay
-      herve4m.quay.quay_notification:
+      infra.quay_configuration.quay_notification:
         quay_host: "{{ quay_host | default(omit) }}"
         validate_certs: "{{ validate_certs | default(omit) }}"
         quay_token: "{{ quay_token | default(omit, true) }}"
@@ -16,6 +16,7 @@
         quay_password: "{{ omit if quay_token is defined and quay_token | length > 0 else quay_password | default(omit) }}"
         config: "{{ config | default(omit) }}"
         event: "{{ event | default(omit) }}"
+        image_expiry_days: "{{ image_expiry_days | default(omit) }}"
         method: "{{ method | default(omit) }}"
         regexp: "{{ regexp | default(omit) }}"
         repository: "{{ repository | default(omit) }}"
