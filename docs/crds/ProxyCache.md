@@ -70,7 +70,7 @@ spec:
     # namespace: mynamespace
 
   # Whether to preserve the corresponding configuration in Quay when you
-  # delete the resource.
+  # delete the ProxyCache resource.
   preserveInQuayOnDeletion: false
 
   organization: production

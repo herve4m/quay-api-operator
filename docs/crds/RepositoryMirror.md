@@ -66,11 +66,11 @@ spec:
   connSecretRef:
     name: quay-credentials
     # By default, the operator looks for the secret in the same namespace as
-    # the RepositoryMirror resource, but you can specify a different namespace.
+    # the repositorymirror resource, but you can specify a different namespace.
     # namespace: mynamespace
 
   # Whether to preserve the corresponding configuration in Quay when you
-  # delete the resource.
+  # delete the RepositoryMirror resource.
   preserveInQuayOnDeletion: false
 
   name: production/ubi9

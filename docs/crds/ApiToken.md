@@ -182,6 +182,16 @@ __Required__: False
 
 __Default value__: None
 
+### forUser
+
+The username to generate an OAuth access token for. The user receives a notification in the web interface, which enables the user to retrieve the token. When you use this option, the resource does not return the token. Requires Quay version 3.12 or later.
+
+__Type__: string
+
+__Required__: False
+
+__Default value__: None
+
 ### preserveInQuayOnDeletion
 
 Whether to preserve the corresponding Quay object when you delete the ApiToken resource. When set to `false` (the default), the object is deleted from Quay.
