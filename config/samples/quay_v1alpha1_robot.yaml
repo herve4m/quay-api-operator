@@ -17,6 +17,9 @@ spec:
 
   name: production+robotprod1
   description: Robot account for production
+  federations:
+    - issuer: https://keycloak-auth-realm.quayadmin.org/realms/quayrealm
+      subject: 449e14f8-9eb5-4d59-a63e-b7a77c75f770
 
   # The Secret resource is created or updated, and stores the returned data.
   # You can use the secret as a pull secret so that pods can pull images from

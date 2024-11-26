@@ -88,7 +88,7 @@ spec:
                     'false' (the default), the object is deleted from Quay.
                   type: boolean
                 organization:
-                  description: Name of the organization. That organization must exist.
+                  description: Name of the organization. This organization must exist.
                   type: string
                 quota:
                   description: Quota that Quay uses to compute the warning and reject limits for the

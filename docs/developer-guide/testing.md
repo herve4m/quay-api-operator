@@ -88,7 +88,7 @@ Results:
 	State: pass
 
 	Log:
-		Loaded ClusterServiceVersion: quay-api-operator.v1.0.0
+		Loaded ClusterServiceVersion: quay-api-operator.v1.1.0
 ...
 ```
 
@@ -242,11 +242,13 @@ for i in apitoken.quay.herve4m.github.io/apitoken-sample \
   message.quay.herve4m.github.io/message-sample \
   notification.quay.herve4m.github.io/notification-sample \
   organization.quay.herve4m.github.io/organization-sample \
+  organizationprune.quay.herve4m.github.io/organizationprune-sample \
   proxycache.quay.herve4m.github.io/proxycache-sample \
   quota.quay.herve4m.github.io/quota-sample \
   repository.quay.herve4m.github.io/repository-sample-1 \
   repository.quay.herve4m.github.io/repository-sample-2 \
   repositorymirror.quay.herve4m.github.io/repositorymirror-sample \
+  repositoryprune.quay.herve4m.github.io/repositoryprune-sample \
   robot.quay.herve4m.github.io/robot-sample \
   tag.quay.herve4m.github.io/tag-sample \
   team.quay.herve4m.github.io/team-sample \
@@ -279,12 +281,14 @@ kubectl delete -n test-operator \
   repository.quay.herve4m.github.io/repository-sample-1 \
   repository.quay.herve4m.github.io/repository-sample-2 \
   repositorymirror.quay.herve4m.github.io/repositorymirror-sample \
+  repositoryprune.quay.herve4m.github.io/repositoryprune-sample \
   robot.quay.herve4m.github.io/robot-sample \
   tag.quay.herve4m.github.io/tag-sample \
   team.quay.herve4m.github.io/team-sample \
   teamldap.quay.herve4m.github.io/teamldap-sample \
   teamoidc.quay.herve4m.github.io/teamoidc-sample \
-  user.quay.herve4m.github.io/user-sample
+  user.quay.herve4m.github.io/user-sample \
+  organizationprune.quay.herve4m.github.io/organizationprune-sample
 kubectl delete -n test-operator \
   apitoken.quay.herve4m.github.io/apitoken-sample \
   application.quay.herve4m.github.io/application-sample \

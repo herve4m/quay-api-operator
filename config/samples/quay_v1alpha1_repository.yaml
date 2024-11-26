@@ -33,8 +33,6 @@ spec:
       type: user
       role: admin
   append: true
-  autoPruneMethod: date
-  autoPruneValue: 4w
   star: true
   repoState: NORMAL
 ---

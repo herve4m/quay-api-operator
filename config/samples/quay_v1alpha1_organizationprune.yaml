@@ -1,0 +1,22 @@
+---
+apiVersion: quay.herve4m.github.io/v1alpha1
+kind: OrganizationPrune
+metadata:
+  name: organizationprune-sample
+spec:
+  # Connection parameters in a Secret resource
+  connSecretRef:
+    name: quay-credentials-secret
+    # By default, the operator looks for the secret in the same namespace as
+    # the organizationprune resource, but you can specify a different namespace.
+    # namespace: mynamespace
+
+  # Whether to preserve the corresponding Quay object when you
+  # delete the OrganizationPrune resource.
+  preserveInQuayOnDeletion: false
+
+  namespace: production
+  method: date
+  value: 7d
+  tagPattern: stable
+  tagPatternMatches: false

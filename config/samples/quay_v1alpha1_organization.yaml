@@ -18,5 +18,3 @@ spec:
   name: production
   email: prodlist@example.com
   timeMachineExpiration: 7d
-  autoPruneMethod: tags
-  autoPruneValue: "20"

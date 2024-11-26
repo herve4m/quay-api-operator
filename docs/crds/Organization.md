@@ -76,8 +76,6 @@ spec:
   name: production
   email: prodlist@example.com
   timeMachineExpiration: 7d
-  autoPruneMethod: tags
-  autoPruneValue: "20"
 
 ```
 
@@ -87,7 +85,7 @@ spec:
 
 ### autoPruneMethod
 
-Method to use for the auto-pruning tags policy. If `none`, then the resource ensures that no policy is in place. The tags are not pruned. If `tags`, then the policy keeps only the number of tags that you specify in `autoPruneValue`. If `date`, then the policy deletes the tags older than the time period that you specify in `autoPruneValue`. `autoPruneValue` is required when `autoPruneMethod` is `tags` or `date`.
+The `autoPruneMethod` parameter is deprecated and will be removed in future versions of the collection. Use the OrganizationPrune and the RepositoryPrune resources instead. Method to use for the auto-pruning tags policy. If `none`, then the resource ensures that no policy is in place. The tags are not pruned. If several policies are available, then the resource removes them all. If `tags`, then the policy keeps only the number of tags that you specify in `autoPruneValue`. If `date`, then the policy deletes the tags older than the time period that you specify in `autoPruneValue`. `autoPruneValue` is required when `autoPruneMethod` is `tags` or `date`.
 
 __Type__: string
 
@@ -97,7 +95,7 @@ __Default value__: None
 
 ### autoPruneValue
 
-Number of tags to keep when `autoPruneMethod` is `tags`. The value must be 1 or more. Period of time when `autoPruneMethod` is `date`. The value must be 1 or more, and must be followed by a suffix; s (for second), m (for minute), h (for hour), d (for day), or w (for week). `autoPruneMethod` is required when `autoPruneValue` is set.
+The `autoPruneValue` parameter is deprecated and will be removed in future versions of the collection. Use the OrganizationPrune and the RepositoryPrune resources instead. Number of tags to keep when `autoPruneMethod` is `tags`. The value must be 1 or more. Period of time when `autoPruneMethod` is `date`. The value must be 1 or more, and must be followed by a suffix; s (for second), m (for minute), h (for hour), d (for day), or w (for week). `autoPruneMethod` is required when `autoPruneValue` is set.
 
 __Type__: string
 

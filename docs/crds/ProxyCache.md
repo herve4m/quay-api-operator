@@ -77,7 +77,7 @@ spec:
   registry: quay.io/prodimgs
   username: cwade
   password: My53cr3Tpa55
-  expiration: 172800
+  expiration: "172800"
 
 ```
 
@@ -120,17 +120,17 @@ __Default value__: None
 
 ### expiration
 
-Tag expiration in seconds for cached images. 86400 (one day) by default.
+Tag expiration in seconds for cached images. The `expiration` parameter accepts a time unit as a suffix; `s` for seconds, `m` for minutes, `h` for hours, `d` for days, and `w` for weeks. For example, `8h` for eight hours. 86400 (one day) by default.
 
-__Type__: integer
+__Type__: string
 
 __Required__: False
 
-__Default value__: 86400
+__Default value__: None
 
 ### insecure
 
-Whether to allow insecure connections to the remote registry. If `true`, then the resource does not validate SSL certificates.
+Whether to allow insecure connections to the remote registry. If `true`, then the resource does not validate SSL certificates. `false` by default.
 
 __Type__: boolean
 
@@ -140,7 +140,7 @@ __Default value__: None
 
 ### organization
 
-Name of the organization in which to create the proxy cache configuration. That organization must exist.
+Name of the organization in which to create the proxy cache configuration. This organization must exist.
 
 __Type__: string
 

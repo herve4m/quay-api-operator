@@ -173,6 +173,23 @@ rules:
       - update
       - watch
   ##
+  ## Rules for quay.herve4m.github.io/v1alpha1, Kind: OrganizationPrune
+  ##
+  - apiGroups:
+      - quay.herve4m.github.io
+    resources:
+      - organizationprunes
+      - organizationprunes/status
+      - organizationprunes/finalizers
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  ##
   ## Rules for quay.herve4m.github.io/v1alpha1, Kind: ProxyCache
   ##
   - apiGroups:
@@ -232,6 +249,23 @@ rules:
       - repositorymirrors
       - repositorymirrors/status
       - repositorymirrors/finalizers
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  ##
+  ## Rules for quay.herve4m.github.io/v1alpha1, Kind: RepositoryPrune
+  ##
+  - apiGroups:
+      - quay.herve4m.github.io
+    resources:
+      - repositoryprunes
+      - repositoryprunes/status
+      - repositoryprunes/finalizers
     verbs:
       - create
       - delete
@@ -342,4 +376,4 @@ rules:
       - patch
       - update
       - watch
-#+kubebuilder:scaffold:rules
+# +kubebuilder:scaffold:rules

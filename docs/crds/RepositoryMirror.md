@@ -85,7 +85,7 @@ spec:
   imageTags:
     - "9.4"
     - "9.3"
-  syncInterval: 172800
+  syncInterval: "172800"
   syncStartDate: "2023-05-25T21:06:00Z"
 
 ```
@@ -129,7 +129,7 @@ __Default value__: None
 
 ### externalReference
 
-Path to the remote container repository to synchronize, such as quay.io/projectquay/quay for example. That parameter is required when creating the mirroring configuration.
+Path to the remote container repository to synchronize, such as quay.io/projectquay/quay for example. This parameter is required when creating the mirroring configuration.
 
 __Type__: string
 
@@ -209,7 +209,7 @@ __Default value__: None
 
 ### name
 
-Name of the existing repository for which the mirror parameters are configured. The format for the name is `namespace`/`shortname`. The namespace can only be an organization namespace.
+Name of the existing repository for which the mirror parameters are configured. The format for the name is `namespace`/`shortname`.The namespace can be an organization or your personal namespace. If you omit the namespace part in the name, then the resource looks for the repository in your personal namespace. You can manage mirrors for repositories in your personal namespace, but not in the personal namespace of other users. The token you use in `quayToken` determines the user account you are using.
 
 __Type__: string
 
@@ -240,7 +240,7 @@ __Default value__: False
 
 ### robotUsername
 
-Username of the robot account that is used for synchronization. That parameter is required when creating the mirroring configuration.
+Username of the robot account that is used for synchronization. This parameter is required when creating the mirroring configuration.
 
 __Type__: string
 
@@ -250,9 +250,9 @@ __Default value__: None
 
 ### syncInterval
 
-Synchronization interval for this repository mirror in seconds. 86400 (one day) by default.
+Synchronization interval for this repository mirror in seconds. The `syncInterval` parameter accepts a time unit as a suffix; `s` for seconds, `m` for minutes, `h` for hours, `d` for days, and `w` for weeks. For example, `8h` for eight hours. 86400 (one day) by default.
 
-__Type__: integer
+__Type__: string
 
 __Required__: False
 

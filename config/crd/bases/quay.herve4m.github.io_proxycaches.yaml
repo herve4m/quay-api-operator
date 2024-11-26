@@ -88,16 +88,18 @@ spec:
                     'false' (the default), the object is deleted from Quay.
                   type: boolean
                 expiration:
-                  default: 86400
-                  description: Tag expiration in seconds for cached images. 86400 (one day) by default.
-                  type: integer
+                  description: Tag expiration in seconds for cached images. The 'expiration' parameter
+                    accepts a time unit as a suffix; 's' for seconds, 'm' for minutes, 'h' for hours,
+                    'd' for days, and 'w' for weeks. For example, '8h' for eight hours. 86400 (one
+                    day) by default.
+                  type: string
                 insecure:
                   description: Whether to allow insecure connections to the remote registry. If 'true',
-                    then the resource does not validate SSL certificates.
+                    then the resource does not validate SSL certificates. 'false' by default.
                   type: boolean
                 organization:
                   description: Name of the organization in which to create the proxy cache configuration.
-                    That organization must exist.
+                    This organization must exist.
                   type: string
                 password:
                   description: User's password as a clear string. Do not set a password for a public

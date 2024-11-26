@@ -16,6 +16,7 @@ following artifacts:
   The roles are overwritten every time you run the script.
 * The ``watches.yaml`` file. The script overwrites this file every time you
   run the script.
+* The ``PROJECT`` file is updated.
 
 The script uses the ``ansible-doc`` and ``operator-sdk`` commands.
 The script must be run from the operator directory.
@@ -249,6 +250,7 @@ class OptionsParser:
                 "repository",
                 "quota",
                 "username",
+                "namespace",
             ]:
                 printer_column = res.copy()
                 printer_column["description"] = name_obj.kind + " in Quay"

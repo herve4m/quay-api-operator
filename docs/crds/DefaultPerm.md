@@ -139,7 +139,7 @@ __Default value__: None
 
 ### organization
 
-Name of the organization for the default permission. That organization must exist.
+Name of the organization for the default permission. This organization must exist.
 
 __Type__: string
 

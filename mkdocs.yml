@@ -31,11 +31,13 @@ nav:
       - ManifestLabel: crds/ManifestLabel.md
       - Message: crds/Message.md
       - Notification: crds/Notification.md
+      - OrganizationPrune: crds/OrganizationPrune.md
       - Organization: crds/Organization.md
       - ProxyCache: crds/ProxyCache.md
       - Quota: crds/Quota.md
       - Repository: crds/Repository.md
       - RepositoryMirror: crds/RepositoryMirror.md
+      - RepositoryPrune: crds/RepositoryPrune.md
       - Robot: crds/Robot.md
       - Tag: crds/Tag.md
       - TeamLdap: crds/TeamLdap.md
