@@ -23,7 +23,9 @@
         quay_token: "{{ quay_token | default(omit, true) }}"
         quay_username: "{{ omit if quay_token is defined and quay_token | length > 0 else quay_username | default(omit) }}"
         quay_password: "{{ omit if quay_token is defined and quay_token | length > 0 else quay_password | default(omit) }}"
+        append: "{{ append | default(omit) }}"
         description: "{{ description | default(omit) }}"
+        federations: "{{ federations | default(omit) }}"
         name: "{{ name | default(omit) }}"
 
   rescue:

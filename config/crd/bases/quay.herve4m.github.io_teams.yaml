@@ -114,7 +114,7 @@ spec:
                     be at least two characters long.
                   type: string
                 organization:
-                  description: Name of the organization for the team. That organization must exist.
+                  description: Name of the organization for the team. This organization must exist.
                   type: string
                 role:
                   description: Role of the team within the organization. If not set, then the new

@@ -1,20 +1,23 @@
+# permissions for end users to view organizationprunes.
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
     app.kubernetes.io/name: quay-api-operator
     app.kubernetes.io/managed-by: kustomize
-  name: proxy-role
+  name: organizationprune-viewer-role
 rules:
 - apiGroups:
-  - authentication.k8s.io
+  - quay.herve4m.github.io
   resources:
-  - tokenreviews
+  - organizationprunes
   verbs:
-  - create
+  - get
+  - list
+  - watch
 - apiGroups:
-  - authorization.k8s.io
+  - quay.herve4m.github.io
   resources:
-  - subjectaccessreviews
+  - organizationprunes/status
   verbs:
-  - create
+  - get

@@ -1,0 +1,27 @@
+# permissions for end users to edit repositoryprunes.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: quay-api-operator
+    app.kubernetes.io/managed-by: kustomize
+  name: repositoryprune-editor-role
+rules:
+- apiGroups:
+  - quay.herve4m.github.io
+  resources:
+  - repositoryprunes
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - quay.herve4m.github.io
+  resources:
+  - repositoryprunes/status
+  verbs:
+  - get

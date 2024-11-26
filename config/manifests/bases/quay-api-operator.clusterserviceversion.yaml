@@ -289,7 +289,7 @@ spec:
         path: name
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
-      - description: Name of the organization for the default permission. That organization
+      - description: Name of the organization for the default permission. This organization
           must exist.
         displayName: Organization
         path: organization
@@ -761,8 +761,8 @@ spec:
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
         - urn:alm:descriptor:com.tectonic.ui:fieldGroup:config
-      - description: Specifies the type of the account defined in 'name'. Only applies to
-          the Quay Notification method.
+      - description: Specifies the type of the account defined in 'config.name'. Only applies
+          to the Quay Notification method.
         displayName: Type
         path: config.type
         x-descriptors:
@@ -812,8 +812,11 @@ spec:
         - urn:alm:descriptor:com.tectonic.ui:text
       - description: Name of the repository which contains the notifications to manage.
           The format for the name is 'namespace'/'shortname'. The namespace can be an organization
-          or a personal namespace. If you omit the namespace part in the name, then the
-          resource looks for the repository in your personal namespace.
+          or your personal namespace. If you omit the namespace part in the name, then the
+          resource looks for the repository in your personal namespace. You can manage notifications
+          for repositories in your personal namespace, but not in the personal namespace
+          of other users. The token you use in 'quayToken' determines the user account you
+          are using.
         displayName: Repository
         path: repository
         x-descriptors:
@@ -901,8 +904,11 @@ spec:
         path: preserveInQuayOnDeletion
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
-      - description: Method to use for the auto-pruning tags policy. If 'none', then the
-          resource ensures that no policy is in place. The tags are not pruned. If 'tags',
+      - description: The 'autoPruneMethod' parameter is deprecated and will be removed in
+          future versions of the collection. Use the OrganizationPrune and the RepositoryPrune
+          resources instead. Method to use for the auto-pruning tags policy. If 'none',
+          then the resource ensures that no policy is in place. The tags are not pruned.
+          If several policies are available, then the resource removes them all. If 'tags',
           then the policy keeps only the number of tags that you specify in 'autoPruneValue'.
           If 'date', then the policy deletes the tags older than the time period that you
           specify in 'autoPruneValue'. 'autoPruneValue' is required when 'autoPruneMethod'
@@ -911,11 +917,13 @@ spec:
         path: autoPruneMethod
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
-      - description: Number of tags to keep when 'autoPruneMethod' is 'tags'. The value
-          must be 1 or more. Period of time when 'autoPruneMethod' is 'date'. The value
-          must be 1 or more, and must be followed by a suffix; s (for second), m (for minute),
-          h (for hour), d (for day), or w (for week). 'autoPruneMethod' is required when
-          'autoPruneValue' is set.
+      - description: The 'autoPruneValue' parameter is deprecated and will be removed in
+          future versions of the collection. Use the OrganizationPrune and the RepositoryPrune
+          resources instead. Number of tags to keep when 'autoPruneMethod' is 'tags'. The
+          value must be 1 or more. Period of time when 'autoPruneMethod' is 'date'. The
+          value must be 1 or more, and must be followed by a suffix; s (for second), m (for
+          minute), h (for hour), d (for day), or w (for week). 'autoPruneMethod' is required
+          when 'autoPruneValue' is set.
         displayName: Auto Prune Value
         path: autoPruneValue
         x-descriptors:
@@ -949,6 +957,116 @@ spec:
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
 
+      statusDescriptors:
+      - description: Observed conditions of Quay components.
+        displayName: Conditions
+        path: conditions
+        x-descriptors:
+        - urn:alm:descriptor:io.kubernetes.conditions
+      - description: Whether the resource has been created in Quay
+        displayName: Exist in Quay
+        path: existInQuay
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - description: Error message when the process fails.
+        displayName: Error Message
+        path: message
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      version: v1alpha1
+    - description: Create or delete auto-pruning policies for organizations and personal namespaces in Quay Container Registry.
+      displayName: Organization Prune
+      group: quay.herve4m.github.io
+      kind: OrganizationPrune
+      name: organizationprunes.quay.herve4m.github.io
+      resources:
+      - kind: Secret
+        name: ""
+        version: v1
+      specDescriptors:
+      - description: |
+          Reference to the secret resource that stores the connection parameters to the Quay Container Registry API.
+        displayName: Connection Parameters Secret
+        path: connSecretRef
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:SecretRef
+      - description: Name of the secret resource.
+        displayName: Secret Name
+        path: connSecretRef.name
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:SecretRef
+        - urn:alm:descriptor:io.kubernetes:Secret
+      - description: Namespace that stores the secret resource.
+        displayName: Secret Namespace
+        path: connSecretRef.namespace
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:SecretRef
+        - urn:alm:descriptor:io.kubernetes:Namespace
+      - description: |
+          Whether to preserve the corresponding Quay object when you delete the OrganizationPrune resource.
+        displayName: Preserve Object in Quay on Deletion
+        path: preserveInQuayOnDeletion
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - description: If 'true', then add the auto-pruning policy to the existing policies.
+          If 'false', then the resource deletes all the existing auto-pruning policies before
+          adding the specified policy.
+        displayName: Append
+        path: append
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - description: Method to use for the auto-pruning tags policy. If 'tags', then the
+          policy keeps only the number of tags that you specify in 'value'. If 'date', then
+          the policy deletes the tags older than the time period that you specify in 'value'.
+        displayName: Method
+        path: method
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - description: Organization or personal namespace. This namespace must exist.
+        displayName: Namespace
+        path: namespace
+        x-descriptors:
+        - urn:alm:descriptor:io.kubernetes:Namespace
+      - description: Regular expression to select the tags to process. If you do not set
+          the parameter, then Quay processes all the tags.
+        displayName: Tag Pattern
+        path: tagPattern
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - description: If 'true', then Quay processes the tags matching the 'tagPattern' parameter.
+          If 'false', then Quay excludes the tags matching the 'tagPattern' parameter. 'true'
+          by default.
+        displayName: Tag Pattern Matches
+        path: tagPatternMatches
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - description: Number of tags to keep when 'method' is 'tags'. The value must be 1
+          or more. Period of time when 'method' is 'date'. The value must be 1 or more,
+          and must be followed by a suffix; s (for second), m (for minute), h (for hour),
+          d (for day), or w (for week).
+        displayName: Value
+        path: value
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+
+      - description: |
+          Secret resource that the OrganizationPrune resource creates. This secret will store the data that the resource generates.
+        displayName: Returned Data Secret
+        path: retSecretRef
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:RetSecretRef
+      - description: Name of the secret resource.
+        displayName: Secret Name
+        path: retSecretRef.name
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:RetSecretRef
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - description: Namespace that stores the secret resource.
+        displayName: Secret Namespace
+        path: retSecretRef.namespace
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:RetSecretRef
+        - urn:alm:descriptor:io.kubernetes:Namespace
       statusDescriptors:
       - description: Observed conditions of Quay components.
         displayName: Conditions
@@ -1000,19 +1118,22 @@ spec:
         path: preserveInQuayOnDeletion
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
-      - description: Tag expiration in seconds for cached images. 86400 (one day) by default.
+      - description: Tag expiration in seconds for cached images. The 'expiration' parameter
+          accepts a time unit as a suffix; 's' for seconds, 'm' for minutes, 'h' for hours,
+          'd' for days, and 'w' for weeks. For example, '8h' for eight hours. 86400 (one
+          day) by default.
         displayName: Expiration
         path: expiration
         x-descriptors:
-        - urn:alm:descriptor:com.tectonic.ui:number
+        - urn:alm:descriptor:com.tectonic.ui:text
       - description: Whether to allow insecure connections to the remote registry. If 'true',
-          then the resource does not validate SSL certificates.
+          then the resource does not validate SSL certificates. 'false' by default.
         displayName: Insecure
         path: insecure
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
       - description: Name of the organization in which to create the proxy cache configuration.
-          That organization must exist.
+          This organization must exist.
         displayName: Organization
         path: organization
         x-descriptors:
@@ -1087,7 +1208,7 @@ spec:
         path: preserveInQuayOnDeletion
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
-      - description: Name of the organization. That organization must exist.
+      - description: Name of the organization. This organization must exist.
         displayName: Organization
         path: organization
         x-descriptors:
@@ -1172,8 +1293,11 @@ spec:
         path: append
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
-      - description: Method to use for the auto-pruning tags policy. If 'none', then the
-          resource ensures that no policy is in place. The tags are not pruned. If 'tags',
+      - description: The 'autoPruneMethod' parameter is deprecated and will be removed in
+          future versions of the collection. Use the OrganizationPrune and the RepositoryPrune
+          resources instead. Method to use for the auto-pruning tags policy. If 'none',
+          then the resource ensures that no policy is in place. The tags are not pruned.
+          If several policies are available, then the resource removes them all. If 'tags',
           then the policy keeps only the number of tags that you specify in 'autoPruneValue'.
           If 'date', then the policy deletes the tags older than the time period that you
           specify in 'autoPruneValue'. 'autoPruneValue' is required when 'autoPruneMethod'
@@ -1182,11 +1306,13 @@ spec:
         path: autoPruneMethod
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
-      - description: Number of tags to keep when 'autoPruneMethod' is 'tags'. The value
-          must be 1 or more. Period of time when 'autoPruneMethod' is 'date'. The value
-          must be 1 or more, and must be followed by a suffix; s (for second), m (for minute),
-          h (for hour), d (for day), or w (for week). 'autoPruneMethod' is required when
-          'autoPruneValue' is set.
+      - description: The 'autoPruneValue' parameter is deprecated and will be removed in
+          future versions of the collection. Use the OrganizationPrune and the RepositoryPrune
+          resources instead. Number of tags to keep when 'autoPruneMethod' is 'tags'. The
+          value must be 1 or more. Period of time when 'autoPruneMethod' is 'date'. The
+          value must be 1 or more, and must be followed by a suffix; s (for second), m (for
+          minute), h (for hour), d (for day), or w (for week). 'autoPruneMethod' is required
+          when 'autoPruneValue' is set.
         displayName: Auto Prune Value
         path: autoPruneValue
         x-descriptors:
@@ -1197,10 +1323,12 @@ spec:
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
       - description: Name of the repository to create, remove, or modify. The format for
-          the name is 'namespace'/'shortname'. The namespace can be an organization or a
+          the name is 'namespace'/'shortname'. The namespace can be an organization or your
           personal namespace. The name must be in lowercase and must not contain white spaces.
           If you omit the namespace part in the name, then the resource uses your personal
-          namespace.
+          namespace. You can manage repositories in your personal namespace, but not in
+          the personal namespace of other users. The token you use in 'quayToken' determines
+          the user account you are using.
         displayName: Name
         path: name
         x-descriptors:
@@ -1288,7 +1416,7 @@ spec:
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
       - description: Path to the remote container repository to synchronize, such as quay.io/projectquay/quay
-          for example. That parameter is required when creating the mirroring configuration.
+          for example. This parameter is required when creating the mirroring configuration.
         displayName: External Reference
         path: externalReference
         x-descriptors:
@@ -1332,8 +1460,12 @@ spec:
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
       - description: Name of the existing repository for which the mirror parameters are
-          configured. The format for the name is 'namespace'/'shortname'. The namespace
-          can only be an organization namespace.
+          configured. The format for the name is 'namespace'/'shortname'.The namespace can
+          be an organization or your personal namespace. If you omit the namespace part
+          in the name, then the resource looks for the repository in your personal namespace.
+          You can manage mirrors for repositories in your personal namespace, but not in
+          the personal namespace of other users. The token you use in 'quayToken' determines
+          the user account you are using.
         displayName: Name
         path: name
         x-descriptors:
@@ -1345,18 +1477,20 @@ spec:
         path: noProxy
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
-      - description: Username of the robot account that is used for synchronization. That
+      - description: Username of the robot account that is used for synchronization. This
           parameter is required when creating the mirroring configuration.
         displayName: Robot Username
         path: robotUsername
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
-      - description: Synchronization interval for this repository mirror in seconds. 86400
-          (one day) by default.
+      - description: Synchronization interval for this repository mirror in seconds. The
+          'syncInterval' parameter accepts a time unit as a suffix; 's' for seconds, 'm'
+          for minutes, 'h' for hours, 'd' for days, and 'w' for weeks. For example, '8h'
+          for eight hours. 86400 (one day) by default.
         displayName: Sync Interval
         path: syncInterval
         x-descriptors:
-        - urn:alm:descriptor:com.tectonic.ui:number
+        - urn:alm:descriptor:com.tectonic.ui:text
       - description: The date and time at which the first synchronization should be initiated.
           The format for the 'syncStartDate' parameter is ISO 8601 UTC, such as 2021-12-02T21:06:00Z.
           If you do not provide the 'syncStartDate' parameter when you configure a new repository
@@ -1373,6 +1507,122 @@ spec:
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
 
+      statusDescriptors:
+      - description: Observed conditions of Quay components.
+        displayName: Conditions
+        path: conditions
+        x-descriptors:
+        - urn:alm:descriptor:io.kubernetes.conditions
+      - description: Whether the resource has been created in Quay
+        displayName: Exist in Quay
+        path: existInQuay
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - description: Error message when the process fails.
+        displayName: Error Message
+        path: message
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      version: v1alpha1
+    - description: Create or delete auto-pruning policies for repositories in Quay Container Registry.
+      displayName: Repository Prune
+      group: quay.herve4m.github.io
+      kind: RepositoryPrune
+      name: repositoryprunes.quay.herve4m.github.io
+      resources:
+      - kind: Secret
+        name: ""
+        version: v1
+      specDescriptors:
+      - description: |
+          Reference to the secret resource that stores the connection parameters to the Quay Container Registry API.
+        displayName: Connection Parameters Secret
+        path: connSecretRef
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:SecretRef
+      - description: Name of the secret resource.
+        displayName: Secret Name
+        path: connSecretRef.name
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:SecretRef
+        - urn:alm:descriptor:io.kubernetes:Secret
+      - description: Namespace that stores the secret resource.
+        displayName: Secret Namespace
+        path: connSecretRef.namespace
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:SecretRef
+        - urn:alm:descriptor:io.kubernetes:Namespace
+      - description: |
+          Whether to preserve the corresponding Quay object when you delete the RepositoryPrune resource.
+        displayName: Preserve Object in Quay on Deletion
+        path: preserveInQuayOnDeletion
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - description: If 'true', then add the auto-pruning policy to the existing policies.
+          If 'false', then the resource deletes all the existing auto-pruning policies before
+          adding the specified policy.
+        displayName: Append
+        path: append
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - description: Method to use for the auto-pruning tags policy. If 'tags', then the
+          policy keeps only the number of tags that you specify in 'value'. If 'date', then
+          the policy deletes the tags older than the time period that you specify in 'value'.
+        displayName: Method
+        path: method
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - description: Name of the existing repository to configure. The format for the name
+          is 'namespace'/'shortname'. The namespace can be an organization or your personal
+          namespace. If you omit the namespace part in the name, then the resource looks
+          for the repository in your personal namespace. You can manage auto-pruning policies
+          for repositories in your personal namespace, but not in the personal namespace
+          of other users. The token you use in 'quayToken' determines the user account you
+          are using.
+        displayName: Repository
+        path: repository
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - description: Regular expression to select the tags to process. If you do not set
+          the parameter, then Quay processes all the tags.
+        displayName: Tag Pattern
+        path: tagPattern
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - description: If 'true', then Quay processes the tags matching the 'tagPattern' parameter.
+          If 'false', then Quay excludes the tags matching the 'tagPattern' parameter. 'true'
+          by default.
+        displayName: Tag Pattern Matches
+        path: tagPatternMatches
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - description: Number of tags to keep when 'method' is 'tags'. The value must be 1
+          or more. Period of time when 'method' is 'date'. The value must be 1 or more,
+          and must be followed by a suffix; s (for second), m (for minute), h (for hour),
+          d (for day), or w (for week).
+        displayName: Value
+        path: value
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+
+      - description: |
+          Secret resource that the RepositoryPrune resource creates. This secret will store the data that the resource generates.
+        displayName: Returned Data Secret
+        path: retSecretRef
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:RetSecretRef
+      - description: Name of the secret resource.
+        displayName: Secret Name
+        path: retSecretRef.name
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:RetSecretRef
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - description: Namespace that stores the secret resource.
+        displayName: Secret Namespace
+        path: retSecretRef.namespace
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:RetSecretRef
+        - urn:alm:descriptor:io.kubernetes:Namespace
       statusDescriptors:
       - description: Observed conditions of Quay components.
         displayName: Conditions
@@ -1424,15 +1674,29 @@ spec:
         path: preserveInQuayOnDeletion
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - description: If 'true', then add the robot account federation configurations defined
+          in 'federations'. If 'false', then the resource sets the federation configurations
+          specified in 'federations', removing all others federation configurations. Robot
+          account federations require Quay version 3.13 or later.
+        displayName: Append
+        path: append
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
       - description: Description of the robot account. You cannot update the description
           of existing robot accounts.
         displayName: Description
         path: description
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
+      - description: Federation configurations, which enable keyless authentication with
+          robot accounts. Robot account federations require Quay version 3.13 or later.
+        displayName: Federations
+        path: federations
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
       - description: Name of the robot account to create or remove, in the format 'namespace'+'shortname'.
-          The namespace can be an organization or a personal namespace. The short name (the
-          part after the '+' sign) must be in lowercase, must not contain white spaces,
+          The namespace can be an organization or your personal namespace. The short name
+          (the part after the '+' sign) must be in lowercase, must not contain white spaces,
           must not start by a digit, and must be at least two characters long. If you omit
           the namespace part in the name, then the resource uses your personal namespace.
           You can create and delete robot accounts in your personal namespace, but not in
@@ -1625,7 +1889,7 @@ spec:
         path: name
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
-      - description: Name of the organization for the team. That organization must exist.
+      - description: Name of the organization for the team. This organization must exist.
         displayName: Organization
         path: organization
         x-descriptors:
@@ -1705,12 +1969,12 @@ spec:
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
       - description: Name of the team to synchronize or unsynchronize with an LDAP group.
-          That team must exist (see the Team resource to create it).
+          This team must exist (see the Team resource to create it).
         displayName: Name
         path: name
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
-      - description: Name of the organization for the team. That organization must exist.
+      - description: Name of the organization for the team. This organization must exist.
         displayName: Organization
         path: organization
         x-descriptors:
@@ -1782,12 +2046,12 @@ spec:
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
       - description: Name of the team to synchronize or unsynchronize with an OIDC group.
-          That team must exist (see the Team resource to create it).
+          This team must exist (see the Team resource to create it).
         displayName: Name
         path: name
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
-      - description: Name of the organization for the team. That organization must exist.
+      - description: Name of the organization for the team. This organization must exist.
         displayName: Organization
         path: organization
         x-descriptors:

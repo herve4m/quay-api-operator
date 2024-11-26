@@ -78,6 +78,13 @@ resources:
     namespaced: true
   domain: herve4m.github.io
   group: quay
+  kind: OrganizationPrune
+  version: v1alpha1
+- api:
+    crdVersion: v1
+    namespaced: true
+  domain: herve4m.github.io
+  group: quay
   kind: ProxyCache
   version: v1alpha1
 - api:
@@ -100,6 +107,13 @@ resources:
   domain: herve4m.github.io
   group: quay
   kind: RepositoryMirror
+  version: v1alpha1
+- api:
+    crdVersion: v1
+    namespaced: true
+  domain: herve4m.github.io
+  group: quay
+  kind: RepositoryPrune
   version: v1alpha1
 - api:
     crdVersion: v1

@@ -11,14 +11,16 @@ resources:
 - bases/quay.herve4m.github.io_messages.yaml
 - bases/quay.herve4m.github.io_notifications.yaml
 - bases/quay.herve4m.github.io_organizations.yaml
+- bases/quay.herve4m.github.io_organizationprunes.yaml
 - bases/quay.herve4m.github.io_proxycaches.yaml
 - bases/quay.herve4m.github.io_quotas.yaml
 - bases/quay.herve4m.github.io_repositories.yaml
 - bases/quay.herve4m.github.io_repositorymirrors.yaml
+- bases/quay.herve4m.github.io_repositoryprunes.yaml
 - bases/quay.herve4m.github.io_robots.yaml
 - bases/quay.herve4m.github.io_tags.yaml
 - bases/quay.herve4m.github.io_teams.yaml
 - bases/quay.herve4m.github.io_teamldaps.yaml
 - bases/quay.herve4m.github.io_teamoidcs.yaml
 - bases/quay.herve4m.github.io_users.yaml
-#+kubebuilder:scaffold:crdkustomizeresource
+# +kubebuilder:scaffold:crdkustomizeresource

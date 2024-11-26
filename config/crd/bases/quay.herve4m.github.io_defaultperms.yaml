@@ -104,7 +104,7 @@ spec:
                     in the organization. For robot accounts use the 'namespace'+'shortrobotname' format.
                   type: string
                 organization:
-                  description: Name of the organization for the default permission. That organization
+                  description: Name of the organization for the default permission. This organization
                     must exist.
                   type: string
                 role:

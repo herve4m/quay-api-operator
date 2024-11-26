@@ -89,7 +89,7 @@ spec:
                   type: boolean
                 externalReference:
                   description: Path to the remote container repository to synchronize, such as quay.io/projectquay/quay
-                    for example. That parameter is required when creating the mirroring configuration.
+                    for example. This parameter is required when creating the mirroring configuration.
                   type: string
                 externalRegistryPassword:
                   description: Password to use for pulling the image from the remote registry.
@@ -120,8 +120,12 @@ spec:
                   type: boolean
                 name:
                   description: Name of the existing repository for which the mirror parameters are
-                    configured. The format for the name is 'namespace'/'shortname'. The namespace
-                    can only be an organization namespace.
+                    configured. The format for the name is 'namespace'/'shortname'.The namespace can
+                    be an organization or your personal namespace. If you omit the namespace part
+                    in the name, then the resource looks for the repository in your personal namespace.
+                    You can manage mirrors for repositories in your personal namespace, but not in
+                    the personal namespace of other users. The token you use in 'quayToken' determines
+                    the user account you are using.
                   type: string
                 noProxy:
                   description: Comma-separated list of hosts for which the proxy should not be used.
@@ -129,13 +133,15 @@ spec:
                     or 'httpsProxy' variables. See the 'curl' documentation for more details.
                   type: string
                 robotUsername:
-                  description: Username of the robot account that is used for synchronization. That
+                  description: Username of the robot account that is used for synchronization. This
                     parameter is required when creating the mirroring configuration.
                   type: string
                 syncInterval:
-                  description: Synchronization interval for this repository mirror in seconds. 86400
-                    (one day) by default.
-                  type: integer
+                  description: Synchronization interval for this repository mirror in seconds. The
+                    'syncInterval' parameter accepts a time unit as a suffix; 's' for seconds, 'm'
+                    for minutes, 'h' for hours, 'd' for days, and 'w' for weeks. For example, '8h'
+                    for eight hours. 86400 (one day) by default.
+                  type: string
                 syncStartDate:
                   description: The date and time at which the first synchronization should be initiated.
                     The format for the 'syncStartDate' parameter is ISO 8601 UTC, such as 2021-12-02T21:06:00Z.

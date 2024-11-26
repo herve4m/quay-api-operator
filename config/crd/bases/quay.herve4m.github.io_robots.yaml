@@ -111,14 +111,37 @@ spec:
                   type: object
                   required:
                     - name
+                append:
+                  default: true
+                  description: If 'true', then add the robot account federation configurations defined
+                    in 'federations'. If 'false', then the resource sets the federation configurations
+                    specified in 'federations', removing all others federation configurations. Robot
+                    account federations require Quay version 3.13 or later.
+                  type: boolean
                 description:
                   description: Description of the robot account. You cannot update the description
                     of existing robot accounts.
                   type: string
+                federations:
+                  description: Federation configurations, which enable keyless authentication with
+                    robot accounts. Robot account federations require Quay version 3.13 or later.
+                  items:
+                    properties:
+                      issuer:
+                        description: OpenID Connect (OIDC) issuer URL.
+                        type: string
+                      subject:
+                        description: OpenID Connect (OIDC) subject.
+                        type: string
+                    required:
+                    - issuer
+                    - subject
+                    type: object
+                  type: array
                 name:
                   description: Name of the robot account to create or remove, in the format 'namespace'+'shortname'.
-                    The namespace can be an organization or a personal namespace. The short name (the
-                    part after the '+' sign) must be in lowercase, must not contain white spaces,
+                    The namespace can be an organization or your personal namespace. The short name
+                    (the part after the '+' sign) must be in lowercase, must not contain white spaces,
                     must not start by a digit, and must be at least two characters long. If you omit
                     the namespace part in the name, then the resource uses your personal namespace.
                     You can create and delete robot accounts in your personal namespace, but not in
