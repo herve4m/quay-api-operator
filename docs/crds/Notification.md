@@ -263,7 +263,7 @@ __Default value__: None
 
 ### repository
 
-Name of the repository which contains the notifications to manage. The format for the name is `namespace`/`shortname`. The namespace can be an organization or a personal namespace. If you omit the namespace part in the name, then the resource looks for the repository in your personal namespace.
+Name of the repository which contains the notifications to manage. The format for the name is `namespace`/`shortname`. The namespace can be an organization or your personal namespace. If you omit the namespace part in the name, then the resource looks for the repository in your personal namespace. You can manage notifications for repositories in your personal namespace, but not in the personal namespace of other users. The token you use in `quayToken` determines the user account you are using.
 
 __Type__: string
 

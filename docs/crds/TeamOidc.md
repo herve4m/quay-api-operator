@@ -133,7 +133,7 @@ __Default value__: None
 
 ### name
 
-Name of the team to synchronize or unsynchronize with an OIDC group. That team must exist (see the Team resource to create it).
+Name of the team to synchronize or unsynchronize with an OIDC group. This team must exist (see the Team resource to create it).
 
 __Type__: string
 
@@ -143,7 +143,7 @@ __Default value__: None
 
 ### organization
 
-Name of the organization for the team. That organization must exist.
+Name of the organization for the team. This organization must exist.
 
 __Type__: string
 

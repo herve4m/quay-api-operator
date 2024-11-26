@@ -119,7 +119,7 @@ __Default value__: None
 
 ### organization
 
-Name of the organization. That organization must exist.
+Name of the organization. This organization must exist.
 
 __Type__: string
 

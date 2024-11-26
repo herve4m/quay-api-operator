@@ -167,7 +167,7 @@ __Default value__: None
 
 ### organization
 
-Name of the organization for the team. That organization must exist.
+Name of the organization for the team. This organization must exist.
 
 __Type__: string
 

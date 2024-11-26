@@ -95,6 +95,16 @@ spec:
 ## Properties
 
 
+### append
+
+If `true`, then add the robot account federation configurations defined in `federations`. If `false`, then the resource sets the federation configurations specified in `federations`, removing all others federation configurations. Robot account federations require Quay version 3.13 or later.
+
+__Type__: boolean
+
+__Required__: False
+
+__Default value__: True
+
 ### connSecretRef
 
 Reference to the secret resource that stores the connection parameters to the Quay Container Registry API.
@@ -138,9 +148,19 @@ __Required__: False
 
 __Default value__: None
 
+### federations
+
+Federation configurations, which enable keyless authentication with robot accounts. Robot account federations require Quay version 3.13 or later.
+
+__Type__: array
+
+__Required__: False
+
+__Default value__: None
+
 ### name
 
-Name of the robot account to create or remove, in the format `namespace`+`shortname`. The namespace can be an organization or a personal namespace. The short name (the part after the `+` sign) must be in lowercase, must not contain white spaces, must not start by a digit, and must be at least two characters long. If you omit the namespace part in the name, then the resource uses your personal namespace. You can create and delete robot accounts in your personal namespace, but not in the personal namespace of other users. The token you use in `quayToken` determines the user account you are using.
+Name of the robot account to create or remove, in the format `namespace`+`shortname`. The namespace can be an organization or your personal namespace. The short name (the part after the `+` sign) must be in lowercase, must not contain white spaces, must not start by a digit, and must be at least two characters long. If you omit the namespace part in the name, then the resource uses your personal namespace. You can create and delete robot accounts in your personal namespace, but not in the personal namespace of other users. The token you use in `quayToken` determines the user account you are using.
 
 __Type__: string
 
