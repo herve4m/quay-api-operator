@@ -88,7 +88,7 @@ Results:
 	State: pass
 
 	Log:
-		Loaded ClusterServiceVersion: quay-api-operator.v1.0.0
+		Loaded ClusterServiceVersion: quay-api-operator.v1.1.0
 ...
 ```
 
