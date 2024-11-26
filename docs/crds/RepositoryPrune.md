@@ -75,8 +75,8 @@ spec:
 
   repository: production/smallimage
   method: tags
-  value: 5
-  tag_pattern: nightly
+  value: "5"
+  tagPattern: nightly
 
 ```
 

@@ -85,7 +85,7 @@ spec:
   imageTags:
     - "9.4"
     - "9.3"
-  syncInterval: 172800
+  syncInterval: "172800"
   syncStartDate: "2023-05-25T21:06:00Z"
 
 ```

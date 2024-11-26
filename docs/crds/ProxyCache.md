@@ -77,7 +77,7 @@ spec:
   registry: quay.io/prodimgs
   username: cwade
   password: My53cr3Tpa55
-  expiration: 172800
+  expiration: "172800"
 
 ```
 

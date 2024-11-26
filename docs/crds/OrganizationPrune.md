@@ -76,8 +76,8 @@ spec:
   namespace: production
   method: date
   value: 7d
-  tag_pattern: stable
-  tag_pattern_matches: false
+  tagPattern: stable
+  tagPatternMatches: false
 
 ```
 
