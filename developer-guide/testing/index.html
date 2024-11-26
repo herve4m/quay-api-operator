@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+
+<html data-bs-theme="light" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="../../img/favicon.ico" rel="shortcut icon"/>
+<title>Testing - API Operator for Quay</title>
+<link href="../../css/bootstrap.min.css" rel="stylesheet"/>
+<link href="../../css/fontawesome.min.css" rel="stylesheet"/>
+<link href="../../css/brands.min.css" rel="stylesheet"/>
+<link href="../../css/solid.min.css" rel="stylesheet"/>
+<link href="../../css/v4-font-face.min.css" rel="stylesheet"/>
+<link href="../../css/base.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" id="hljs-light" rel="stylesheet"/>
+<link disabled="" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" id="hljs-dark" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+</head>
+<body>
+<div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+<div class="container">
+<a class="navbar-brand" href="../..">API Operator for Quay</a>
+<!-- Expander button -->
+<button aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-bs-target="#navbar-collapse" data-bs-toggle="collapse" type="button">
+<span class="navbar-toggler-icon"></span>
+</button>
+<!-- Expanded navigation -->
+<div class="navbar-collapse collapse" id="navbar-collapse">
+<!-- Main navigation -->
+<ul class="nav navbar-nav">
+<li class="nav-item">
+<a class="nav-link" href="../..">User Guide</a>
+</li>
+<li class="nav-item dropdown">
+<a aria-expanded="false" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button">Custom Resources</a>
+<ul class="dropdown-menu">
+<li>
+<a class="dropdown-item" href="../../crds/">Operator Custom Resources</a>
+</li>
+<li>
+<a class="dropdown-item" href="../../crds/ApiToken/">ApiToken</a>
+</li>
+<li>
+<a class="dropdown-item" href="../../crds/Application/">Application</a>
+</li>
+<li>
+<a class="dropdown-item" href="../../crds/DefaultPerm/">DefaultPerm</a>
+</li>
+<li>
+<a class="dropdown-item" href="../../crds/DockerToken/">DockerToken</a>
+</li>
+<li>
+<a class="dropdown-item" href="../../crds/FirstUser/">FirstUser</a>
+</li>
+<li>
+<a class="dropdown-item" href="../../crds/ManifestLabel/">ManifestLabel</a>
+</li>
+<li>
+<a class="dropdown-item" href="../../crds/Message/">Message</a>
+</li>
+<li>
+<a class="dropdown-item" href="../../crds/Notification/">Notification</a>
+</li>
+<li>
+<a class="dropdown-item" href="../../crds/OrganizationPrune/">OrganizationPrune</a>
+</li>
+<li>
+<a class="dropdown-item" href="../../crds/Organization/">Organization</a>
+</li>
+<li>
+<a class="dropdown-item" href="../../crds/ProxyCache/">ProxyCache</a>
+</li>
+<li>
+<a class="dropdown-item" href="../../crds/Quota/">Quota</a>
+</li>
+<li>
+<a class="dropdown-item" href="../../crds/Repository/">Repository</a>
+</li>
+<li>
+<a class="dropdown-item" href="../../crds/RepositoryMirror/">RepositoryMirror</a>
+</li>
+<li>
+<a class="dropdown-item" href="../../crds/RepositoryPrune/">RepositoryPrune</a>
+</li>
+<li>
+<a class="dropdown-item" href="../../crds/Robot/">Robot</a>
+</li>
+<li>
+<a class="dropdown-item" href="../../crds/Tag/">Tag</a>
+</li>
+<li>
+<a class="dropdown-item" href="../../crds/TeamLdap/">TeamLdap</a>
+</li>
+<li>
+<a class="dropdown-item" href="../../crds/TeamOidc/">TeamOidc</a>
+</li>
+<li>
+<a class="dropdown-item" href="../../crds/Team/">Team</a>
+</li>
+<li>
+<a class="dropdown-item" href="../../crds/User/">User</a>
+</li>
+</ul>
+</li>
+<li class="nav-item dropdown">
+<a aria-current="page" aria-expanded="false" class="nav-link dropdown-toggle active" data-bs-toggle="dropdown" href="#" role="button">Developer Guide</a>
+<ul class="dropdown-menu">
+<li>
+<a class="dropdown-item" href="../">Developer Guide</a>
+</li>
+<li>
+<a class="dropdown-item" href="../tools/">Tools</a>
+</li>
+<li>
+<a class="dropdown-item" href="../building/">Building</a>
+</li>
+<li>
+<a class="dropdown-item" href="../deploying/">Deploying</a>
+</li>
+<li>
+<a aria-current="page" class="dropdown-item active" href="./">Testing</a>
+</li>
+<li>
+<a class="dropdown-item" href="../releasing/">Releasing to OperatorHub.io</a>
+</li>
+</ul>
+</li>
+</ul>
+<ul class="nav navbar-nav ms-md-auto">
+<li class="nav-item">
+<a class="nav-link" href="../deploying/" rel="prev">
+<i class="fa fa-arrow-left"></i> Previous
+                                </a>
+</li>
+<li class="nav-item">
+<a class="nav-link" href="../releasing/" rel="next">
+                                    Next <i class="fa fa-arrow-right"></i>
+</a>
+</li>
+<li class="nav-item">
+<a class="nav-link" href="https://github.com/herve4m/quay-api-operator/edit/main/docs/developer-guide/testing.md"><i class="fa-brands fa-github"></i> Edit on GitHub</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="container">
+<div class="row">
+<div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+<div class="navbar-header">
+<button class="navbar-toggler collapsed" data-bs-target="#toc-collapse" data-bs-toggle="collapse" title="Table of Contents" type="button">
+<span class="fa fa-angle-down"></span>
+</button>
+</div>
+<div class="navbar-collapse collapse card bg-body-tertiary" id="toc-collapse">
+<ul class="nav flex-column">
+<li class="nav-item" data-bs-level="1"><a class="nav-link" href="#validating-and-testing-the-operator">Validating and Testing the Operator</a>
+<ul class="nav flex-column">
+<li class="nav-item" data-bs-level="2"><a class="nav-link" href="#validating-the-operator">Validating the Operator</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-bs-level="2"><a class="nav-link" href="#testing-the-operator-with-molecule">Testing the Operator with Molecule</a>
+<ul class="nav flex-column">
+<li class="nav-item" data-bs-level="3"><a class="nav-link" href="#requirements">Requirements</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-bs-level="3"><a class="nav-link" href="#running-the-molecule-scenario">Running the Molecule Scenario</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+</ul>
+</li>
+<li class="nav-item" data-bs-level="2"><a class="nav-link" href="#manually-testing-the-operator">Manually Testing the Operator</a>
+<ul class="nav flex-column">
+<li class="nav-item" data-bs-level="3"><a class="nav-link" href="#deploying-quay-in-kubernetes-or-openshift">Deploying Quay in Kubernetes or OpenShift</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-bs-level="3"><a class="nav-link" href="#applying-the-test-resources">Applying the Test Resources</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+<li class="nav-item" data-bs-level="3"><a class="nav-link" href="#deleting-the-test-resources">Deleting the Test Resources</a>
+<ul class="nav flex-column">
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div></div>
+<div class="col-md-9" role="main">
+<h1 id="validating-and-testing-the-operator">Validating and Testing the Operator</h1>
+<p>Before submitting your work, validate and test the Operator.
+GitHub Actions automatically perform the following tests when you push updates to the GitHub repository.</p>
+<h2 id="validating-the-operator">Validating the Operator</h2>
+<p>Some of the following validation tests require a Kubernetes cluster to run.
+All these tests are automatically performed by GitHub Actions when committing your work.
+See the <code>.github/workflows/tests.yaml</code> file.</p>
+<p>The tests use the <code>bundle/</code> directory that you build by running the <code>make bundle</code> command:</p>
+<pre><code class="language-sh">make bundle
+</code></pre>
+<p>Validating the bundle manifests by using the <code>operator-sdk bundle validate</code> command:</p>
+<pre><code class="language-sh">operator-sdk bundle validate ./bundle --select-optional suite=operatorframework
+</code></pre>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If the <code>operator-sdk</code> command is not available on your system, then the <code>make bundle</code> command that you used previously downloads and installs it in the <code>./bin</code> directory in the current directory.
+In that case, specify the path to the <code>operator-sdk</code> command: <code>./bin/operator-sdk bundle validate ...</code></p>
+</div>
+<p>Validating the bundle manifests by using the <code>k8s-community-bundle-validator</code> command (see the <a href="../tools/">tools</a> section to install this command).
+A 0 return code indicates success:</p>
+<pre><code class="language-sh">k8s-community-bundle-validator ./bundle
+echo $?
+</code></pre>
+<p>Validate the bundle manifests by using Scorecard.
+Scorecard uses pods to run the tests, and therefore requires a Kubernetes cluster.
+Ensure that you are logged in to your cluster before running Scorecard.
+A 0 return code indicates success:</p>
+<pre><code class="language-sh">operator-sdk scorecard ./bundle
+echo $?
+</code></pre>
+<p>The command returns a lot of output.
+Each test reports its status in the <code>State</code> field:</p>
+<pre><code class="language-text">--------------------------------------------------------------------------------
+Image:      quay.io/operator-framework/scorecard-test:v1.35.0
+Entrypoint: [scorecard-test olm-bundle-validation]
+Labels:
+    "suite":"olm"
+    "test":"olm-bundle-validation-test"
+Results:
+    Name: olm-bundle-validation
+    State: pass
+
+    Log:
+        time="2024-05-31T16:43:27Z" level=debug msg="Found manifests directory" name=bundle-test
+        time="2024-05-31T16:43:27Z" level=debug msg="Found metadata directory" name=bundle-test
+        time="2024-05-31T16:43:27Z" level=debug msg="Getting mediaType info from manifests directory" name=bundle-test
+        time="2024-05-31T16:43:27Z" level=debug msg="Found annotations file" name=bundle-test
+        time="2024-05-31T16:43:27Z" level=debug msg="Could not find optional dependencies file" name=bundle-test
+
+
+--------------------------------------------------------------------------------
+Image:      quay.io/operator-framework/scorecard-test:v1.35.0
+Entrypoint: [scorecard-test basic-check-spec]
+Labels:
+    "suite":"basic"
+    "test":"basic-check-spec-test"
+Results:
+    Name: basic-check-spec
+    State: pass
+
+
+--------------------------------------------------------------------------------
+Image:      quay.io/operator-framework/scorecard-test:v1.35.0
+Entrypoint: [scorecard-test olm-crds-have-resources]
+Labels:
+    "suite":"olm"
+    "test":"olm-crds-have-resources-test"
+Results:
+    Name: olm-crds-have-resources
+    State: pass
+
+    Log:
+        Loaded ClusterServiceVersion: quay-api-operator.v1.1.0
+...
+</code></pre>
+<h2 id="testing-the-operator-with-molecule">Testing the Operator with Molecule</h2>
+<p>The Molecule scenario tests the API Operator resources.</p>
+<p>The scenario creates a <a href="https://kind.sigs.k8s.io/">Kind</a> Kubernetes cluster, deploys a Quay Container Registry instance in this cluster, deploys the API Operator for Quay, and then uses test resources to verify that the Operator operates correctly.</p>
+<p>The Molecule scenario configuration is stored in the <code>molecule/kind</code> directory.
+Some files in this directory refer to files from the <code>molecule/default</code> directory.</p>
+<h3 id="requirements">Requirements</h3>
+<p>The Molecule scenario requires that you install the following applications in your system:</p>
+<ul>
+<li><a href="https://docs.ansible.com/ansible/latest/installation_guide/">ansible-core</a></li>
+<li><a href="https://ansible.readthedocs.io/projects/molecule/installation/">Molecule</a></li>
+<li>The Kubernetes Python package</li>
+<li><a href="https://docs.docker.com/engine/install/">Docker</a></li>
+<li><a href="https://kind.sigs.k8s.io/docs/user/quick-start">Kind</a></li>
+<li><a href="https://kubernetes.io/docs/tasks/tools/">kubectl</a></li>
+<li><a href="https://kubectl.docs.kubernetes.io/installation/kustomize/">kustomize</a></li>
+</ul>
+<h3 id="running-the-molecule-scenario">Running the Molecule Scenario</h3>
+<p>From the root directory of the Operator GitHub repository, run the following command:</p>
+<pre><code class="language-sh">molecule test --scenario-name kind
+</code></pre>
+<p>The command creates a Kind Kubernetes cluster, and then deploys a Quay Container Registry instance from the Kubernetes resources in the <code>molecule/default/quay</code> directory.
+The command deploys the Operator, and runs the tests from the Ansible tasks in the <code>molecule/default/tasks</code> directory.
+These tasks use the Kubernetes resources in the <code>config/samples</code> directory to test the Operator.</p>
+<p>After the tests, the scenario deletes the Kind cluster.</p>
+<h2 id="manually-testing-the-operator">Manually Testing the Operator</h2>
+<p>Before you can test the Operator, you need to prepare your cluster:</p>
+<ol>
+<li><a href="../building/">Build and publish</a> the container image.</li>
+<li><a href="../deploying/">Deploy</a> the Operator.</li>
+<li>Deploy a Quay instance for running the tests.
+   You can use the <a href="https://github.com/quay/quay-operator">Quay Operator</a>, or use the following instructions to deploy a test Quay instance in Kubernetes or OpenShift.</li>
+</ol>
+<h3 id="deploying-quay-in-kubernetes-or-openshift">Deploying Quay in Kubernetes or OpenShift</h3>
+<p>The following instructions require a Kubernetes or OpenShift cluster, with at least 3 GiB of memory available on a node.
+The Quay instance uses ephemeral storage, and you should use it only for testing the Operator.</p>
+<p>The resources in YAML format are available in the <code>molecule/default/quay</code> directory.</p>
+<ol>
+<li>
+<p>Change to the <code>molecule/default/quay</code> directory.</p>
+<pre><code>cd ./molecule/default/quay
+</code></pre>
+</li>
+<li>
+<p>Create the <code>quay</code> Kubernetes namespace to host the Quay instance.
+   Do not use a different name, because the resources rely on this name.</p>
+<pre><code>kubectl create namespace quay
+</code></pre>
+</li>
+<li>
+<p>Deploy the resources from the YAML files:</p>
+<pre><code>kubectl apply -n quay -f postgresql.yaml
+kubectl apply -n quay -f redis.yaml
+kubectl apply -n quay -f fake-clair.yaml
+sleep 20   # Give time for the pods to be up and running
+kubectl apply -n quay -f quay.yaml
+sleep 60   # Give time for Quay to start (it might restart a few times)
+kubectl get pods -n quay # All pods should be up and running
+</code></pre>
+</li>
+</ol>
+<p>The Quay instance is accessible only as a service, and is not accessible from outside the cluster.
+The Quay instance is available at <code>https://quay.quay.svc.cluster.local</code> from inside the cluster.</p>
+<p>This Quay installation enables the first user creation feature (<code>FEATURE_USER_INITIALIZE</code> in <code>config.yaml</code>), which allows you to test the <code>FirstUser</code> Kubernetes resource to bootstrap Quay.</p>
+<h3 id="applying-the-test-resources">Applying the Test Resources</h3>
+<p>The <code>config/samples</code> directory stores some sample resource files in YAML format that you can use to test the Operator.</p>
+<p>The resources refer to Secrets to retrieve the Quay connection parameters.
+However, you only have to create the Secret for the <code>FirstUser</code> resource, which in turn creates a Secret to store the temporary Quay credentials.
+Then, the <code>ApiToken</code> resource uses that new secret to generate a permanent OAuth access token that it stores in a third Secret resource, which in turn is used by all the other resources.</p>
+<div class="mermaid">flowchart TD
+    K1["`__Secret__
+        _quay-connection-secret_`"]:::keyStyle
+    K2["`__Secret__
+        _quay-temp-credentials-secret_`"]:::keyStyle
+    K3["`__Secret__
+        _quay-credentials-secret_`"]:::keyStyle
+
+    FirstUser[FirstUser]:::QuayStyle
+    ApiToken[Organization/Application/ApiToken]:::QuayStyle
+    User[User]:::QuayStyle
+    Team[Team]:::QuayStyle
+    Robot[Robot]:::QuayStyle
+    Repository[Repository]:::QuayStyle
+    DockerToken[DockerToken]:::QuayStyle
+    etc[...]:::ETC
+
+    K1 --connSecretRef--&gt; FirstUser
+    FirstUser --retSecretRef --&gt; K2
+    K2 --connSecretRef--&gt; ApiToken
+    ApiToken --retSecretRef --&gt; K3
+    K3 --connSecretRef--&gt; User
+    K3 --connSecretRef--&gt; Team
+    K3 --connSecretRef--&gt; Robot
+    K3 --connSecretRef--&gt; Repository
+    K3 --connSecretRef--&gt; DockerToken
+    K3 --&gt; etc
+
+    classDef keyStyle fill:#ffe8cc,stroke:#f8ae54,font-size:10pt;
+    classDef QuayStyle fill:#cce3ff,stroke:#549ef8;
+    classDef ETC fill:#fff,stroke:#fff;
+
+</div>
+<p>Before applying the resources, create a namespace and the Secret for the <code>FirstUser</code> resource.</p>
+<pre><code class="language-sh">kubectl create namespace test-operator
+kubectl create secret generic quay-connection-secret -n test-operator \
+  --from-literal host=https://quay.quay.svc.cluster.local \
+  --from-literal validateCerts=false
+</code></pre>
+<p>Use the <code>kubectl apply</code> command to deploy all the resources:</p>
+<pre><code class="language-sh">kubectl apply -n test-operator -k config/samples
+</code></pre>
+<p>Most resources initially report an error state, because the Secret that provides the Quay connection parameters does not exist yet (the <code>FirstUser</code> and <code>ApiToken</code> resources must complete first).
+It takes 30 minutes to reconcile.</p>
+<p>You can review the status of the resources by using the following loop:</p>
+<pre><code class="language-sh">for i in apitoken.quay.herve4m.github.io/apitoken-sample \
+  application.quay.herve4m.github.io/application-sample \
+  defaultperm.quay.herve4m.github.io/defaultperm-sample \
+  dockertoken.quay.herve4m.github.io/dockertoken-sample \
+  firstuser.quay.herve4m.github.io/firstuser-sample \
+  manifestlabel.quay.herve4m.github.io/manifestlabel-sample \
+  message.quay.herve4m.github.io/message-sample \
+  notification.quay.herve4m.github.io/notification-sample \
+  organization.quay.herve4m.github.io/organization-sample \
+  organizationprune.quay.herve4m.github.io/organizationprune-sample \
+  proxycache.quay.herve4m.github.io/proxycache-sample \
+  quota.quay.herve4m.github.io/quota-sample \
+  repository.quay.herve4m.github.io/repository-sample-1 \
+  repository.quay.herve4m.github.io/repository-sample-2 \
+  repositorymirror.quay.herve4m.github.io/repositorymirror-sample \
+  repositoryprune.quay.herve4m.github.io/repositoryprune-sample \
+  robot.quay.herve4m.github.io/robot-sample \
+  tag.quay.herve4m.github.io/tag-sample \
+  team.quay.herve4m.github.io/team-sample \
+  teamldap.quay.herve4m.github.io/teamldap-sample \
+  teamoidc.quay.herve4m.github.io/teamoidc-sample \
+  user.quay.herve4m.github.io/user-sample
+do
+  kubectl get -n test-operator --no-headers $i
+done
+</code></pre>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <code>manifestlabel-sample</code>, <code>teamldap-sample</code>, <code>teamoidc-sample</code>, and <code>tag-sample</code> resources stay in the error state.
+This state is expected because these resources depend on Quay features or container images that are not available in this test environment.</p>
+</div>
+<h3 id="deleting-the-test-resources">Deleting the Test Resources</h3>
+<p>Delete the resources by using the <code>kubectl delete</code> command.
+Delete the Organization, Application, ApiToken, and FirstUser resources at the end, because they control the secrets  that the other resources uses to access Quay.</p>
+<pre><code class="language-sh">kubectl delete -n test-operator \
+  defaultperm.quay.herve4m.github.io/defaultperm-sample \
+  dockertoken.quay.herve4m.github.io/dockertoken-sample \
+  manifestlabel.quay.herve4m.github.io/manifestlabel-sample \
+  message.quay.herve4m.github.io/message-sample \
+  notification.quay.herve4m.github.io/notification-sample \
+  proxycache.quay.herve4m.github.io/proxycache-sample \
+  quota.quay.herve4m.github.io/quota-sample \
+  repository.quay.herve4m.github.io/repository-sample-1 \
+  repository.quay.herve4m.github.io/repository-sample-2 \
+  repositorymirror.quay.herve4m.github.io/repositorymirror-sample \
+  repositoryprune.quay.herve4m.github.io/repositoryprune-sample \
+  robot.quay.herve4m.github.io/robot-sample \
+  tag.quay.herve4m.github.io/tag-sample \
+  team.quay.herve4m.github.io/team-sample \
+  teamldap.quay.herve4m.github.io/teamldap-sample \
+  teamoidc.quay.herve4m.github.io/teamoidc-sample \
+  user.quay.herve4m.github.io/user-sample \
+  organizationprune.quay.herve4m.github.io/organizationprune-sample
+kubectl delete -n test-operator \
+  apitoken.quay.herve4m.github.io/apitoken-sample \
+  application.quay.herve4m.github.io/application-sample \
+  organization.quay.herve4m.github.io/organization-sample
+kubectl delete -n test-operator firstuser.quay.herve4m.github.io/firstuser-sample
+kubectl delete namespace test-operator
+</code></pre>
+<p>You can delete the Quay installation by deleting the <code>quay</code> namespace:</p>
+<pre><code class="language-sh">kubectl delete namespace quay
+</code></pre></div>
+</div>
+</div>
+<footer class="col-md-12">
+<hr/>
+<p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+</footer>
+<script src="../../js/bootstrap.bundle.min.js"></script>
+<script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+<script src="../../js/base.js"></script>
+<div aria-hidden="true" aria-labelledby="keyboardModalLabel" class="modal" id="mkdocs_keyboard_modal" role="dialog" tabindex="-1">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+<button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+</div>
+<div class="modal-body">
+<table class="table">
+<thead>
+<tr>
+<th style="width: 20%;">Keys</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="help shortcut"><kbd>?</kbd></td>
+<td>Open this help</td>
+</tr>
+<tr>
+<td class="next shortcut"><kbd>n</kbd></td>
+<td>Next page</td>
+</tr>
+<tr>
+<td class="prev shortcut"><kbd>p</kbd></td>
+<td>Previous page</td>
+</tr>
+<tr>
+<td class="search shortcut"><kbd>s</kbd></td>
+<td>Search</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="modal-footer">
+</div>
+</div>
+</div>
+</div>
+<script type="module">import mermaid from "https://unpkg.com/mermaid@10.4.0/dist/mermaid.esm.min.mjs";
+mermaid.initialize({
+    theme: "neutral"
+});</script></body>
+</html>

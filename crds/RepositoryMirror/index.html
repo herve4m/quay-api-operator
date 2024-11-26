@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>RepositoryMirror - API Operator for Quay</title>
+        <link href="../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../css/fontawesome.min.css" rel="stylesheet">
+        <link href="../../css/brands.min.css" rel="stylesheet">
+        <link href="../../css/solid.min.css" rel="stylesheet">
+        <link href="../../css/v4-font-face.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" >
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" disabled>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="../..">API Operator for Quay</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="nav-item">
+                                <a href="../.." class="nav-link">User Guide</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle active" aria-current="page" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Custom Resources</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../" class="dropdown-item">Operator Custom Resources</a>
+</li>
+                                    
+<li>
+    <a href="../ApiToken/" class="dropdown-item">ApiToken</a>
+</li>
+                                    
+<li>
+    <a href="../Application/" class="dropdown-item">Application</a>
+</li>
+                                    
+<li>
+    <a href="../DefaultPerm/" class="dropdown-item">DefaultPerm</a>
+</li>
+                                    
+<li>
+    <a href="../DockerToken/" class="dropdown-item">DockerToken</a>
+</li>
+                                    
+<li>
+    <a href="../FirstUser/" class="dropdown-item">FirstUser</a>
+</li>
+                                    
+<li>
+    <a href="../ManifestLabel/" class="dropdown-item">ManifestLabel</a>
+</li>
+                                    
+<li>
+    <a href="../Message/" class="dropdown-item">Message</a>
+</li>
+                                    
+<li>
+    <a href="../Notification/" class="dropdown-item">Notification</a>
+</li>
+                                    
+<li>
+    <a href="../OrganizationPrune/" class="dropdown-item">OrganizationPrune</a>
+</li>
+                                    
+<li>
+    <a href="../Organization/" class="dropdown-item">Organization</a>
+</li>
+                                    
+<li>
+    <a href="../ProxyCache/" class="dropdown-item">ProxyCache</a>
+</li>
+                                    
+<li>
+    <a href="../Quota/" class="dropdown-item">Quota</a>
+</li>
+                                    
+<li>
+    <a href="../Repository/" class="dropdown-item">Repository</a>
+</li>
+                                    
+<li>
+    <a href="./" class="dropdown-item active" aria-current="page">RepositoryMirror</a>
+</li>
+                                    
+<li>
+    <a href="../RepositoryPrune/" class="dropdown-item">RepositoryPrune</a>
+</li>
+                                    
+<li>
+    <a href="../Robot/" class="dropdown-item">Robot</a>
+</li>
+                                    
+<li>
+    <a href="../Tag/" class="dropdown-item">Tag</a>
+</li>
+                                    
+<li>
+    <a href="../TeamLdap/" class="dropdown-item">TeamLdap</a>
+</li>
+                                    
+<li>
+    <a href="../TeamOidc/" class="dropdown-item">TeamOidc</a>
+</li>
+                                    
+<li>
+    <a href="../Team/" class="dropdown-item">Team</a>
+</li>
+                                    
+<li>
+    <a href="../User/" class="dropdown-item">User</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Developer Guide</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../developer-guide/" class="dropdown-item">Developer Guide</a>
+</li>
+                                    
+<li>
+    <a href="../../developer-guide/tools/" class="dropdown-item">Tools</a>
+</li>
+                                    
+<li>
+    <a href="../../developer-guide/building/" class="dropdown-item">Building</a>
+</li>
+                                    
+<li>
+    <a href="../../developer-guide/deploying/" class="dropdown-item">Deploying</a>
+</li>
+                                    
+<li>
+    <a href="../../developer-guide/testing/" class="dropdown-item">Testing</a>
+</li>
+                                    
+<li>
+    <a href="../../developer-guide/releasing/" class="dropdown-item">Releasing to OperatorHub.io</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ms-md-auto">
+                            <li class="nav-item">
+                                <a rel="prev" href="../Repository/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../RepositoryPrune/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="https://github.com/herve4m/quay-api-operator/edit/main/docs/crds/RepositoryMirror.md" class="nav-link"><i class="fa-brands fa-github"></i> Edit on GitHub</a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-bs-level="1"><a href="#repositorymirror-manage-quay-container-registry-repository-mirror-configurations" class="nav-link">RepositoryMirror - Manage Quay Container Registry repository mirror configurations</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="2"><a href="#usage-example" class="nav-link">Usage Example</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#properties" class="nav-link">Properties</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="3"><a href="#connsecretref" class="nav-link">connSecretRef</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="3"><a href="#connsecretrefname" class="nav-link">connSecretRef.name</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="3"><a href="#connsecretrefnamespace" class="nav-link">connSecretRef.namespace</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="3"><a href="#externalreference" class="nav-link">externalReference</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="3"><a href="#externalregistrypassword" class="nav-link">externalRegistryPassword</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="3"><a href="#externalregistryusername" class="nav-link">externalRegistryUsername</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="3"><a href="#forcesync" class="nav-link">forceSync</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="3"><a href="#httpproxy" class="nav-link">httpProxy</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="3"><a href="#httpsproxy" class="nav-link">httpsProxy</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="3"><a href="#imagetags" class="nav-link">imageTags</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="3"><a href="#isenabled" class="nav-link">isEnabled</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="3"><a href="#name" class="nav-link">name</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="3"><a href="#noproxy" class="nav-link">noProxy</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="3"><a href="#preserveinquayondeletion" class="nav-link">preserveInQuayOnDeletion</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="3"><a href="#robotusername" class="nav-link">robotUsername</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="3"><a href="#syncinterval" class="nav-link">syncInterval</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="3"><a href="#syncstartdate" class="nav-link">syncStartDate</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="3"><a href="#verifytls" class="nav-link">verifyTls</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#listing-the-repositorymirror-resources" class="nav-link">Listing the RepositoryMirror Resources</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<!---
+DO NOT EDIT THIS FILE, BECAUSE IT IS AUTOMATICALLY GENERATED FROM A TEMPLATE.
+Instead, edit the scripts/templates/docs/api.md.jinja template, and then run
+the scripts/crd2markdown script.
+--->
+
+<h1 id="repositorymirror-manage-quay-container-registry-repository-mirror-configurations">RepositoryMirror - Manage Quay Container Registry repository mirror configurations</h1>
+<p>The RepositoryMirror custom resource relies on a Secret resource to provide the connection parameters to the Quay instance.
+This Secret resource must include the following data:</p>
+<ul>
+<li><code>host</code>: URL for accessing the Quay API, such as <code>https://quay.example.com:8443</code> for example.</li>
+<li><code>validateCerts</code>: Whether to allow insecure connections to the API.
+  By default, insecure connections are refused.</li>
+<li><code>token</code>: OAuth access token for authenticating against the API.
+  To create such a token see the <a href="https://access.redhat.com/documentation/en-us/red_hat_quay/3/html-single/red_hat_quay_api_guide/index#creating-oauth-access-token">Creating an OAuth Access Token</a> documentation.
+  You can also use the <a href="../ApiToken/">ApiToken</a> custom resource to create this token.</li>
+<li><code>username</code>: The username to use for authenticating against the API.
+  If <code>token</code> is set, then <code>username</code> is ignored.</li>
+<li><code>password</code>: The password to use for authenticating against the API.
+  If <code>token</code> is set, then <code>password</code> is ignored.</li>
+</ul>
+<p>You can create the secret by using the <code>kubectl create secret</code> command:</p>
+<pre><code class="language-sh">kubectl create secret generic quay-credentials --from-literal host=https://quay.example.com:8443 --from-literal validateCerts=false --from-literal token=vFYyU2D0fHYXvcA3Y5TYfMrIMyVIH9YmxoVLsmku
+</code></pre>
+<p>Or you can create the secret from a resource file:</p>
+<pre><code class="language-yaml">---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: quay-credentials
+stringData:
+  host: https://quay.example.com:8443
+  validateCerts: &quot;false&quot;
+  token: vFYyU2D0fHYXvcA3Y5TYfMrIMyVIH9YmxoVLsmku
+</code></pre>
+<p>You refer to this secret in your RepositoryMirror custom resource by using the <code>connSecretRef</code> property.
+See the <a href="#usage-example">usage example</a>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Do not delete the Secret resource if a Quay custom resource still references it.
+If you delete the Secret resource, then the Operator cannot connect to the Quay API anymore, and cannot synchronize the Quay custom resource with its corresponding object in Quay.
+In addition, deleting the Quay custom resource does not complete because the Operator cannot delete the corresponding object in Quay.</p>
+<p>If you face this issue, then edit the custom resource (<code>kubectl edit</code>), and set the <a href="#preserveinquayondeletion">.spec.preserveInQuayOnDeletion</a> property to <code>true</code>.
+Alternatively, you can remove the <code>.metadata.finalizers</code> section.
+In both case, you must manually delete the corresponding object in Quay.</p>
+</div>
+<h2 id="usage-example">Usage Example</h2>
+<pre><code class="language-yaml">---
+apiVersion: quay.herve4m.github.io/v1alpha1
+kind: RepositoryMirror
+metadata:
+  name: repositorymirror-sample
+spec:
+  # Connection parameters in a Secret resource
+  connSecretRef:
+    name: quay-credentials
+    # By default, the operator looks for the secret in the same namespace as
+    # the repositorymirror resource, but you can specify a different namespace.
+    # namespace: mynamespace
+
+  # Whether to preserve the corresponding configuration in Quay when you
+  # delete the RepositoryMirror resource.
+  preserveInQuayOnDeletion: false
+
+  name: production/ubi9
+  isEnabled: true
+  externalReference: registry.access.redhat.com/ubi9-micro
+  verifyTls: true
+  httpProxy: http://proxy.example.com:3128
+  noProxy: registry.access.redhat.com
+  # externalRegistryUsername: jsmith
+  # externalRegistryPassword: Sup3r53cr3t
+  robotUsername: production+robotprod1
+  imageTags:
+    - &quot;9.4&quot;
+    - &quot;9.3&quot;
+  syncInterval: &quot;172800&quot;
+  syncStartDate: &quot;2023-05-25T21:06:00Z&quot;
+
+</code></pre>
+<h2 id="properties">Properties</h2>
+<h3 id="connsecretref">connSecretRef</h3>
+<p>Reference to the secret resource that stores the connection parameters to the Quay Container Registry API.
+The secret must include the <code>host</code>, <code>token</code> (or <code>username</code> and <code>password</code>), and optionally the <code>validateCerts</code> keys.</p>
+<p><strong>Type</strong>: object (see the following properties)</p>
+<p><strong>Required</strong>: True</p>
+<p><strong>Default value</strong>: None</p>
+<h3 id="connsecretrefname">connSecretRef.name</h3>
+<p>Name of the secret resource.</p>
+<p><strong>Type</strong>: string</p>
+<p><strong>Required</strong>: True</p>
+<p><strong>Default value</strong>: None</p>
+<h3 id="connsecretrefnamespace">connSecretRef.namespace</h3>
+<p>Namespace of the secret resource. By default, the secret resource is retrieved from the same namespace as the current RepositoryMirror resource.</p>
+<p><strong>Type</strong>: string</p>
+<p><strong>Required</strong>: False</p>
+<p><strong>Default value</strong>: None</p>
+<h3 id="externalreference">externalReference</h3>
+<p>Path to the remote container repository to synchronize, such as quay.io/projectquay/quay for example. This parameter is required when creating the mirroring configuration.</p>
+<p><strong>Type</strong>: string</p>
+<p><strong>Required</strong>: False</p>
+<p><strong>Default value</strong>: None</p>
+<h3 id="externalregistrypassword">externalRegistryPassword</h3>
+<p>Password to use for pulling the image from the remote registry.</p>
+<p><strong>Type</strong>: string</p>
+<p><strong>Required</strong>: False</p>
+<p><strong>Default value</strong>: None</p>
+<h3 id="externalregistryusername">externalRegistryUsername</h3>
+<p>Username to use for pulling the image from the remote registry.</p>
+<p><strong>Type</strong>: string</p>
+<p><strong>Required</strong>: False</p>
+<p><strong>Default value</strong>: None</p>
+<h3 id="forcesync">forceSync</h3>
+<p>Triggers an immediate image synchronization.</p>
+<p><strong>Type</strong>: boolean</p>
+<p><strong>Required</strong>: False</p>
+<p><strong>Default value</strong>: None</p>
+<h3 id="httpproxy">httpProxy</h3>
+<p>HTTP proxy to use for accessing the remote container registry. See the <code>curl</code> documentation for more details. By default, no proxy is used.</p>
+<p><strong>Type</strong>: string</p>
+<p><strong>Required</strong>: False</p>
+<p><strong>Default value</strong>: None</p>
+<h3 id="httpsproxy">httpsProxy</h3>
+<p>HTTPS proxy to use for accessing the remote container registry. See the <code>curl</code> documentation for more details. By default, no proxy is used.</p>
+<p><strong>Type</strong>: string</p>
+<p><strong>Required</strong>: False</p>
+<p><strong>Default value</strong>: None</p>
+<h3 id="imagetags">imageTags</h3>
+<p>List of image tags to be synchronized from the remote repository.</p>
+<p><strong>Type</strong>: array</p>
+<p><strong>Required</strong>: False</p>
+<p><strong>Default value</strong>: None</p>
+<h3 id="isenabled">isEnabled</h3>
+<p>Defines whether the mirror configuration is active or inactive. <code>false</code> by default.</p>
+<p><strong>Type</strong>: boolean</p>
+<p><strong>Required</strong>: False</p>
+<p><strong>Default value</strong>: None</p>
+<h3 id="name">name</h3>
+<p>Name of the existing repository for which the mirror parameters are configured. The format for the name is <code>namespace</code>/<code>shortname</code>.The namespace can be an organization or your personal namespace. If you omit the namespace part in the name, then the resource looks for the repository in your personal namespace. You can manage mirrors for repositories in your personal namespace, but not in the personal namespace of other users. The token you use in <code>quayToken</code> determines the user account you are using.</p>
+<p><strong>Type</strong>: string</p>
+<p><strong>Required</strong>: True</p>
+<p><strong>Default value</strong>: None</p>
+<h3 id="noproxy">noProxy</h3>
+<p>Comma-separated list of hosts for which the proxy should not be used. Only relevant when you also specify a proxy configuration by setting the <code>httpProxy</code> or <code>httpsProxy</code> variables. See the <code>curl</code> documentation for more details.</p>
+<p><strong>Type</strong>: string</p>
+<p><strong>Required</strong>: False</p>
+<p><strong>Default value</strong>: None</p>
+<h3 id="preserveinquayondeletion">preserveInQuayOnDeletion</h3>
+<p>Whether to preserve the corresponding Quay object when you delete the RepositoryMirror resource. When set to <code>false</code> (the default), the object is deleted from Quay.</p>
+<p><strong>Type</strong>: boolean</p>
+<p><strong>Required</strong>: False</p>
+<p><strong>Default value</strong>: False</p>
+<h3 id="robotusername">robotUsername</h3>
+<p>Username of the robot account that is used for synchronization. This parameter is required when creating the mirroring configuration.</p>
+<p><strong>Type</strong>: string</p>
+<p><strong>Required</strong>: False</p>
+<p><strong>Default value</strong>: None</p>
+<h3 id="syncinterval">syncInterval</h3>
+<p>Synchronization interval for this repository mirror in seconds. The <code>syncInterval</code> parameter accepts a time unit as a suffix; <code>s</code> for seconds, <code>m</code> for minutes, <code>h</code> for hours, <code>d</code> for days, and <code>w</code> for weeks. For example, <code>8h</code> for eight hours. 86400 (one day) by default.</p>
+<p><strong>Type</strong>: string</p>
+<p><strong>Required</strong>: False</p>
+<p><strong>Default value</strong>: None</p>
+<h3 id="syncstartdate">syncStartDate</h3>
+<p>The date and time at which the first synchronization should be initiated. The format for the <code>syncStartDate</code> parameter is ISO 8601 UTC, such as 2021-12-02T21:06:00Z. If you do not provide the <code>syncStartDate</code> parameter when you configure a new repository mirror, then the synchronization is immediately active, and a synchronization is initiated if the <code>isEnabled</code> parameter is <code>true</code>.</p>
+<p><strong>Type</strong>: string</p>
+<p><strong>Required</strong>: False</p>
+<p><strong>Default value</strong>: None</p>
+<h3 id="verifytls">verifyTls</h3>
+<p>Defines whether TLS of the external registry should be verified. <code>true</code> by default.</p>
+<p><strong>Type</strong>: boolean</p>
+<p><strong>Required</strong>: False</p>
+<p><strong>Default value</strong>: None</p>
+<h2 id="listing-the-repositorymirror-resources">Listing the RepositoryMirror Resources</h2>
+<p>You can retrieve the list of the RepositoryMirror custom resources in a namespace by using the <code>kubectl get</code> command:</p>
+<pre><code class="language-sh">kubectl get repositorymirrors.quay.herve4m.github.io -n &lt;namespace&gt;
+</code></pre></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="../../js/bootstrap.bundle.min.js"></script>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js"></script>
+
+        <div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

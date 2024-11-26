@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>Deploying - API Operator for Quay</title>
+        <link href="../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../css/fontawesome.min.css" rel="stylesheet">
+        <link href="../../css/brands.min.css" rel="stylesheet">
+        <link href="../../css/solid.min.css" rel="stylesheet">
+        <link href="../../css/v4-font-face.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" >
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" disabled>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="../..">API Operator for Quay</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="nav-item">
+                                <a href="../.." class="nav-link">User Guide</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Custom Resources</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../crds/" class="dropdown-item">Operator Custom Resources</a>
+</li>
+                                    
+<li>
+    <a href="../../crds/ApiToken/" class="dropdown-item">ApiToken</a>
+</li>
+                                    
+<li>
+    <a href="../../crds/Application/" class="dropdown-item">Application</a>
+</li>
+                                    
+<li>
+    <a href="../../crds/DefaultPerm/" class="dropdown-item">DefaultPerm</a>
+</li>
+                                    
+<li>
+    <a href="../../crds/DockerToken/" class="dropdown-item">DockerToken</a>
+</li>
+                                    
+<li>
+    <a href="../../crds/FirstUser/" class="dropdown-item">FirstUser</a>
+</li>
+                                    
+<li>
+    <a href="../../crds/ManifestLabel/" class="dropdown-item">ManifestLabel</a>
+</li>
+                                    
+<li>
+    <a href="../../crds/Message/" class="dropdown-item">Message</a>
+</li>
+                                    
+<li>
+    <a href="../../crds/Notification/" class="dropdown-item">Notification</a>
+</li>
+                                    
+<li>
+    <a href="../../crds/OrganizationPrune/" class="dropdown-item">OrganizationPrune</a>
+</li>
+                                    
+<li>
+    <a href="../../crds/Organization/" class="dropdown-item">Organization</a>
+</li>
+                                    
+<li>
+    <a href="../../crds/ProxyCache/" class="dropdown-item">ProxyCache</a>
+</li>
+                                    
+<li>
+    <a href="../../crds/Quota/" class="dropdown-item">Quota</a>
+</li>
+                                    
+<li>
+    <a href="../../crds/Repository/" class="dropdown-item">Repository</a>
+</li>
+                                    
+<li>
+    <a href="../../crds/RepositoryMirror/" class="dropdown-item">RepositoryMirror</a>
+</li>
+                                    
+<li>
+    <a href="../../crds/RepositoryPrune/" class="dropdown-item">RepositoryPrune</a>
+</li>
+                                    
+<li>
+    <a href="../../crds/Robot/" class="dropdown-item">Robot</a>
+</li>
+                                    
+<li>
+    <a href="../../crds/Tag/" class="dropdown-item">Tag</a>
+</li>
+                                    
+<li>
+    <a href="../../crds/TeamLdap/" class="dropdown-item">TeamLdap</a>
+</li>
+                                    
+<li>
+    <a href="../../crds/TeamOidc/" class="dropdown-item">TeamOidc</a>
+</li>
+                                    
+<li>
+    <a href="../../crds/Team/" class="dropdown-item">Team</a>
+</li>
+                                    
+<li>
+    <a href="../../crds/User/" class="dropdown-item">User</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle active" aria-current="page" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Developer Guide</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../" class="dropdown-item">Developer Guide</a>
+</li>
+                                    
+<li>
+    <a href="../tools/" class="dropdown-item">Tools</a>
+</li>
+                                    
+<li>
+    <a href="../building/" class="dropdown-item">Building</a>
+</li>
+                                    
+<li>
+    <a href="./" class="dropdown-item active" aria-current="page">Deploying</a>
+</li>
+                                    
+<li>
+    <a href="../testing/" class="dropdown-item">Testing</a>
+</li>
+                                    
+<li>
+    <a href="../releasing/" class="dropdown-item">Releasing to OperatorHub.io</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ms-md-auto">
+                            <li class="nav-item">
+                                <a rel="prev" href="../building/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../testing/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="https://github.com/herve4m/quay-api-operator/edit/main/docs/developer-guide/deploying.md" class="nav-link"><i class="fa-brands fa-github"></i> Edit on GitHub</a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-bs-level="1"><a href="#deploying-the-operator-for-testing" class="nav-link">Deploying the Operator for Testing</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="2"><a href="#log-in-to-your-cluster-as-a-cluster-administrator" class="nav-link">Log in to Your Cluster as a Cluster Administrator</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#run-the-operator-by-using-a-deployment-resource" class="nav-link">Run the Operator by Using a Deployment Resource</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="3"><a href="#undeploy-the-operator" class="nav-link">Undeploy the Operator</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#run-the-operator-by-using-olm" class="nav-link">Run the Operator by Using OLM</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="3"><a href="#bundle-the-operator" class="nav-link">Bundle the Operator</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="3"><a href="#install-olm" class="nav-link">Install OLM</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="3"><a href="#deploy-the-operator" class="nav-link">Deploy the Operator</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="3"><a href="#undeploy-the-operator_1" class="nav-link">Undeploy the Operator</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="deploying-the-operator-for-testing">Deploying the Operator for Testing</h1>
+<p>There are several ways to run the Operator in your cluster.
+Probably the easiest approach is to use a Deployment resource.
+Another approach is to use the Operator Lifecycle Manager (OLM).</p>
+<p>Both methods require that you first <a href="../building/">build and publish</a> the container image for the Operator.</p>
+<h2 id="log-in-to-your-cluster-as-a-cluster-administrator">Log in to Your Cluster as a Cluster Administrator</h2>
+<p>Both methods use the <code>kubectl</code> command to interact with your Kubernetes cluster from your workstation.
+Therefore, you need to configure the <code>~/.kube/config</code> file to grant you a cluster administrator access to the cluster.
+With an OpenShift cluster, you can use the <code>oc login</code> command.</p>
+<h2 id="run-the-operator-by-using-a-deployment-resource">Run the Operator by Using a Deployment Resource</h2>
+<p>Set the <code>IMG</code> environment variable to the name of the image that you built and pushed to the container registry.
+The Operator manager container uses that image.</p>
+<pre><code class="language-sh">IMG=quay.io/&lt;some-organization&gt;/quay-api-operator:&lt;tag&gt;
+export IMG
+make deploy
+</code></pre>
+<p>The <code>make deploy</code> command installs the Custom Resource Definitions (CRDs), creates the <code>quay-api-operator-system</code> Kubernetes namespace, and then creates the Deployment resource that deploys the manager pod.</p>
+<p>You can verify that the pod is running by using the <code>kubectl get pods</code> command:</p>
+<pre><code class="language-sh">kubectl get pods -n quay-api-operator-system
+</code></pre>
+<p>If the pod fails to start, then review its logs by running the <code>kubectl logs &lt;podname&gt; -n quay-api-operator-system</code> command.
+These logs are also useful later on, for accessing the Ansible messages, and troubleshooting Quay resources.</p>
+<p>For more details, review the <a href="https://sdk.operatorframework.io/docs/building-operators/ansible/tutorial/#2-run-as-a-deployment-inside-the-cluster">Run as a Deployment Inside the Cluster</a> section of the <a href="https://sdk.operatorframework.io/docs/building-operators/ansible/tutorial/#run-the-operator">Run the Operator</a> guide.</p>
+<h3 id="undeploy-the-operator">Undeploy the Operator</h3>
+<p>To remove the Operator from the cluster, use the <code>undeploy</code> target of the <code>Makefile</code>:</p>
+<pre><code class="language-sh">IMG=quay.io/&lt;some-organization&gt;/quay-api-operator:&lt;tag&gt;
+export IMG
+make undeploy
+</code></pre>
+<p>The command deletes the manager Deployment resource, the CRDs, and the <code>quay-api-operator-system</code>  namespace.</p>
+<h2 id="run-the-operator-by-using-olm">Run the Operator by Using OLM</h2>
+<p>OLM consumes the Operator as a bundle container image that you must prepare.</p>
+<h3 id="bundle-the-operator">Bundle the Operator</h3>
+<p>You create the bundle manifests, and then build and push the image by using the <code>make</code> targets.</p>
+<p>In the <code>Makefile</code>, the <code>BUNDLE_IMG</code> variable specifies the name of the bundle image, which is set to <code>quay.io/herve4m/quay-api-operator-bundle:v$(VERSION)</code> by default.
+Because you do not have write access to that image repository, you must redefine the variable as an environment variable before building the bundle image.
+Select a repository for which you have write access.</p>
+<pre><code class="language-sh">BUNDLE_IMG=quay.io/&lt;some-organization&gt;/quay-api-operator-bundle:&lt;tag&gt;
+export BUNDLE_IMG
+# Remove a previous local build of the bundle image, if it exists
+podman rmi ${BUNDLE_IMG}
+# Log in to Quay with your credentials
+podman login --username &lt;yourname&gt; quay.io
+# Build and then push the image
+make bundle bundle-build bundle-push
+</code></pre>
+<h3 id="install-olm">Install OLM</h3>
+<p>If you use an OpenShift cluster, the OLM is already installed.
+Otherwise, use the <code>operator-sdk</code> command to install it.</p>
+<pre><code class="language-sh">operator-sdk olm install
+</code></pre>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If the <code>operator-sdk</code> command is not available on your system, then the <code>make bundle</code> command that you used previously downloads and installs it in the <code>./bin</code> directory in the current directory.
+In that case, specify the path to the <code>operator-sdk</code> command: <code>./bin/operator-sdk olm install</code></p>
+</div>
+<h3 id="deploy-the-operator">Deploy the Operator</h3>
+<p>Create the <code>quay-api-operator</code> namespace to host the Operator:</p>
+<pre><code class="language-sh">kubectl create namespace quay-api-operator
+</code></pre>
+<p>Use the <code>operator-sdk run bundle</code> command to install the Operator in your cluster:</p>
+<pre><code class="language-sh">operator-sdk run bundle -n quay-api-operator ${BUNDLE_IMG}
+</code></pre>
+<p>The command create the <code>CatalogSource</code>, <code>OperatorGroup</code>, <code>Subscription</code>, and <code>ClusterServiceVersion</code> resources, and then wait for the Operator to complete its deployment.</p>
+<h3 id="undeploy-the-operator_1">Undeploy the Operator</h3>
+<p>Undeploy the Operator and delete the OLM resources:</p>
+<pre><code class="language-sh">kubectl get Subscription -n quay-api-operator | grep quay-api-operator
+kubectl delete Subscription -n quay-api-operator quay-api-operator-&lt;version&gt;
+
+kubectl get ClusterServiceVersion | grep quay-api-operator
+kubectl delete ClusterServiceVersion quay-api-operator.&lt;version&gt;
+
+kubectl delete OperatorGroup -n quay-api-operator operator-sdk-og
+kubectl delete CatalogSource -n quay-api-operator quay-api-operator-catalog
+
+kubectl delete namespace quay-api-operator
+</code></pre>
+<p>For more details, review the <a href="https://sdk.operatorframework.io/docs/olm-integration/tutorial-bundle/">OLM Integration Bundle Tutorial</a> and the <a href="https://sdk.operatorframework.io/docs/building-operators/ansible/tutorial/#3-deploy-your-operator-with-olm">Deploy Your Operator with OLM</a> section of the <a href="https://sdk.operatorframework.io/docs/building-operators/ansible/tutorial/#run-the-operator">Run the Operator</a> guide.</p></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="../../js/bootstrap.bundle.min.js"></script>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js"></script>
+
+        <div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
