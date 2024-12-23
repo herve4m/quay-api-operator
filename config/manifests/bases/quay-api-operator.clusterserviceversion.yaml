@@ -6,7 +6,7 @@ metadata:
     alm-examples: '[]'
     capabilities: Basic Install
     categories: Integration & Delivery
-    containerImage: quay.io/herve4m/quay-api-operator:1.1.0
+    containerImage: quay.io/herve4m/quay-api-operator:1.1.1
     createdAt: "2024-06-01T20:59:59Z"
     description: |
       Manage Quay Container Registry deployments by using Kubernetes resources.
@@ -437,7 +437,7 @@ spec:
         - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
       - description: If 'true', then an OAuth access token is created and returned. You
           can use that returned token with the other Quay resources, by setting it in the
-          'quayToken' parameter. The token is valid for 2 hours 30 minutes. If 'false',
+          'quay_token' parameter. The token is valid for 2 hours 30 minutes. If 'false',
           then no access token is created.
         displayName: Create Token
         path: createToken
@@ -950,8 +950,13 @@ spec:
         path: newName
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
-      - description: The amount of time, after a tag is deleted, that the tag is accessible
-          in time machine before being garbage collected.
+      - description: After a tag is deleted, the amount of time in seconds it is kept in
+          time machine before being garbage collected. The 'timeMachineExpiration' parameter
+          accepts a time unit as a suffix; 's' for seconds, 'm' for minutes, 'h' for hours,
+          'd' for days, and 'w' for weeks. For example, '2w' for two weeks. Only the expiration
+          times that your Quay administrator declares in 'config.yaml' with the 'TAG_EXPIRATION_OPTIONS'
+          option are allowed. The default value for the 'TAG_EXPIRATION_OPTIONS' option
+          is '0s', '1d', '1w', '2w', and '4w'.
         displayName: Time Machine Expiration
         path: timeMachineExpiration
         x-descriptors:
