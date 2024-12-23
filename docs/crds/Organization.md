@@ -179,7 +179,7 @@ __Default value__: False
 
 ### timeMachineExpiration
 
-The amount of time, after a tag is deleted, that the tag is accessible in time machine before being garbage collected.
+After a tag is deleted, the amount of time in seconds it is kept in time machine before being garbage collected. The `timeMachineExpiration` parameter accepts a time unit as a suffix; `s` for seconds, `m` for minutes, `h` for hours, `d` for days, and `w` for weeks. For example, `2w` for two weeks. Only the expiration times that your Quay administrator declares in `config.yaml` with the `TAG_EXPIRATION_OPTIONS` option are allowed. The default value for the `TAG_EXPIRATION_OPTIONS` option is `0s`, `1d`, `1w`, `2w`, and `4w`.
 
 __Type__: string
 
