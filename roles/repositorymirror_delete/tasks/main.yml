@@ -35,8 +35,10 @@
         name: "{{ name | default(omit) }}"
         no_proxy: "{{ no_proxy | default(omit) }}"
         robot_username: "{{ robot_username | default(omit) }}"
+        skopeo_timeout: "{{ skopeo_timeout | default(omit) }}"
         sync_interval: "{{ sync_interval | default(omit) }}"
         sync_start_date: "{{ sync_start_date | default(omit) }}"
+        unsigned_images: "{{ unsigned_images | default(omit) }}"
         verify_tls: "{{ verify_tls | default(omit) }}"
       register: ret
       failed_when:
