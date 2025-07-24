@@ -76,7 +76,7 @@ spec:
   image: production/smallimage:v1.4.3
   tag: v1
   expirationFormat: "%Y-%m-%d"
-  expiration: "2025-05-25"
+  expiration: "2027-05-25"
 
 ```
 
