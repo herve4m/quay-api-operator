@@ -6,7 +6,7 @@ metadata:
     alm-examples: '[]'
     capabilities: Basic Install
     categories: Integration & Delivery
-    containerImage: quay.io/herve4m/quay-api-operator:1.1.1
+    containerImage: quay.io/herve4m/quay-api-operator:1.2.0
     createdAt: "2024-06-01T20:59:59Z"
     description: |
       Manage Quay Container Registry deployments by using Kubernetes resources.
@@ -1488,6 +1488,15 @@ spec:
         path: robotUsername
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
+      - description: Maximum duration of mirroring jobs. The timeout must be between 5 minutes
+          (300 seconds) and 12 hours (43200 seconds). The 'skopeoTimeout' parameter accepts
+          a time unit as a suffix; 's' for seconds, 'm' for minutes, and 'h' for hours.
+          For example, '10m' for 10 minutes. 5 minutes (300 seconds) by default. Setting
+          a timeout requires Quay version 3.15 or later.
+        displayName: Skopeo Timeout
+        path: skopeoTimeout
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
       - description: Synchronization interval for this repository mirror in seconds. The
           'syncInterval' parameter accepts a time unit as a suffix; 's' for seconds, 'm'
           for minutes, 'h' for hours, 'd' for days, and 'w' for weeks. For example, '8h'
@@ -1505,6 +1514,11 @@ spec:
         path: syncStartDate
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
+      - description: Allow unsigned images to be mirrored.
+        displayName: Unsigned Images
+        path: unsignedImages
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
       - description: Defines whether TLS of the external registry should be verified. 'true'
           by default.
         displayName: Verify Tls

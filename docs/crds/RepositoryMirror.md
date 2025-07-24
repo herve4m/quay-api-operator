@@ -248,6 +248,16 @@ __Required__: False
 
 __Default value__: None
 
+### skopeoTimeout
+
+Maximum duration of mirroring jobs. The timeout must be between 5 minutes (300 seconds) and 12 hours (43200 seconds). The `skopeoTimeout` parameter accepts a time unit as a suffix; `s` for seconds, `m` for minutes, and `h` for hours. For example, `10m` for 10 minutes. 5 minutes (300 seconds) by default. Setting a timeout requires Quay version 3.15 or later.
+
+__Type__: string
+
+__Required__: False
+
+__Default value__: None
+
 ### syncInterval
 
 Synchronization interval for this repository mirror in seconds. The `syncInterval` parameter accepts a time unit as a suffix; `s` for seconds, `m` for minutes, `h` for hours, `d` for days, and `w` for weeks. For example, `8h` for eight hours. 86400 (one day) by default.
@@ -263,6 +273,16 @@ __Default value__: None
 The date and time at which the first synchronization should be initiated. The format for the `syncStartDate` parameter is ISO 8601 UTC, such as 2021-12-02T21:06:00Z. If you do not provide the `syncStartDate` parameter when you configure a new repository mirror, then the synchronization is immediately active, and a synchronization is initiated if the `isEnabled` parameter is `true`.
 
 __Type__: string
+
+__Required__: False
+
+__Default value__: None
+
+### unsignedImages
+
+Allow unsigned images to be mirrored.
+
+__Type__: boolean
 
 __Required__: False
 

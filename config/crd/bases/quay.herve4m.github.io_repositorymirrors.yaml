@@ -136,6 +136,13 @@ spec:
                   description: Username of the robot account that is used for synchronization. This
                     parameter is required when creating the mirroring configuration.
                   type: string
+                skopeoTimeout:
+                  description: Maximum duration of mirroring jobs. The timeout must be between 5 minutes
+                    (300 seconds) and 12 hours (43200 seconds). The 'skopeoTimeout' parameter accepts
+                    a time unit as a suffix; 's' for seconds, 'm' for minutes, and 'h' for hours.
+                    For example, '10m' for 10 minutes. 5 minutes (300 seconds) by default. Setting
+                    a timeout requires Quay version 3.15 or later.
+                  type: string
                 syncInterval:
                   description: Synchronization interval for this repository mirror in seconds. The
                     'syncInterval' parameter accepts a time unit as a suffix; 's' for seconds, 'm'
@@ -149,6 +156,9 @@ spec:
                     mirror, then the synchronization is immediately active, and a synchronization
                     is initiated if the 'isEnabled' parameter is 'true'.
                   type: string
+                unsignedImages:
+                  description: Allow unsigned images to be mirrored.
+                  type: boolean
                 verifyTls:
                   description: Defines whether TLS of the external registry should be verified. 'true'
                     by default.
