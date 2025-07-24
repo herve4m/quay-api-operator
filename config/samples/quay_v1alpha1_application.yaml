@@ -2,9 +2,6 @@
 apiVersion: quay.herve4m.github.io/v1alpha1
 kind: Application
 metadata:
-  labels:
-    app.kubernetes.io/name: quay-api-operator
-    app.kubernetes.io/managed-by: kustomize
   name: application-sample
 spec:
   # Connection parameters in a Secret resource
