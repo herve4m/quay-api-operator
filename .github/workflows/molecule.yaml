@@ -15,14 +15,14 @@ jobs:
   molecule-test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
-          python-version: '3.10'
+          python-version: '3.13'
 
       - name: Install required packages
-        run: pip install -Iv molecule kubernetes
+        run: pip install -Iv kubernetes ansible-dev-tools
 
       - name: Run the kind molecule test
         run: molecule test --scenario-name kind
