@@ -23,7 +23,7 @@
         chdir: '{{ config_dir }}/testing'
 
     - name: Set testing namespace
-      command: '{{ kustomize }} edit set namespace {{ namespace }}'
+      command: '{{ kustomize }} edit set namespace {{ k8s_namespace }}'
       args:
         chdir: '{{ config_dir }}/testing'
 

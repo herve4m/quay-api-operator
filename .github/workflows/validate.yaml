@@ -70,7 +70,8 @@ jobs:
       - name: Verify that the CRDs are available
         run: |
           set -x
-          kubectl get crd/apitokens.quay.herve4m.github.io \
+          kubectl get \
+            crd/apitokens.quay.herve4m.github.io \
             crd/applications.quay.herve4m.github.io \
             crd/defaultperms.quay.herve4m.github.io \
             crd/dockertokens.quay.herve4m.github.io \
@@ -78,11 +79,16 @@ jobs:
             crd/manifestlabels.quay.herve4m.github.io \
             crd/messages.quay.herve4m.github.io \
             crd/notifications.quay.herve4m.github.io \
+            crd/organizationimmutabilities.quay.herve4m.github.io \
+            crd/organizationmirrors.quay.herve4m.github.io \
+            crd/organizationprunes.quay.herve4m.github.io \
             crd/organizations.quay.herve4m.github.io \
             crd/proxycaches.quay.herve4m.github.io \
             crd/quotas.quay.herve4m.github.io \
             crd/repositories.quay.herve4m.github.io \
+            crd/repositoryimmutabilities.quay.herve4m.github.io \
             crd/repositorymirrors.quay.herve4m.github.io \
+            crd/repositoryprunes.quay.herve4m.github.io \
             crd/robots.quay.herve4m.github.io \
             crd/tags.quay.herve4m.github.io \
             crd/teamldaps.quay.herve4m.github.io \

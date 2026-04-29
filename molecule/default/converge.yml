@@ -11,7 +11,7 @@
       k8s:
         api_version: v1
         kind: Namespace
-        name: '{{ namespace }}'
+        name: '{{ k8s_namespace }}'
 
     - import_tasks: kustomize.yml
       vars:
