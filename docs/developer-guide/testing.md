@@ -241,8 +241,8 @@ for i in apitoken.quay.herve4m.github.io/apitoken-sample \
   manifestlabel.quay.herve4m.github.io/manifestlabel-sample \
   message.quay.herve4m.github.io/message-sample \
   notification.quay.herve4m.github.io/notification-sample \
-  organization.quay.herve4m.github.io/organization-sample \
   organization.quay.herve4m.github.io/organization-mirror-sample \
+  organization.quay.herve4m.github.io/organization-sample \
   organizationimmutability.quay.herve4m.github.io/organizationimmutability-sample \
   organizationmirror.quay.herve4m.github.io/organizationmirror-sample \
   organizationprune.quay.herve4m.github.io/organizationprune-sample \
@@ -253,8 +253,8 @@ for i in apitoken.quay.herve4m.github.io/apitoken-sample \
   repositoryimmutability.quay.herve4m.github.io/repositoryimmutability-sample \
   repositorymirror.quay.herve4m.github.io/repositorymirror-sample \
   repositoryprune.quay.herve4m.github.io/repositoryprune-sample \
-  robot.quay.herve4m.github.io/robot-sample \
   robot.quay.herve4m.github.io/robot-mirror-sample \
+  robot.quay.herve4m.github.io/robot-sample \
   tag.quay.herve4m.github.io/tag-sample \
   team.quay.herve4m.github.io/team-sample \
   teamldap.quay.herve4m.github.io/teamldap-sample \
