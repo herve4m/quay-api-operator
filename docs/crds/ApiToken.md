@@ -12,6 +12,8 @@ This Secret resource must include the following data:
 * `host`: URL for accessing the Quay API, such as ``https://quay.example.com:8443`` for example.
 * `validateCerts`: Whether to allow insecure connections to the API.
   By default, insecure connections are refused.
+* `timeout`: Number of seconds to wait for Quay to send data before giving up.
+  By default the timeout is at 10 seconds.
 * `username`: The username to use for authenticating against the API.
 * `password`: The password to use for authenticating against the API.
 
@@ -21,7 +23,7 @@ The OAuth access token that the ApiToken custom resource generates acts on behal
 You can create the secret by using the `kubectl create secret` command:
 
 ```sh
-kubectl create secret generic quay-credentials --from-literal host=https://quay.example.com:8443 --from-literal validateCerts=false --from-literal username=admin --from-literal password=Sup3r53cr3L
+kubectl create secret generic quay-credentials --from-literal host=https://quay.example.com:8443 --from-literal validateCerts=false --from-literal timeout=21 --from-literal username=admin --from-literal password=Sup3r53cr3L
 ```
 
 Or you can create the secret from a resource file:
@@ -35,6 +37,7 @@ metadata:
 stringData:
   host: https://quay.example.com:8443
   validateCerts: "false"
+  timeout: 21
   username: admin
   password: Sup3r53cr3L
 ```
@@ -211,6 +214,7 @@ RetSecretRef is the secret resource that the ApiToken resource creates. This sec
 - token - The OAuth access token (copy).
 - host - URL for accessing the Quay API.
 - validateCerts - Whether to allow insecure connections to the API.
+- timeout - Number of seconds to wait for Quay to send data before giving up.
 
 
 __Type__: object (see the following properties)

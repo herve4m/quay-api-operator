@@ -4,9 +4,9 @@ Instead, edit the scripts/templates/docs/api.md.jinja template, and then run
 the scripts/crd2markdown script.
 --->
 
-# RepositoryMirror - Manage Quay Container Registry repository mirror configurations
+# OrganizationMirror - Manage Quay Container Registry organization mirror configurations
 
-The RepositoryMirror custom resource relies on a Secret resource to provide the connection parameters to the Quay instance.
+The OrganizationMirror custom resource relies on a Secret resource to provide the connection parameters to the Quay instance.
 This Secret resource must include the following data:
 
 * `host`: URL for accessing the Quay API, such as ``https://quay.example.com:8443`` for example.
@@ -43,7 +43,7 @@ stringData:
   token: vFYyU2D0fHYXvcA3Y5TYfMrIMyVIH9YmxoVLsmku
 ```
 
-You refer to this secret in your RepositoryMirror custom resource by using the `connSecretRef` property.
+You refer to this secret in your OrganizationMirror custom resource by using the `connSecretRef` property.
 See the [usage example](#usage-example).
 
 !!! warning
@@ -61,35 +61,34 @@ See the [usage example](#usage-example).
 ```yaml
 ---
 apiVersion: quay.herve4m.github.io/v1alpha1
-kind: RepositoryMirror
+kind: OrganizationMirror
 metadata:
-  name: repositorymirror-sample
+  name: organizationmirror-sample
 spec:
   # Connection parameters in a Secret resource
   connSecretRef:
     name: quay-credentials
     # By default, the operator looks for the secret in the same namespace as
-    # the repositorymirror resource, but you can specify a different namespace.
+    # the organizationmirror resource, but you can specify a different namespace.
     # namespace: mynamespace
 
-  # Whether to preserve the corresponding configuration in Quay when you
-  # delete the RepositoryMirror resource.
+  # Whether to preserve the corresponding Quay object when you
+  # delete the OrganizationMirror resource.
   preserveInQuayOnDeletion: false
 
-  name: production/ubi9
+  organization: productionmirror
+  externalRegistryType: quay
+  externalRegistryUrl: https://quay.io
+  externalNamespace: projectquay
+  robotUsername: productionmirror+syncrobot
+  visibility: public
+  repositoryFilters:
+    - quay
+    - clair
+    - redis
+  syncInterval: 2d
+  syncStartDate: "2026-04-27T13:00:00Z"
   isEnabled: true
-  externalReference: registry.access.redhat.com/ubi9-micro
-  verifyTls: true
-  httpProxy: http://proxy.example.com:3128
-  noProxy: registry.access.redhat.com
-  # externalRegistryUsername: jsmith
-  # externalRegistryPassword: Sup3r53cr3t
-  robotUsername: production+robotprod1
-  imageTags:
-    - "9.4"
-    - "9.3"
-  syncInterval: "172800"
-  syncStartDate: "2023-05-25T21:06:00Z"
 
 ```
 
@@ -121,7 +120,7 @@ __Default value__: None
 
 ### connSecretRef.namespace
 
-Namespace of the secret resource. By default, the secret resource is retrieved from the same namespace as the current RepositoryMirror resource.
+Namespace of the secret resource. By default, the secret resource is retrieved from the same namespace as the current OrganizationMirror resource.
 
 
 __Type__: string
@@ -130,9 +129,9 @@ __Required__: False
 
 __Default value__: None
 
-### externalReference
+### externalNamespace
 
-Path to the remote container repository to synchronize, such as quay.io/projectquay/quay for example. This parameter is required when creating the mirroring configuration.
+Namespace, or project, in the external registry from which repositories are mirrored, such as `projectquay` or `library`. This parameter is required when creating the mirroring configuration.
 
 __Type__: string
 
@@ -142,7 +141,27 @@ __Default value__: None
 
 ### externalRegistryPassword
 
-Password to use for pulling the image from the remote registry.
+Password to use for pulling images from the remote registry. Only used when `externalRegistryUsername` is also provided.
+
+__Type__: string
+
+__Required__: False
+
+__Default value__: None
+
+### externalRegistryType
+
+Type of the external registry from which repositories are mirrored. This parameter is required when creating the mirroring configuration. The type cannot be changed after creation.
+
+__Type__: string
+
+__Required__: False
+
+__Default value__: None
+
+### externalRegistryUrl
+
+URL of the external registry, such as https://quay.io or https://harbor.example.com This parameter is required when creating the mirroring configuration.
 
 __Type__: string
 
@@ -152,7 +171,7 @@ __Default value__: None
 
 ### externalRegistryUsername
 
-Username to use for pulling the image from the remote registry.
+Username to use for pulling images from the remote registry. If not provided, then anonymous access is used.
 
 __Type__: string
 
@@ -162,7 +181,7 @@ __Default value__: None
 
 ### forceSync
 
-Triggers an immediate image synchronization.
+Triggers an immediate synchronization of all repositories in the mirror.
 
 __Type__: boolean
 
@@ -190,33 +209,13 @@ __Required__: False
 
 __Default value__: None
 
-### imageTags
-
-List of image tags to be synchronized from the remote repository.
-
-__Type__: array
-
-__Required__: False
-
-__Default value__: None
-
 ### isEnabled
 
-Defines whether the mirror configuration is active or inactive. `false` by default.
+Defines whether the mirror configuration is active or inactive. `true` by default.
 
 __Type__: boolean
 
 __Required__: False
-
-__Default value__: None
-
-### name
-
-Name of the existing repository for which the mirror parameters are configured. The format for the name is `namespace`/`shortname`. The namespace can be an organization or your personal namespace. If you omit the namespace part in the name, then the resource looks for the repository in your personal namespace. You can manage mirrors for repositories in your personal namespace, but not in the personal namespace of other users. The token you use in `quayToken` determines the user account you are using.
-
-__Type__: string
-
-__Required__: True
 
 __Default value__: None
 
@@ -230,9 +229,19 @@ __Required__: False
 
 __Default value__: None
 
+### organization
+
+Name of the organization to configure for mirroring. The organization must exist and be empty (contain no repositories) when creating a new mirror configuration.
+
+__Type__: string
+
+__Required__: True
+
+__Default value__: None
+
 ### preserveInQuayOnDeletion
 
-Whether to preserve the corresponding Quay object when you delete the RepositoryMirror resource. When set to `false` (the default), the object is deleted from Quay.
+Whether to preserve the corresponding Quay object when you delete the OrganizationMirror resource. When set to `false` (the default), the object is deleted from Quay.
 
 
 __Type__: boolean
@@ -241,9 +250,19 @@ __Required__: False
 
 __Default value__: False
 
+### repositoryFilters
+
+List of repository name patterns to synchronize from the external namespace. Supports glob patterns such as `hello*`, `busy*`, or `*test`. If not specified or empty, then all repositories from the external namespace are synchronized.
+
+__Type__: array
+
+__Required__: False
+
+__Default value__: None
+
 ### robotUsername
 
-Username of the robot account that is used for synchronization. This parameter is required when creating the mirroring configuration.
+Username of the robot account that is used for synchronization. The robot must belong to the organization specified in `organization`. This parameter is required when creating the mirroring configuration.
 
 __Type__: string
 
@@ -253,7 +272,7 @@ __Default value__: None
 
 ### skopeoTimeout
 
-Maximum duration of mirroring jobs. The timeout must be between 5 minutes (300 seconds) and 12 hours (43200 seconds). The `skopeoTimeout` parameter accepts a time unit as a suffix; `s` for seconds, `m` for minutes, and `h` for hours. For example, `10m` for 10 minutes. 5 minutes (300 seconds) by default. Setting a timeout requires Quay version 3.15 or later.
+Maximum duration of mirroring jobs. The timeout must be between 5 minutes (300 seconds) and 12 hours (43200 seconds). The `skopeoTimeout` parameter accepts a time unit as a suffix; `s` for seconds, `m` for minutes, and `h` for hours. For example, `10m` for 10 minutes. 5 minutes (300 seconds) by default.
 
 __Type__: string
 
@@ -263,7 +282,7 @@ __Default value__: None
 
 ### syncInterval
 
-Synchronization interval for this repository mirror in seconds. The `syncInterval` parameter accepts a time unit as a suffix; `s` for seconds, `m` for minutes, `h` for hours, `d` for days, and `w` for weeks. For example, `8h` for eight hours. 86400 (one day) by default.
+Synchronization interval for this repository mirror in seconds. The `syncInterval` parameter accepts a time unit as a suffix; `s` for seconds, `m` for minutes, `h` for hours, `d` for days, and `w` for weeks. For example, `8h` for eight hours. The minimal value in 60 seconds. 86400 (one day) by default.
 
 __Type__: string
 
@@ -273,19 +292,9 @@ __Default value__: None
 
 ### syncStartDate
 
-The date and time at which the first synchronization should be initiated. The format for the `syncStartDate` parameter is ISO 8601 UTC, such as 2021-12-02T21:06:00Z. If you do not provide the `syncStartDate` parameter when you configure a new repository mirror, then the synchronization is immediately active, and a synchronization is initiated if the `isEnabled` parameter is `true`.
+The date and time at which the first synchronization should be initiated. The format for the `syncStartDate` parameter is ISO 8601 UTC, such as 2026-04-25T21:06:00Z. If you do not provide the `syncStartDate` parameter when you configure a new organization mirror, then the synchronization is immediately active, and a synchronization is initiated if the `isEnabled` parameter is `true`.
 
 __Type__: string
-
-__Required__: False
-
-__Default value__: None
-
-### unsignedImages
-
-Allow unsigned images to be mirrored.
-
-__Type__: boolean
 
 __Required__: False
 
@@ -301,11 +310,21 @@ __Required__: False
 
 __Default value__: None
 
+### visibility
 
-## Listing the RepositoryMirror Resources
+Visibility of the mirrored repositories created in the organization. `public` by default.
 
-You can retrieve the list of the RepositoryMirror custom resources in a namespace by using the `kubectl get` command:
+__Type__: string
+
+__Required__: False
+
+__Default value__: None
+
+
+## Listing the OrganizationMirror Resources
+
+You can retrieve the list of the OrganizationMirror custom resources in a namespace by using the `kubectl get` command:
 
 ```sh
-kubectl get repositorymirrors.quay.herve4m.github.io -n <namespace>
+kubectl get organizationmirrors.quay.herve4m.github.io -n <namespace>
 ```

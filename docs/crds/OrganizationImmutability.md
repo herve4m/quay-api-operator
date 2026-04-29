@@ -4,9 +4,9 @@ Instead, edit the scripts/templates/docs/api.md.jinja template, and then run
 the scripts/crd2markdown script.
 --->
 
-# DockerToken - Manage tokens for accessing Quay Container Registry repositories
+# OrganizationImmutability - Manage tag immutability policies for organizations and user namespaces
 
-The DockerToken custom resource relies on a Secret resource to provide the connection parameters to the Quay instance.
+The OrganizationImmutability custom resource relies on a Secret resource to provide the connection parameters to the Quay instance.
 This Secret resource must include the following data:
 
 * `host`: URL for accessing the Quay API, such as ``https://quay.example.com:8443`` for example.
@@ -43,7 +43,7 @@ stringData:
   token: vFYyU2D0fHYXvcA3Y5TYfMrIMyVIH9YmxoVLsmku
 ```
 
-You refer to this secret in your DockerToken custom resource by using the `connSecretRef` property.
+You refer to this secret in your OrganizationImmutability custom resource by using the `connSecretRef` property.
 See the [usage example](#usage-example).
 
 !!! warning
@@ -61,39 +61,40 @@ See the [usage example](#usage-example).
 ```yaml
 ---
 apiVersion: quay.herve4m.github.io/v1alpha1
-kind: DockerToken
+kind: OrganizationImmutability
 metadata:
-  name: dockertoken-sample
+  name: organizationimmutability-sample
 spec:
   # Connection parameters in a Secret resource
   connSecretRef:
     name: quay-credentials
     # By default, the operator looks for the secret in the same namespace as
-    # the dockertoken resource, but you can specify a different namespace.
+    # the organizationimmutability resource, but you can specify a different namespace.
     # namespace: mynamespace
 
   # Whether to preserve the corresponding Quay object when you
-  # delete the DockerToken resource.
+  # delete the OrganizationImmutability resource.
   preserveInQuayOnDeletion: false
 
-  name: mytoken
-
-  # The Secret resource is created or updated, and stores the returned data.
-  # You can use the secret as a pull secret so that pods can pull images from
-  # Quay by using your credentials.
-  # The secret contains the .dockerconfigjson entry, which is the Base64
-  # encoded Docker configuration in JSON format
-  retSecretRef:
-    name: dockertoken-sample-ret-secret
-    # By default, the operator stores the secret in the same namespace as the
-    # dockertoken resource, but you can specify a different namespace.
-    # namespace: mynamespace
+  namespace: production
+  tagPattern: "release.*"
+  behavior: matching_immutable
 
 ```
 
 
 ## Properties
 
+
+### behavior
+
+Specify the behavior of the matching pattern. If `matching_immutable`, then tags that match the pattern are immutable. If `not_matching_immutable`, then all the tags not matching the pattern are immutable. `matching_immutable` by default.
+
+__Type__: string
+
+__Required__: False
+
+__Default value__: None
 
 ### connSecretRef
 
@@ -119,7 +120,7 @@ __Default value__: None
 
 ### connSecretRef.namespace
 
-Namespace of the secret resource. By default, the secret resource is retrieved from the same namespace as the current DockerToken resource.
+Namespace of the secret resource. By default, the secret resource is retrieved from the same namespace as the current OrganizationImmutability resource.
 
 
 __Type__: string
@@ -128,9 +129,9 @@ __Required__: False
 
 __Default value__: None
 
-### name
+### namespace
 
-Name of the token to create or delete.
+Organization or personal namespace. This namespace must exist.
 
 __Type__: string
 
@@ -138,9 +139,19 @@ __Required__: True
 
 __Default value__: None
 
+### newTagPattern
+
+New regular expression for the immutability policy. Setting this option changes the regular expression of the policy which current pattern is provided in `tagPattern`.
+
+__Type__: string
+
+__Required__: False
+
+__Default value__: None
+
 ### preserveInQuayOnDeletion
 
-Whether to preserve the corresponding Quay object when you delete the DockerToken resource. When set to `false` (the default), the object is deleted from Quay.
+Whether to preserve the corresponding Quay object when you delete the OrganizationImmutability resource. When set to `false` (the default), the object is deleted from Quay.
 
 
 __Type__: boolean
@@ -149,30 +160,9 @@ __Required__: False
 
 __Default value__: False
 
-### retSecretRef
+### tagPattern
 
-RetSecretRef is the secret resource that the DockerToken resource creates. This secret will store the data that the resource generates:
-
-- auth - Base64 encoding of the username and the token (`'username`:`tokenCode``). Some client configuration files, such as the `~/.docker/config.json` Docker configuration file, require that you provide the username and the token in that format. You can decode the string by using the `base64 --decode` command. See the `base64'(1) man page.
-- created - Token creation date and time.
-- dockerconfigjson - Base64 encoding of the `~/.docker/config.json` configuration file. The `containers-auth.json`(5) man page describe the format of the file.
-- expiration - Expiration date and time of the token. By default, tokens do not expire. In that case `expiration` is `null`. Your Quay administrator might have activated expiration by setting the `APP_SPECIFIC_TOKEN_EXPIRATION` directive in the `config.yaml` configuration file.
-- lastAccessed - Last date and time the token was used. If the token has not been used yet, then `lastAccessed` is `null`.
-- name - Name of the application token.
-- tokenCode - Token to use as the password.
-- username - Username to use with client commands such as `docker` or `podman`. When you use a token with those commands, do not use your login name but use this username instead. For Quay, that username is always `$app`. Because the `$` character is a special shell character, you might have to protect it with a backslash or by using single quotation marks.
-- uuid - Internal ID of the application token.
-
-
-__Type__: object (see the following properties)
-
-__Required__: False
-
-__Default value__: None
-
-### retSecretRef.name
-
-Name of the secret resource.
+Regular expression to select the tags to protect.
 
 __Type__: string
 
@@ -180,22 +170,11 @@ __Required__: True
 
 __Default value__: None
 
-### retSecretRef.namespace
 
-Namespace of the secret resource. By default, the secret resource is created in the same namespace as the current DockerToken resource.
+## Listing the OrganizationImmutability Resources
 
-
-__Type__: string
-
-__Required__: False
-
-__Default value__: None
-
-
-## Listing the DockerToken Resources
-
-You can retrieve the list of the DockerToken custom resources in a namespace by using the `kubectl get` command:
+You can retrieve the list of the OrganizationImmutability custom resources in a namespace by using the `kubectl get` command:
 
 ```sh
-kubectl get dockertokens.quay.herve4m.github.io -n <namespace>
+kubectl get organizationimmutabilities.quay.herve4m.github.io -n <namespace>
 ```
