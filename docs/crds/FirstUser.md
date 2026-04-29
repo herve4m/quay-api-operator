@@ -18,11 +18,13 @@ This Secret resource must include the following data:
 * `host`: URL for accessing the Quay API, such as ``https://quay.example.com:8443`` for example.
 * `validateCerts`: Whether to allow insecure connections to the API.
   By default, insecure connections are refused.
+* `timeout`: Number of seconds to wait for Quay to send data before giving up.
+  By default the timeout is at 10 seconds.
 
 You can create the secret by using the `kubectl create secret` command:
 
 ```sh
-kubectl create secret generic quay-connection-secret --from-literal host=https://quay.example.com:8443 --from-literal validateCerts=false
+kubectl create secret generic quay-connection-secret --from-literal host=https://quay.example.com:8443 --from-literal validateCerts=false --from-literal timeout=21
 ```
 
 Or you can create the secret from a resource file:
@@ -36,6 +38,7 @@ metadata:
 stringData:
   host: https://quay.example.com:8443
   validateCerts: "false"
+  timeout: 21
 ```
 
 You refer to this secret in your FirstUser custom resource by using the `connSecretRef` property:
@@ -185,6 +188,7 @@ RetSecretRef is the secret resource that the FirstUser resource creates. This se
 - token - The OAuth access token (copy).
 - host - URL for accessing the Quay API.
 - validateCerts - Whether to allow insecure connections to the API.
+- timeout - Number of seconds to wait for Quay to send data before giving up.
 - email - User's email address.
 - encryptedPassword - Encrypted user's password.
 

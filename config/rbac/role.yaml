@@ -376,4 +376,55 @@ rules:
       - patch
       - update
       - watch
+  ##
+  ## Rules for quay.herve4m.github.io/v1alpha1, Kind: OrganizationImmutability
+  ##
+  - apiGroups:
+      - quay.herve4m.github.io
+    resources:
+      - organizationimmutabilities
+      - organizationimmutabilities/status
+      - organizationimmutabilities/finalizers
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  ##
+  ## Rules for quay.herve4m.github.io/v1alpha1, Kind: OrganizationMirror
+  ##
+  - apiGroups:
+      - quay.herve4m.github.io
+    resources:
+      - organizationmirrors
+      - organizationmirrors/status
+      - organizationmirrors/finalizers
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  ##
+  ## Rules for quay.herve4m.github.io/v1alpha1, Kind: RepositoryImmutability
+  ##
+  - apiGroups:
+      - quay.herve4m.github.io
+    resources:
+      - repositoryimmutabilities
+      - repositoryimmutabilities/status
+      - repositoryimmutabilities/finalizers
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
 # +kubebuilder:scaffold:rules

@@ -46,6 +46,7 @@
       infra.quay_configuration.quay_api_token:
         quay_host: "{{ quay_host | default(omit) }}"
         validate_certs: "{{ validate_certs | default(omit) }}"
+        timeout: "{{ timeout | default(omit) }}"
         quay_username: "{{ quay_username | default(omit) }}"
         quay_password: "{{ quay_password | default(omit) }}"
         client_id: "{{ client_id_value }}"
@@ -75,6 +76,7 @@
             token: "{{ ret['access_token'] | default('', true) | ansible.builtin.b64encode }}"
             host: "{{ quay_host | default('http://127.0.0.1') | ansible.builtin.b64encode }}"
             validateCerts: "{{ validate_certs | default('true') | ansible.builtin.b64encode }}"
+            timeout: "{{ timeout | default('10') | ansible.builtin.b64encode }}"
             accessToken: "{{ ret['access_token'] | default('', true) | ansible.builtin.b64encode }}"
       when:
         - ret_secret_ref is defined

@@ -102,6 +102,8 @@ spec:
 
                     - validateCerts - Whether to allow insecure connections to the API.
 
+                    - timeout - Number of seconds to wait for Quay to send data before giving up.
+
                   properties:
                     name:
                       description: Name of the secret resource.

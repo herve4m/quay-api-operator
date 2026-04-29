@@ -11,6 +11,7 @@
       infra.quay_configuration.quay_first_user:
         quay_host: "{{ quay_host | default(omit) }}"
         validate_certs: "{{ validate_certs | default(omit) }}"
+        timeout: "{{ timeout | default(omit) }}"
         create_token: "{{ create_token | default(omit) }}"
         email: "{{ email | default(omit) }}"
         password: "{{ password | default(omit) }}"
@@ -39,6 +40,7 @@
             token: "{{ ret['access_token'] | default('', true) | ansible.builtin.b64encode | default(omit, true) }}"
             host: "{{ quay_host | default('http://127.0.0.1') | ansible.builtin.b64encode }}"
             validateCerts: "{{ validate_certs | default('true') | ansible.builtin.b64encode }}"
+            timeout: "{{ timeout | default('10') | ansible.builtin.b64encode }}"
             username: "{{ username | default('', true) | ansible.builtin.b64encode | default(omit, true) }}"
             password: "{{ password | default('', true) | ansible.builtin.b64encode | default(omit, true) }}"
             accessToken: "{{ ret['access_token'] | default('', true) | ansible.builtin.b64encode }}"

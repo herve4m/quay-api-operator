@@ -12,6 +12,8 @@ This Secret resource must include the following data:
 * `host`: URL for accessing the Quay API, such as ``https://quay.example.com:8443`` for example.
 * `validateCerts`: Whether to allow insecure connections to the API.
   By default, insecure connections are refused.
+* `timeout`: Number of seconds to wait for Quay to send data before giving up.
+  By default the timeout is at 10 seconds.
 * `token`: OAuth access token for authenticating against the API.
   To create such a token see the [Creating an OAuth Access Token](https://access.redhat.com/documentation/en-us/red_hat_quay/3/html-single/red_hat_quay_api_guide/index#creating-oauth-access-token) documentation.
   You can also use the [ApiToken](ApiToken.md) custom resource to create this token.
@@ -23,7 +25,7 @@ This Secret resource must include the following data:
 You can create the secret by using the `kubectl create secret` command:
 
 ```sh
-kubectl create secret generic quay-credentials --from-literal host=https://quay.example.com:8443 --from-literal validateCerts=false --from-literal token=vFYyU2D0fHYXvcA3Y5TYfMrIMyVIH9YmxoVLsmku
+kubectl create secret generic quay-credentials --from-literal host=https://quay.example.com:8443 --from-literal validateCerts=false --from-literal timeout=21 --from-literal token=vFYyU2D0fHYXvcA3Y5TYfMrIMyVIH9YmxoVLsmku
 ```
 
 Or you can create the secret from a resource file:
@@ -37,6 +39,7 @@ metadata:
 stringData:
   host: https://quay.example.com:8443
   validateCerts: "false"
+  timeout: 21
   token: vFYyU2D0fHYXvcA3Y5TYfMrIMyVIH9YmxoVLsmku
 ```
 
@@ -209,7 +212,7 @@ __Default value__: None
 
 ### name
 
-Name of the existing repository for which the mirror parameters are configured. The format for the name is `namespace`/`shortname`.The namespace can be an organization or your personal namespace. If you omit the namespace part in the name, then the resource looks for the repository in your personal namespace. You can manage mirrors for repositories in your personal namespace, but not in the personal namespace of other users. The token you use in `quayToken` determines the user account you are using.
+Name of the existing repository for which the mirror parameters are configured. The format for the name is `namespace`/`shortname`. The namespace can be an organization or your personal namespace. If you omit the namespace part in the name, then the resource looks for the repository in your personal namespace. You can manage mirrors for repositories in your personal namespace, but not in the personal namespace of other users. The token you use in `quayToken` determines the user account you are using.
 
 __Type__: string
 

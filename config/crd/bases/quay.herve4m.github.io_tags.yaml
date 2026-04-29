@@ -102,6 +102,10 @@ spec:
                     for the repository in your personal namespace. If you omit the tag and the digest
                     part, then 'latest' is assumed.
                   type: string
+                immutable:
+                  description: Whether the tag must be immutable or not. Immutability prevents a tag
+                    from being changed or deleted. Requires Quay version 3.17 or later.
+                  type: boolean
                 tag:
                   description: When 'state=present', the 'tag' parameter provides the new tag to add
                     to the image. If another image already uses that tag, then the resource removes

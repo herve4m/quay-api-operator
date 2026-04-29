@@ -157,4 +157,25 @@ resources:
   group: quay
   kind: User
   version: v1alpha1
+- api:
+    crdVersion: v1
+    namespaced: true
+  domain: herve4m.github.io
+  group: quay
+  kind: OrganizationImmutability
+  version: v1alpha1
+- api:
+    crdVersion: v1
+    namespaced: true
+  domain: herve4m.github.io
+  group: quay
+  kind: OrganizationMirror
+  version: v1alpha1
+- api:
+    crdVersion: v1
+    namespaced: true
+  domain: herve4m.github.io
+  group: quay
+  kind: RepositoryImmutability
+  version: v1alpha1
 version: "3"

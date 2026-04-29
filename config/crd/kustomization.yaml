@@ -23,4 +23,7 @@ resources:
 - bases/quay.herve4m.github.io_teamldaps.yaml
 - bases/quay.herve4m.github.io_teamoidcs.yaml
 - bases/quay.herve4m.github.io_users.yaml
+- bases/quay.herve4m.github.io_organizationimmutabilities.yaml
+- bases/quay.herve4m.github.io_organizationmirrors.yaml
+- bases/quay.herve4m.github.io_repositoryimmutabilities.yaml
 # +kubebuilder:scaffold:crdkustomizeresource

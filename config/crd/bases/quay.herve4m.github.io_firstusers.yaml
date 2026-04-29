@@ -103,6 +103,8 @@ spec:
 
                     - validateCerts - Whether to allow insecure connections to the API.
 
+                    - timeout - Number of seconds to wait for Quay to send data before giving up.
+
                     - email - User's email address.
 
                     - encryptedPassword - Encrypted user's password.

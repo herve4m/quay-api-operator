@@ -14,6 +14,8 @@ argument_specs:
         resource.
       - The I(validate_certs) fact is set from the C(validateCerts) field in
         the secret resource.
+      - The I(timeout) fact is set from the C(timeout) field in
+        the secret resource.
       - The I(quay_token) fact is set from the C(token) field in the secret
         resource.
       - The I(quay_username) fact is set from the C(username) field in the
@@ -43,6 +45,8 @@ argument_specs:
                 C(username) and C(password) are ignored.
               - The C(validateCerts) field specifies whether to allow insecure
                 connections to the API.
+              - The C(timeout) field specifies the number of seconds to wait for
+                Quay to send data before giving up.
             type: str
             required: true
           namespace:

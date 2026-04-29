@@ -28,6 +28,9 @@ items:
         DISTRIBUTED_STORAGE_DEFAULT_LOCATIONS: []
         DISTRIBUTED_STORAGE_PREFERENCE:
           - default
+        FEATURE_SPARSE_INDEX: true
+        FEATURE_IMMUTABLE_TAGS: true
+        FEATURE_IMAGE_PULL_STATS: true
         FEATURE_ACI_CONVERSION: false
         FEATURE_APP_REGISTRY: false
         FEATURE_BUILD_SUPPORT: false
@@ -36,10 +39,15 @@ items:
         FEATURE_UI_V2: true
         FEATURE_UI_V2_REPO_SETTINGS: true
         FEATURE_AUTO_PRUNE: true
+        FEATURE_GARBAGE_COLLECTION: true
+        FEATURE_ASSIGN_OAUTH_TOKEN: true
         FEATURE_QUOTA_MANAGEMENT: true
         FEATURE_REPO_MIRROR: true
+        FEATURE_ORG_MIRROR: true
         FEATURE_RESTRICTED_V1_PUSH: true
         FEATURE_SECURITY_SCANNER: true
+        FEATURE_SUPERUSER_CONFIGDUMP: true
+        FEATURE_SUPERUSERS_FULL_ACCESS: true
         FEATURE_TEAM_SYNCING: true
         FEATURE_USER_RENAME: true
         FEATURE_USERNAME_CONFIRMATION: false
@@ -203,7 +211,7 @@ items:
                   name: config-emptydir
           containers:
             - name: quay
-              image: quay.io/projectquay/quay:v3.13.1
+              image: quay.io/projectquay/quay:3.17.1
               resources:
                 requests:
                   memory: 128Mi

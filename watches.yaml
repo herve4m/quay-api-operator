@@ -67,6 +67,20 @@
     role: organization_delete
 - version: v1alpha1
   group: quay.herve4m.github.io
+  kind: OrganizationImmutability
+  role: organizationimmutability
+  finalizer:
+    name: quay.herve4m.github.io/finalizer
+    role: organizationimmutability_delete
+- version: v1alpha1
+  group: quay.herve4m.github.io
+  kind: OrganizationMirror
+  role: organizationmirror
+  finalizer:
+    name: quay.herve4m.github.io/finalizer
+    role: organizationmirror_delete
+- version: v1alpha1
+  group: quay.herve4m.github.io
   kind: OrganizationPrune
   role: organizationprune
   finalizer:
@@ -93,6 +107,13 @@
   finalizer:
     name: quay.herve4m.github.io/finalizer
     role: repository_delete
+- version: v1alpha1
+  group: quay.herve4m.github.io
+  kind: RepositoryImmutability
+  role: repositoryimmutability
+  finalizer:
+    name: quay.herve4m.github.io/finalizer
+    role: repositoryimmutability_delete
 - version: v1alpha1
   group: quay.herve4m.github.io
   kind: RepositoryMirror

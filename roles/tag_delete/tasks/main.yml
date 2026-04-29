@@ -20,12 +20,14 @@
         state: absent
         quay_host: "{{ quay_host | default(omit) }}"
         validate_certs: "{{ validate_certs | default(omit) }}"
+        timeout: "{{ timeout | default(omit) }}"
         quay_token: "{{ quay_token | default(omit, true) }}"
         quay_username: "{{ omit if quay_token is defined and quay_token | length > 0 else quay_username | default(omit) }}"
         quay_password: "{{ omit if quay_token is defined and quay_token | length > 0 else quay_password | default(omit) }}"
         expiration: "{{ expiration | default(omit) }}"
         expiration_format: "{{ expiration_format | default(omit) }}"
         image: "{{ image | default(omit) }}"
+        immutable: "{{ immutable | default(omit) }}"
         tag: "{{ tag | default(omit) }}"
 
   rescue:

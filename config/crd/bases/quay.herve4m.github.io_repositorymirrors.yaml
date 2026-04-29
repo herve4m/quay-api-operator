@@ -120,8 +120,8 @@ spec:
                   type: boolean
                 name:
                   description: Name of the existing repository for which the mirror parameters are
-                    configured. The format for the name is 'namespace'/'shortname'.The namespace can
-                    be an organization or your personal namespace. If you omit the namespace part
+                    configured. The format for the name is 'namespace'/'shortname'. The namespace
+                    can be an organization or your personal namespace. If you omit the namespace part
                     in the name, then the resource looks for the repository in your personal namespace.
                     You can manage mirrors for repositories in your personal namespace, but not in
                     the personal namespace of other users. The token you use in 'quayToken' determines

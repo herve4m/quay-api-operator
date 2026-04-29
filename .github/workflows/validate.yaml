@@ -21,7 +21,7 @@ jobs:
       IMG: quay.io/herve4m/quay-api-operator:0.1.0
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Build the manager container image
         run: make docker-build
@@ -70,7 +70,8 @@ jobs:
       - name: Verify that the CRDs are available
         run: |
           set -x
-          kubectl get crd/apitokens.quay.herve4m.github.io \
+          kubectl get \
+            crd/apitokens.quay.herve4m.github.io \
             crd/applications.quay.herve4m.github.io \
             crd/defaultperms.quay.herve4m.github.io \
             crd/dockertokens.quay.herve4m.github.io \
@@ -78,11 +79,16 @@ jobs:
             crd/manifestlabels.quay.herve4m.github.io \
             crd/messages.quay.herve4m.github.io \
             crd/notifications.quay.herve4m.github.io \
+            crd/organizationimmutabilities.quay.herve4m.github.io \
+            crd/organizationmirrors.quay.herve4m.github.io \
+            crd/organizationprunes.quay.herve4m.github.io \
             crd/organizations.quay.herve4m.github.io \
             crd/proxycaches.quay.herve4m.github.io \
             crd/quotas.quay.herve4m.github.io \
             crd/repositories.quay.herve4m.github.io \
+            crd/repositoryimmutabilities.quay.herve4m.github.io \
             crd/repositorymirrors.quay.herve4m.github.io \
+            crd/repositoryprunes.quay.herve4m.github.io \
             crd/robots.quay.herve4m.github.io \
             crd/tags.quay.herve4m.github.io \
             crd/teamldaps.quay.herve4m.github.io \
@@ -103,7 +109,7 @@ jobs:
 
       - name: Upload pod descriptions
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: Manager pod logs
           path: /tmp/deploy.log

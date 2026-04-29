@@ -15,11 +15,14 @@ the scripts/crd2markdown script.
 * [ManifestLabel](ManifestLabel.md): Manage Quay Container Registry image manifest labels
 * [Message](Message.md): Manage Quay Container Registry global messages
 * [Notification](Notification.md): Manage Quay Container Registry repository notifications
+* [OrganizationImmutability](OrganizationImmutability.md): Manage tag immutability policies for organizations and user namespaces
+* [OrganizationMirror](OrganizationMirror.md): Manage Quay Container Registry organization mirror configurations
 * [OrganizationPrune](OrganizationPrune.md): Manage auto-pruning policies for organizations and user namespaces
 * [Organization](Organization.md): Manage Quay Container Registry organizations
 * [ProxyCache](ProxyCache.md): Manage Quay Container Registry proxy cache configurations
 * [Quota](Quota.md): Manage Quay Container Registry organizations quota
 * [Repository](Repository.md): Manage Quay Container Registry repositories
+* [RepositoryImmutability](RepositoryImmutability.md): Manage tag immutability policies for repositories
 * [RepositoryMirror](RepositoryMirror.md): Manage Quay Container Registry repository mirror configurations
 * [RepositoryPrune](RepositoryPrune.md): Manage auto-pruning policies for repositories
 * [Robot](Robot.md): Manage Quay Container Registry robot accounts
