@@ -326,7 +326,7 @@ spec:
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
       version: v1alpha1
-    - description: Create or delete tokens for client tools to access repositories. For example, the 'docker', 'podman', and 'skopeo' command-line tools can use such tokens. Kubernetes can also use those tokens, declared is Kubernetes secret objects, to pull images and deploy pods. Using tokens is an alternative to using your user login and password. The tokens you create are for the user account you are logged in. You cannot create tokens for other users, even if you are logged in with a super user account.
+    - description: Create or delete tokens for client tools to access repositories. For example, the 'docker', 'podman', and 'skopeo' command-line tools can use such tokens. Kubernetes can also use those tokens, declared as Kubernetes secret objects, to pull images and deploy pods. Using tokens is an alternative to using your user login and password. The tokens you create are for the user account with which you are logged in. You cannot create tokens for other users, even if you are logged in with a super user account.
       displayName: Docker Token
       group: quay.herve4m.github.io
       kind: DockerToken
@@ -979,6 +979,253 @@ spec:
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
       version: v1alpha1
+    - description: Create, delete, and update tag immutability policies for an organization or a user namespace.
+      displayName: Organization Immutability
+      group: quay.herve4m.github.io
+      kind: OrganizationImmutability
+      name: organizationimmutabilities.quay.herve4m.github.io
+      resources:
+      - kind: Secret
+        name: ""
+        version: v1
+      specDescriptors:
+      - description: |
+          Reference to the secret resource that stores the connection parameters to the Quay Container Registry API.
+        displayName: Connection Parameters Secret
+        path: connSecretRef
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:SecretRef
+      - description: Name of the secret resource.
+        displayName: Secret Name
+        path: connSecretRef.name
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:SecretRef
+        - urn:alm:descriptor:io.kubernetes:Secret
+      - description: Namespace that stores the secret resource.
+        displayName: Secret Namespace
+        path: connSecretRef.namespace
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:SecretRef
+        - urn:alm:descriptor:io.kubernetes:Namespace
+      - description: |
+          Whether to preserve the corresponding Quay object when you delete the OrganizationImmutability resource.
+        displayName: Preserve Object in Quay on Deletion
+        path: preserveInQuayOnDeletion
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - description: Specify the behavior of the matching pattern. If 'matching_immutable',
+          then tags that match the pattern are immutable. If 'not_matching_immutable', then
+          all the tags not matching the pattern are immutable. 'matching_immutable' by default.
+        displayName: Behavior
+        path: behavior
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - description: Organization or personal namespace. This namespace must exist.
+        displayName: Namespace
+        path: namespace
+        x-descriptors:
+        - urn:alm:descriptor:io.kubernetes:Namespace
+      - description: New regular expression for the immutability policy. Setting this option
+          changes the regular expression of the policy which current pattern is provided
+          in 'tagPattern'.
+        displayName: New Tag Pattern
+        path: newTagPattern
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - description: Regular expression to select the tags to protect.
+        displayName: Tag Pattern
+        path: tagPattern
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+
+      statusDescriptors:
+      - description: Observed conditions of Quay components.
+        displayName: Conditions
+        path: conditions
+        x-descriptors:
+        - urn:alm:descriptor:io.kubernetes.conditions
+      - description: Whether the resource has been created in Quay
+        displayName: Exist in Quay
+        path: existInQuay
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - description: Error message when the process fails.
+        displayName: Error Message
+        path: message
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      version: v1alpha1
+    - description: Configure and synchronize organization-level mirrors in Quay Container Registry. Organization mirroring enables automatic synchronization of all repositories (or a filtered subset) from an external registry namespace into a Quay organization.
+      displayName: Organization Mirror
+      group: quay.herve4m.github.io
+      kind: OrganizationMirror
+      name: organizationmirrors.quay.herve4m.github.io
+      resources:
+      - kind: Secret
+        name: ""
+        version: v1
+      specDescriptors:
+      - description: |
+          Reference to the secret resource that stores the connection parameters to the Quay Container Registry API.
+        displayName: Connection Parameters Secret
+        path: connSecretRef
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:SecretRef
+      - description: Name of the secret resource.
+        displayName: Secret Name
+        path: connSecretRef.name
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:SecretRef
+        - urn:alm:descriptor:io.kubernetes:Secret
+      - description: Namespace that stores the secret resource.
+        displayName: Secret Namespace
+        path: connSecretRef.namespace
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:SecretRef
+        - urn:alm:descriptor:io.kubernetes:Namespace
+      - description: |
+          Whether to preserve the corresponding Quay object when you delete the OrganizationMirror resource.
+        displayName: Preserve Object in Quay on Deletion
+        path: preserveInQuayOnDeletion
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - description: Namespace, or project, in the external registry from which repositories
+          are mirrored, such as 'projectquay' or 'library'. This parameter is required when
+          creating the mirroring configuration.
+        displayName: External Namespace
+        path: externalNamespace
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - description: Password to use for pulling images from the remote registry. Only used
+          when 'externalRegistryUsername' is also provided.
+        displayName: External Registry Password
+        path: externalRegistryPassword
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:password
+      - description: Type of the external registry from which repositories are mirrored.
+          This parameter is required when creating the mirroring configuration. The type
+          cannot be changed after creation.
+        displayName: External Registry Type
+        path: externalRegistryType
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - description: URL of the external registry, such as https://quay.io or https://harbor.example.com
+          This parameter is required when creating the mirroring configuration.
+        displayName: External Registry Url
+        path: externalRegistryUrl
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - description: Username to use for pulling images from the remote registry. If not
+          provided, then anonymous access is used.
+        displayName: External Registry Username
+        path: externalRegistryUsername
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - description: Triggers an immediate synchronization of all repositories in the mirror.
+        displayName: Force Sync
+        path: forceSync
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - description: HTTP proxy to use for accessing the remote container registry. See
+          the 'curl' documentation for more details. By default, no proxy is used.
+        displayName: Http Proxy
+        path: httpProxy
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - description: HTTPS proxy to use for accessing the remote container registry. See
+          the 'curl' documentation for more details. By default, no proxy is used.
+        displayName: Https Proxy
+        path: httpsProxy
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - description: Defines whether the mirror configuration is active or inactive. 'true'
+          by default.
+        displayName: Is Enabled
+        path: isEnabled
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - description: Comma-separated list of hosts for which the proxy should not be used.
+          Only relevant when you also specify a proxy configuration by setting the 'httpProxy'
+          or 'httpsProxy' variables. See the 'curl' documentation for more details.
+        displayName: No Proxy
+        path: noProxy
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - description: Name of the organization to configure for mirroring. The organization
+          must exist and be empty (contain no repositories) when creating a new mirror configuration.
+        displayName: Organization
+        path: organization
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - description: List of repository name patterns to synchronize from the external namespace.
+          Supports glob patterns such as 'hello*', 'busy*', or '*test'. If not specified
+          or empty, then all repositories from the external namespace are synchronized.
+        displayName: Repository Filters
+        path: repositoryFilters
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - description: Username of the robot account that is used for synchronization. The
+          robot must belong to the organization specified in 'organization'. This parameter
+          is required when creating the mirroring configuration.
+        displayName: Robot Username
+        path: robotUsername
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - description: Maximum duration of mirroring jobs. The timeout must be between 5 minutes
+          (300 seconds) and 12 hours (43200 seconds). The 'skopeoTimeout' parameter accepts
+          a time unit as a suffix; 's' for seconds, 'm' for minutes, and 'h' for hours.
+          For example, '10m' for 10 minutes. 5 minutes (300 seconds) by default.
+        displayName: Skopeo Timeout
+        path: skopeoTimeout
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - description: Synchronization interval for this repository mirror in seconds. The
+          'syncInterval' parameter accepts a time unit as a suffix; 's' for seconds, 'm'
+          for minutes, 'h' for hours, 'd' for days, and 'w' for weeks. For example, '8h'
+          for eight hours. The minimal value in 60 seconds. 86400 (one day) by default.
+        displayName: Sync Interval
+        path: syncInterval
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - description: The date and time at which the first synchronization should be initiated.
+          The format for the 'syncStartDate' parameter is ISO 8601 UTC, such as 2026-04-25T21:06:00Z.
+          If you do not provide the 'syncStartDate' parameter when you configure a new organization
+          mirror, then the synchronization is immediately active, and a synchronization
+          is initiated if the 'isEnabled' parameter is 'true'.
+        displayName: Sync Start Date
+        path: syncStartDate
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - description: Defines whether TLS of the external registry should be verified. 'true'
+          by default.
+        displayName: Verify Tls
+        path: verifyTls
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - description: Visibility of the mirrored repositories created in the organization.
+          'public' by default.
+        displayName: Visibility
+        path: visibility
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+
+      statusDescriptors:
+      - description: Observed conditions of Quay components.
+        displayName: Conditions
+        path: conditions
+        x-descriptors:
+        - urn:alm:descriptor:io.kubernetes.conditions
+      - description: Whether the resource has been created in Quay
+        displayName: Exist in Quay
+        path: existInQuay
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - description: Error message when the process fails.
+        displayName: Error Message
+        path: message
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      version: v1alpha1
     - description: Create or delete auto-pruning policies for organizations and personal namespaces in Quay Container Registry.
       displayName: Organization Prune
       group: quay.herve4m.github.io
@@ -1386,6 +1633,88 @@ spec:
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
       version: v1alpha1
+    - description: Create, delete, and update tag immutability policies for a repository.
+      displayName: Repository Immutability
+      group: quay.herve4m.github.io
+      kind: RepositoryImmutability
+      name: repositoryimmutabilities.quay.herve4m.github.io
+      resources:
+      - kind: Secret
+        name: ""
+        version: v1
+      specDescriptors:
+      - description: |
+          Reference to the secret resource that stores the connection parameters to the Quay Container Registry API.
+        displayName: Connection Parameters Secret
+        path: connSecretRef
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:SecretRef
+      - description: Name of the secret resource.
+        displayName: Secret Name
+        path: connSecretRef.name
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:SecretRef
+        - urn:alm:descriptor:io.kubernetes:Secret
+      - description: Namespace that stores the secret resource.
+        displayName: Secret Namespace
+        path: connSecretRef.namespace
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:SecretRef
+        - urn:alm:descriptor:io.kubernetes:Namespace
+      - description: |
+          Whether to preserve the corresponding Quay object when you delete the RepositoryImmutability resource.
+        displayName: Preserve Object in Quay on Deletion
+        path: preserveInQuayOnDeletion
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - description: Specify the behavior of the matching pattern. If 'matching_immutable',
+          then tags that match the pattern are immutable. If 'not_matching_immutable', then
+          all the tags not matching the pattern are immutable. 'matching_immutable' by default.
+        displayName: Behavior
+        path: behavior
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - description: New regular expression for the immutability policy. Setting this option
+          changes the regular expression of the policy which current pattern is provided
+          in 'tagPattern'.
+        displayName: New Tag Pattern
+        path: newTagPattern
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - description: Name of the existing repository to configure. The format for the name
+          is 'namespace'/'shortname'. The namespace can be an organization or your personal
+          namespace. If you omit the namespace part in the name, then the resource looks
+          for the repository in your personal namespace. You can manage tag immutability
+          policies for repositories in your personal namespace, but not in the personal
+          namespace of other users. The token you use in 'quayToken' determines the user
+          account you are using.
+        displayName: Repository
+        path: repository
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      - description: Regular expression to select the tags to protect.
+        displayName: Tag Pattern
+        path: tagPattern
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+
+      statusDescriptors:
+      - description: Observed conditions of Quay components.
+        displayName: Conditions
+        path: conditions
+        x-descriptors:
+        - urn:alm:descriptor:io.kubernetes.conditions
+      - description: Whether the resource has been created in Quay
+        displayName: Exist in Quay
+        path: existInQuay
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - description: Error message when the process fails.
+        displayName: Error Message
+        path: message
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+      version: v1alpha1
     - description: Configure and synchronize repository mirrors in Quay Container Registry.
       displayName: Repository Mirror
       group: quay.herve4m.github.io
@@ -1465,8 +1794,8 @@ spec:
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
       - description: Name of the existing repository for which the mirror parameters are
-          configured. The format for the name is 'namespace'/'shortname'.The namespace can
-          be an organization or your personal namespace. If you omit the namespace part
+          configured. The format for the name is 'namespace'/'shortname'. The namespace
+          can be an organization or your personal namespace. If you omit the namespace part
           in the name, then the resource looks for the repository in your personal namespace.
           You can manage mirrors for repositories in your personal namespace, but not in
           the personal namespace of other users. The token you use in 'quayToken' determines
@@ -1819,6 +2148,12 @@ spec:
         path: image
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:text
+      - description: Whether the tag must be immutable or not. Immutability prevents a tag
+          from being changed or deleted. Requires Quay version 3.17 or later.
+        displayName: Immutable
+        path: immutable
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
       - description: When 'state=present', the 'tag' parameter provides the new tag to add
           to the image. If another image already uses that tag, then the resource removes
           the tag from that other image first. When 'state=absent', the 'tag' parameter

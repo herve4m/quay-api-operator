@@ -17,5 +17,6 @@ spec:
 
   image: production/smallimage:v1.4.3
   tag: v1
+  immutable: false
   expirationFormat: "%Y-%m-%d"
   expiration: "2027-05-25"

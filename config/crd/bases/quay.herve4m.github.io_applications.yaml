@@ -99,7 +99,7 @@ spec:
                     store the data that the resource generates:
 
 
-                    - clientId - ID if the client associated with the application object.
+                    - clientId - ID of the client associated with the application object.
 
                     - clientSecret - Secret for the client associated with the application object.
 

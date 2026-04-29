@@ -21,4 +21,7 @@ resources:
 - quay_v1alpha1_teamldap.yaml
 - quay_v1alpha1_teamoidc.yaml
 - quay_v1alpha1_user.yaml
+- quay_v1alpha1_organizationimmutability.yaml
+- quay_v1alpha1_organizationmirror.yaml
+- quay_v1alpha1_repositoryimmutability.yaml
 # +kubebuilder:scaffold:manifestskustomizesamples

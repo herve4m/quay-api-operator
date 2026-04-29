@@ -29,7 +29,7 @@ items:
         spec:
           containers:
             - name: fake-clair
-              image: registry.access.redhat.com/ubi9/httpd-24:1
+              image: quay.io/fedora/httpd-24:latest
               resources:
                 requests:
                   memory: 64Mi

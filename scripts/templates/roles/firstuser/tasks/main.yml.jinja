@@ -14,6 +14,7 @@
 {%- raw %}
         quay_host: "{{ quay_host | default(omit) }}"
         validate_certs: "{{ validate_certs | default(omit) }}"
+        timeout: "{{ timeout | default(omit) }}"
 {%- endraw %}
 {%- for item in options %}
         {{ item }}: {{ "\"{{ " + item + " | default(omit) }}\"" -}}
@@ -50,6 +51,7 @@
             token: {{ "\"{{ ret['" + item["ansible_name"] + "'] | default('', true) | ansible.builtin.b64encode | default(omit, true) }}\"" }}
             host: {{ "\"{{ quay_host | default('http://127.0.0.1') | ansible.builtin.b64encode }}\"" }}
             validateCerts: {{ "\"{{ validate_certs | default('true') | ansible.builtin.b64encode }}\"" }}
+            timeout: {{ "\"{{ timeout | default('10') | ansible.builtin.b64encode }}\"" }}
             username: {{ "\"{{ username | default('', true) | ansible.builtin.b64encode | default(omit, true) }}\"" }}
             password: {{ "\"{{ password | default('', true) | ansible.builtin.b64encode | default(omit, true) }}\"" }}
 {%- endif %}

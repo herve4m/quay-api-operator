@@ -22,7 +22,8 @@
 #                 "password": "czNjcjN0",
 #                 "token": "WFla",
 #                 "username": "YWRtaW4=",
-#                 "validateCerts": "dHJ1ZQ=="
+#                 "validateCerts": "dHJ1ZQ==",
+#                 "timeout": "21"
 #             },
 #             "kind": "Secret",
 #             "metadata": { ... },
@@ -50,6 +51,8 @@
     quay_password: "{{ auth_secret_r['resources'][0]['data']['password']
       | default('') | ansible.builtin.b64decode | default(omit, true) }}"
     validate_certs: "{{ auth_secret_r['resources'][0]['data']['validateCerts']
+      | default('') | ansible.builtin.b64decode | default(omit, true) }}"
+    timeout: "{{ auth_secret_r['resources'][0]['data']['timeout']
       | default('') | ansible.builtin.b64decode | default(omit, true) }}"
   when:
     - auth_secret_r['resources'] | length > 0

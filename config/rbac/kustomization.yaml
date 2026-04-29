@@ -22,6 +22,15 @@ resources:
 # default, aiding admins in cluster management. Those roles are
 # not used by the quay-api-operator itself. You can comment the following lines
 # if you do not want those helpers be installed with your Project.
+# - repositoryimmutability_admin_role.yaml
+# - repositoryimmutability_editor_role.yaml
+# - repositoryimmutability_viewer_role.yaml
+# - organizationmirror_admin_role.yaml
+# - organizationmirror_editor_role.yaml
+# - organizationmirror_viewer_role.yaml
+# - organizationimmutability_admin_role.yaml
+# - organizationimmutability_editor_role.yaml
+# - organizationimmutability_viewer_role.yaml
 # - user_editor_role.yaml
 # - user_viewer_role.yaml
 # - teamoidc_editor_role.yaml

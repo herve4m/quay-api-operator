@@ -20,17 +20,20 @@ The role retrieves the following fields from the secret resource:
   The role sets the `quay_password` Ansible fact from this field.
 * `validateCerts`: Whether to allow insecure connections to the API.
   The role sets the `validate_certs` Ansible fact from this field.
+* `timeout`: Number of seconds to wait for Quay to send data before giving up.
+  The role sets the `timeout` Ansible fact from this field.
+
 
 Use the following command as an example to create a secret resource for authenticating to the Quay Container Registry REST API with an OAuth access token:
 
 ```
-kubectl create secret generic quay-creds-token --from-literal host=https://quay.example.com:8443 --from-literal validateCerts=true --from-literal token=XYZ
+kubectl create secret generic quay-creds-token --from-literal host=https://quay.example.com:8443 --from-literal validateCerts=true --from-literal timeout=21 --from-literal token=XYZ
 ```
 
 Use the following command as an example to create a secret resource for authenticating to the Quay Container Registry REST API with a username and a password:
 
 ```
-kubectl create secret generic quay-creds-user --from-literal host=https://quay.example.com:8443 --from-literal validateCerts=true --from-literal username=admin --from-literal password=s3cr3t
+kubectl create secret generic quay-creds-user --from-literal host=https://quay.example.com:8443 --from-literal validateCerts=true --from-literal timeout=21 --from-literal username=admin --from-literal password=s3cr3t
 ```
 
 
