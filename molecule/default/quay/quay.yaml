@@ -211,7 +211,7 @@ items:
                   name: config-emptydir
           containers:
             - name: quay
-              image: quay.io/projectquay/quay:3.17.1
+              image: quay.io/projectquay/quay:3.18.0
               resources:
                 requests:
                   memory: 128Mi

@@ -214,7 +214,7 @@ RetSecretRef is the secret resource that the ApiToken resource creates. This sec
 - token - The OAuth access token (copy).
 - host - URL for accessing the Quay API.
 - validateCerts - Whether to allow insecure connections to the API.
-- timeout - Number of seconds to wait for Quay to send data before giving up.
+- timeout - Number of seconds to wait for Quay before giving up.
 
 
 __Type__: object (see the following properties)
