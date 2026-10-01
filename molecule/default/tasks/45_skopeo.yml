@@ -7,7 +7,7 @@
       kind: Job
       metadata:
         name: skopeo
-        namespace: "{{ k8s_namespace }}"
+        namespace: "{{ namespace }}"
       spec:
         template:
           spec:
