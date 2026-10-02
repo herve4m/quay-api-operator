@@ -19,6 +19,14 @@ spec:
   externalRegistryType: quay
   externalRegistryUrl: https://quay.io
   externalNamespace: projectquay
+
+  # External registry credentials in a Secret resource.
+  # If externalRegistrySecretRef is set, then it takes precedence over
+  # externalRegistryUsername and externalRegistryPassword.
+  # externalRegistrySecretRef:
+  #   name: external-registry-credentials
+  #   namespace: mynamespace
+
   robotUsername: productionmirror+syncrobot
   visibility: public
   repositoryFilters:

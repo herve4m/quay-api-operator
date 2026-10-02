@@ -21,6 +21,17 @@ spec:
   verifyTls: true
   httpProxy: http://proxy.example.com:3128
   noProxy: registry.access.redhat.com
+
+  # External registry credentials in a Secret resource.
+  # If externalRegistrySecretRef is set, then it takes precedence over
+  # externalRegistryUsername and externalRegistryPassword.
+  externalRegistrySecretRef:
+    name: external-registry-credentials
+    # By default, the operator looks for the secret in the same namespace as
+    # the repositorymirror resource, but you can specify a different namespace.
+    # namespace: mynamespace
+
+  # Alternatively, you can specify the credentials directly:
   # externalRegistryUsername: jsmith
   # externalRegistryPassword: Sup3r53cr3t
   robotUsername: production+robotprod1
