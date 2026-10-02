@@ -7,6 +7,35 @@
       when:
         - not secret_found
 
+    - name: Retrieve the external registry credentials from the provided secret resource
+      when:
+        - external_registry_secret_ref is defined
+        - "'name' in external_registry_secret_ref"
+        - external_registry_secret_ref['name'] | length > 0
+      block:
+        - name: Retrieve the secret that stores the external registry credentials
+          kubernetes.core.k8s_info:
+            api_version: v1
+            kind: Secret
+            name: "{{ external_registry_secret_ref['name'] }}"
+            namespace: "{{ external_registry_secret_ref['namespace']
+              | default(ansible_operator_meta['namespace']) }}"
+          register: ext_reg_secret_r
+
+        - name: Ensure the external registry credentials secret exists
+          ansible.builtin.fail:
+            msg: "externalRegistrySecretRef: {{ external_registry_secret_ref['name'] }}: secret not found"
+          when:
+            - "ext_reg_secret_r['resources'] | length == 0 or
+              'data' not in ext_reg_secret_r['resources'][0]"
+
+        - name: Set the external registry credentials from the secret
+          ansible.builtin.set_fact:
+            _ext_reg_secret_username: "{{ ext_reg_secret_r['resources'][0]['data']['username']
+              | default('') | ansible.builtin.b64decode | default(omit, true) }}"
+            _ext_reg_secret_password: "{{ ext_reg_secret_r['resources'][0]['data']['password']
+              | default('') | ansible.builtin.b64decode | default(omit, true) }}"
+
     - name: Ensure the repositorymirror resource exists in Quay
       infra.quay_configuration.quay_repository_mirror:
         quay_host: "{{ quay_host | default(omit) }}"
@@ -16,8 +45,6 @@
         quay_username: "{{ omit if quay_token is defined and quay_token | length > 0 else quay_username | default(omit) }}"
         quay_password: "{{ omit if quay_token is defined and quay_token | length > 0 else quay_password | default(omit) }}"
         external_reference: "{{ external_reference | default(omit) }}"
-        external_registry_password: "{{ external_registry_password | default(omit) }}"
-        external_registry_username: "{{ external_registry_username | default(omit) }}"
         force_sync: "{{ force_sync | default(omit) }}"
         http_proxy: "{{ http_proxy | default(omit) }}"
         https_proxy: "{{ https_proxy | default(omit) }}"
@@ -31,6 +58,8 @@
         sync_start_date: "{{ sync_start_date | default(omit) }}"
         unsigned_images: "{{ unsigned_images | default(omit) }}"
         verify_tls: "{{ verify_tls | default(omit) }}"
+        external_registry_username: "{{ _ext_reg_secret_username | default(external_registry_username | default(omit)) }}"
+        external_registry_password: "{{ _ext_reg_secret_password | default(external_registry_password | default(omit)) }}"
       register: ret
 
     - name: Ensure the existInQuay flag is set in the resource status

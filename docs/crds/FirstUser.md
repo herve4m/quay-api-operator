@@ -188,7 +188,7 @@ RetSecretRef is the secret resource that the FirstUser resource creates. This se
 - token - The OAuth access token (copy).
 - host - URL for accessing the Quay API.
 - validateCerts - Whether to allow insecure connections to the API.
-- timeout - Number of seconds to wait for Quay to send data before giving up.
+- timeout - Number of seconds to wait for Quay before giving up.
 - email - User's email address.
 - encryptedPassword - Encrypted user's password.
 

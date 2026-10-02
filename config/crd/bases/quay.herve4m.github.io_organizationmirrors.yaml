@@ -87,6 +87,30 @@ spec:
                     delete the OrganizationMirror resource. When set to
                     'false' (the default), the object is deleted from Quay.
                   type: boolean
+                externalRegistrySecretRef:
+                  description: >
+                    Reference to the secret resource that stores the
+                    credentials for pulling from the external registry.
+
+                    The secret must include the 'username' and 'password'
+                    keys.
+
+                    If 'externalRegistrySecretRef' is set, then it takes
+                    precedence over the 'externalRegistryUsername' and
+                    'externalRegistryPassword' parameters.
+                  properties:
+                    name:
+                      description: Name of the secret resource.
+                      type: string
+                    namespace:
+                      description: >
+                        Namespace of the secret resource. By default, the
+                        secret resource is retrieved from the same namespace
+                        as the current OrganizationMirror resource.
+                      type: string
+                  type: object
+                  required:
+                    - name
                 externalNamespace:
                   description: Namespace, or project, in the external registry from which repositories
                     are mirrored, such as 'projectquay' or 'library'. This parameter is required when

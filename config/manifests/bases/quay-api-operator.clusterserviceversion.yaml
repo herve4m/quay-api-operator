@@ -6,7 +6,7 @@ metadata:
     alm-examples: '[]'
     capabilities: Basic Install
     categories: Integration & Delivery
-    containerImage: quay.io/herve4m/quay-api-operator:1.3.0
+    containerImage: quay.io/herve4m/quay-api-operator:1.3.1
     createdAt: "2024-06-01T20:59:59Z"
     description: |
       Manage Quay Container Registry deployments by using Kubernetes resources.
@@ -1089,6 +1089,24 @@ spec:
         path: preserveInQuayOnDeletion
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - description: |
+          Reference to the secret resource that stores the credentials for pulling from the external registry.
+        displayName: External Registry Credentials Secret
+        path: externalRegistrySecretRef
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:ExtRegSecretRef
+      - description: Name of the secret resource.
+        displayName: Secret Name
+        path: externalRegistrySecretRef.name
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:ExtRegSecretRef
+        - urn:alm:descriptor:io.kubernetes:Secret
+      - description: Namespace that stores the secret resource.
+        displayName: Secret Namespace
+        path: externalRegistrySecretRef.namespace
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:ExtRegSecretRef
+        - urn:alm:descriptor:io.kubernetes:Namespace
       - description: Namespace, or project, in the external registry from which repositories
           are mirrored, such as 'projectquay' or 'library'. This parameter is required when
           creating the mirroring configuration.
@@ -1749,6 +1767,24 @@ spec:
         path: preserveInQuayOnDeletion
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+      - description: |
+          Reference to the secret resource that stores the credentials for pulling from the external registry.
+        displayName: External Registry Credentials Secret
+        path: externalRegistrySecretRef
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:ExtRegSecretRef
+      - description: Name of the secret resource.
+        displayName: Secret Name
+        path: externalRegistrySecretRef.name
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:ExtRegSecretRef
+        - urn:alm:descriptor:io.kubernetes:Secret
+      - description: Namespace that stores the secret resource.
+        displayName: Secret Namespace
+        path: externalRegistrySecretRef.namespace
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:ExtRegSecretRef
+        - urn:alm:descriptor:io.kubernetes:Namespace
       - description: Path to the remote container repository to synchronize, such as quay.io/projectquay/quay
           for example. This parameter is required when creating the mirroring configuration.
         displayName: External Reference

@@ -2,16 +2,26 @@
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  name: apitokens.quay.herve4m.github.io
+  name: {{ resource.plural }}.{{ config.QUALIFIED_GROUP }}
 spec:
-  group: quay.herve4m.github.io
+  group: {{ config.QUALIFIED_GROUP }}
   names:
-    kind: ApiToken
-    plural: apitokens
+    kind: {{ resource.kind }}
+    plural: {{ resource.plural }}
+{%- if resource.short|length > 0 %}
+    shortNames:
+      - {{ resource.short }}
+{%- endif %}
   scope: Namespaced
   versions:
-    - name: v1alpha1
+    - name: {{ config.VERSION }}
       additionalPrinterColumns:
+{%- for item in additional_cols %}
+        - name: {{ item["name"] }}
+          type: {{ item["type"] }}
+          description: {{ item["description"] }}
+          jsonPath: {{ item["jsonPath"] }}
+{%- endfor %}
         - name: Success
           type: string
           description: The status of the resource creation process in Quay
@@ -29,7 +39,7 @@ spec:
           jsonPath: .metadata.creationTimestamp
       schema:
         openAPIV3Schema:
-          description: Create OAuth access tokens for accessing the Quay Container Registry API
+          description: {{ description }}
           properties:
             apiVersion:
               description: >
@@ -50,15 +60,13 @@ spec:
             metadata:
               type: object
             spec:
-              description: Spec defines the desired state of ApiToken
+              description: Spec defines the desired state of {{ resource.kind }}
               type: object
               required:
                 - connSecretRef
-              oneOf:
-                - required:
-                    - clientId
-                - required:
-                    - clientIdFrom
+{%- for item in required %}
+                - {{ item[0] }}
+{%- endfor %}
               properties:
                 connSecretRef:
                   description: >
@@ -75,7 +83,7 @@ spec:
                       description: >
                         Namespace of the secret resource. By default, the
                         secret resource is retrieved from the same namespace
-                        as the current ApiToken resource.
+                        as the current {{ resource.kind }} resource.
                       type: string
                   type: object
                   required:
@@ -84,49 +92,20 @@ spec:
                   default: false
                   description: >
                     Whether to preserve the corresponding Quay object when you
-                    delete the ApiToken resource. When set to
+                    delete the {{ resource.kind }} resource. When set to
                     'false' (the default), the object is deleted from Quay.
                   type: boolean
-                retSecretRef:
-                  description: >
-                    RetSecretRef is the secret resource that the
-                    ApiToken resource creates. This secret will
-                    store the data that the resource generates:
-
-
-                    - accessToken - The OAuth access token.
-
-                    - token - The OAuth access token (copy).
-
-                    - host - URL for accessing the Quay API.
-
-                    - validateCerts - Whether to allow insecure connections to the API.
-
-                    - timeout - Number of seconds to wait for Quay before giving up.
-
-                  properties:
-                    name:
-                      description: Name of the secret resource.
-                      type: string
-                    namespace:
-                      description: >
-                        Namespace of the secret resource. By default, the
-                        secret resource is created in the same namespace
-                        as the current ApiToken resource.
-                      type: string
-                  type: object
-                  required:
-                    - name
-                clientIdFrom:
+                externalRegistrySecretRef:
                   description: >
                     Reference to the secret resource that stores the
-                    client ID of the application.
+                    credentials for pulling from the external registry.
 
-                    You specify the key that stores this client ID by using the
-                    'key' parameter. By default the operator looks for a
-                    'clientId' key in the secret.
+                    The secret must include the 'username' and 'password'
+                    keys.
 
-                    Mutually exclusive with 'clientId'.
+                    If 'externalRegistrySecretRef' is set, then it takes
+                    precedence over the 'externalRegistryUsername' and
+                    'externalRegistryPassword' parameters.
                   properties:
                     name:
                       description: Name of the secret resource.
@@ -135,49 +114,15 @@ spec:
                       description: >
                         Namespace of the secret resource. By default, the
                         secret resource is retrieved from the same namespace
-                        as the current ApiToken resource.
-                      type: string
-                    key:
-                      default: clientId
-                      description: >
-                        In the secret resource, key that stores the client ID.
+                        as the current {{ resource.kind }} resource.
                       type: string
                   type: object
                   required:
                     - name
-                clientId:
-                  description: The client ID associated with the OAuth application to use for generating
-                    the OAuth access token. See the Application resource to create an application
-                    object and to retrieve the associated client ID.
-                  type: string
-                forUser:
-                  description: The username to generate an OAuth access token for. The user receives
-                    a notification in the web interface, which enables the user to retrieve the token.
-                    When you use this option, the resource does not return the token. Requires Quay
-                    version 3.12 or later.
-                  type: string
-                rights:
-                  default:
-                  - repo:read
-                  description: List of permissions to grant to the user account. 'all' means all the
-                    permissions.
-                  items:
-                    enum:
-                    - org:admin
-                    - repo:admin
-                    - repo:create
-                    - repo:read
-                    - repo:write
-                    - super:user
-                    - user:admin
-                    - user:read
-                    - all
-                    type: string
-                  type: array
-
+                {{ options_yaml|indent(16) }}
             status:
               description: >
-                Status defines the observed state of ApiToken
+                Status defines the observed state of {{ resource.kind }}
               type: object
               x-kubernetes-preserve-unknown-fields: true
           type: object

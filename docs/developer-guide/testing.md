@@ -40,7 +40,7 @@ Ensure that you are logged in to your cluster before running Scorecard.
 A 0 return code indicates success:
 
 ```sh
-operator-sdk scorecard ./bundle
+operator-sdk scorecard -w 120s ./bundle
 echo $?
 ```
 
