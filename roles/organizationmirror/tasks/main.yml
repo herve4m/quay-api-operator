@@ -31,9 +31,9 @@
 
         - name: Set the external registry credentials from the secret
           ansible.builtin.set_fact:
-            external_registry_username: "{{ ext_reg_secret_r['resources'][0]['data']['username']
+            _ext_reg_secret_username: "{{ ext_reg_secret_r['resources'][0]['data']['username']
               | default('') | ansible.builtin.b64decode | default(omit, true) }}"
-            external_registry_password: "{{ ext_reg_secret_r['resources'][0]['data']['password']
+            _ext_reg_secret_password: "{{ ext_reg_secret_r['resources'][0]['data']['password']
               | default('') | ansible.builtin.b64decode | default(omit, true) }}"
 
     - name: Ensure the organizationmirror resource exists in Quay
@@ -45,10 +45,8 @@
         quay_username: "{{ omit if quay_token is defined and quay_token | length > 0 else quay_username | default(omit) }}"
         quay_password: "{{ omit if quay_token is defined and quay_token | length > 0 else quay_password | default(omit) }}"
         external_namespace: "{{ external_namespace | default(omit) }}"
-        external_registry_password: "{{ external_registry_password | default(omit) }}"
         external_registry_type: "{{ external_registry_type | default(omit) }}"
         external_registry_url: "{{ external_registry_url | default(omit) }}"
-        external_registry_username: "{{ external_registry_username | default(omit) }}"
         force_sync: "{{ force_sync | default(omit) }}"
         http_proxy: "{{ http_proxy | default(omit) }}"
         https_proxy: "{{ https_proxy | default(omit) }}"
@@ -62,6 +60,8 @@
         sync_start_date: "{{ sync_start_date | default(omit) }}"
         verify_tls: "{{ verify_tls | default(omit) }}"
         visibility: "{{ visibility | default(omit) }}"
+        external_registry_username: "{{ _ext_reg_secret_username | default(external_registry_username | default(omit)) }}"
+        external_registry_password: "{{ _ext_reg_secret_password | default(external_registry_password | default(omit)) }}"
       register: ret
 
     - name: Ensure the existInQuay flag is set in the resource status

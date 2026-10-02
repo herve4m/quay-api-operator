@@ -32,9 +32,9 @@
 
         - name: Set the external registry credentials from the secret
           ansible.builtin.set_fact:
-            external_registry_username: "{{ ext_reg_secret_r['resources'][0]['data']['username']
+            _ext_reg_secret_username: "{{ ext_reg_secret_r['resources'][0]['data']['username']
               | default('') | ansible.builtin.b64decode | default(omit, true) }}"
-            external_registry_password: "{{ ext_reg_secret_r['resources'][0]['data']['password']
+            _ext_reg_secret_password: "{{ ext_reg_secret_r['resources'][0]['data']['password']
               | default('') | ansible.builtin.b64decode | default(omit, true) }}"
 {%- endraw %}
 
@@ -49,8 +49,14 @@
         quay_password: "{{ omit if quay_token is defined and quay_token | length > 0 else quay_password | default(omit) }}"
 {%- endraw %}
 {%- for item in options %}
+{%- if item not in ["external_registry_username", "external_registry_password"] %}
         {{ item }}: {{ "\"{{ " + item + " | default(omit) }}\"" -}}
-{% endfor %}
+{%- endif %}
+{%- endfor %}
+{%- raw %}
+        external_registry_username: "{{ _ext_reg_secret_username | default(external_registry_username | default(omit)) }}"
+        external_registry_password: "{{ _ext_reg_secret_password | default(external_registry_password | default(omit)) }}"
+{%- endraw %}
       register: ret
 
     - name: Ensure the existInQuay flag is set in the resource status
