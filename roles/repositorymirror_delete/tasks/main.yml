@@ -26,6 +26,7 @@
         quay_token: "{{ quay_token | default(omit, true) }}"
         quay_username: "{{ omit if quay_token is defined and quay_token | length > 0 else quay_username | default(omit) }}"
         quay_password: "{{ omit if quay_token is defined and quay_token | length > 0 else quay_password | default(omit) }}"
+        architecture_filter: "{{ architecture_filter | default(omit) }}"
         external_reference: "{{ external_reference | default(omit) }}"
         external_registry_password: "{{ external_registry_password | default(omit) }}"
         external_registry_username: "{{ external_registry_username | default(omit) }}"

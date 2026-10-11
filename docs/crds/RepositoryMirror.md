@@ -128,12 +128,27 @@ spec:
     - "9.3"
   syncInterval: "172800"
   syncStartDate: "2023-05-25T21:06:00Z"
+  architectureFilter:
+    - amd64
+    - arm64
+    - ppc64le
+    - s390x
 
 ```
 
 
 ## Properties
 
+
+### architectureFilter
+
+List of architectures to mirror from the remote repository. When omitted, all available architectures are mirrored. Filtering architectures requires Quay version 3.17 or later.
+
+__Type__: array
+
+__Required__: False
+
+__Default value__: None
 
 ### connSecretRef
 

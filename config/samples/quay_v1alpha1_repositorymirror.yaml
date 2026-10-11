@@ -40,3 +40,8 @@ spec:
     - "9.3"
   syncInterval: "172800"
   syncStartDate: "2023-05-25T21:06:00Z"
+  architectureFilter:
+    - amd64
+    - arm64
+    - ppc64le
+    - s390x

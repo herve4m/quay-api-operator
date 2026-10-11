@@ -111,6 +111,18 @@ spec:
                   type: object
                   required:
                     - name
+                architectureFilter:
+                  description: List of architectures to mirror from the remote repository. When omitted,
+                    all available architectures are mirrored. Filtering architectures requires Quay
+                    version 3.17 or later.
+                  items:
+                    enum:
+                    - amd64
+                    - arm64
+                    - ppc64le
+                    - s390x
+                    type: string
+                  type: array
                 externalReference:
                   description: Path to the remote container repository to synchronize, such as quay.io/projectquay/quay
                     for example. This parameter is required when creating the mirroring configuration.
