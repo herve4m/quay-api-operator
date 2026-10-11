@@ -6,7 +6,7 @@ metadata:
     alm-examples: '[]'
     capabilities: Basic Install
     categories: Integration & Delivery
-    containerImage: quay.io/herve4m/quay-api-operator:1.3.1
+    containerImage: quay.io/herve4m/quay-api-operator:1.4.0
     createdAt: "2024-06-01T20:59:59Z"
     description: |
       Manage Quay Container Registry deployments by using Kubernetes resources.
@@ -1785,6 +1785,13 @@ spec:
         x-descriptors:
         - urn:alm:descriptor:com.tectonic.ui:fieldGroup:ExtRegSecretRef
         - urn:alm:descriptor:io.kubernetes:Namespace
+      - description: List of architectures to mirror from the remote repository. When omitted,
+          all available architectures are mirrored. Filtering architectures requires Quay
+          version 3.17 or later.
+        displayName: Architecture Filter
+        path: architectureFilter
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
       - description: Path to the remote container repository to synchronize, such as quay.io/projectquay/quay
           for example. This parameter is required when creating the mirroring configuration.
         displayName: External Reference
